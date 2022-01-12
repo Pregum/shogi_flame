@@ -1,20 +1,37 @@
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flame/util.dart';
-import 'package:flutter/services.dart';
+import 'package:flame/game.dart';
 
-import 'package:shogi_game/box_game.dart';
+import 'package:flutter/material.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MaterialApp(
+      home: Scaffold(
+    body: GameWidget(
+      game: IsometricMapGame(),
+    ),
+  )));
+}
 
-  Util flameUtil = Util();
-  await flameUtil.fullScreen();
-  await flameUtil.setOrientation(DeviceOrientation.portraitUp);
+class HomeView extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _HomeViewState();
+  }
+}
 
-  BoxGame game = BoxGame();
-  TapGestureRecognizer tapper = TapGestureRecognizer();
-  tapper.onTapDown = game.onTapDown;
-  runApp(game.widget);
-  flameUtil.addGestureRecognizer(tapper);
+class _HomeViewState extends State<HomeView> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: GameWidget(game: IsometricMapGame()),
+      ),
+    );
+  }
+}
+
+class IsometricMapGame extends FlameGame {
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+  }
 }
