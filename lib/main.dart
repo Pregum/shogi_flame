@@ -3,6 +3,8 @@ import 'package:flame/game.dart';
 
 import 'package:flutter/material.dart';
 
+import 'dart:ui' as ui;
+
 Future<void> main() async {
   runApp(MaterialApp(
       home: Scaffold(
@@ -41,5 +43,23 @@ class IsometricMapGame extends FlameGame {
       size: sprite.srcSize * 2,
       anchor: Anchor.center,
     ));
+  }
+}
+
+class Selector extends SpriteComponent {
+  bool show = true;
+
+  Selector(double s, ui.Image img)
+      : super(
+          sprite: Sprite(img, srcSize: Vector2.all(32.0)),
+          size: Vector2.all(s),
+        );
+  @override
+  void render(Canvas canvas) {
+    if (!show) {
+      return;
+    }
+
+    super.render(canvas);
   }
 }
