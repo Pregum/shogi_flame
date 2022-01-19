@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flame/input.dart';
 
 import 'package:flutter/material.dart';
 
@@ -32,7 +33,13 @@ class _HomeViewState extends State<HomeView> {
   }
 }
 
-class IsometricMapGame extends FlameGame {
+class IsometricMapGame extends FlameGame with MouseMovementDetector {
+  static const scale = 2.0;
+  static const srcTileSize = 32.0;
+  static const destTileSize = scale * srcTileSize;
+
+  late Selector selector;
+  IsometricMapGame();
   @override
   Future<void> onLoad() async {
     await super.onLoad();
@@ -43,6 +50,9 @@ class IsometricMapGame extends FlameGame {
       size: sprite.srcSize * 2,
       anchor: Anchor.center,
     ));
+
+    final selectorImage = await images.load('selector.png');
+    add(selector = Selector(destTileSize, selectorImage));
   }
 }
 
