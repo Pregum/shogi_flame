@@ -54,6 +54,12 @@ class IsometricMapGame extends FlameGame with MouseMovementDetector {
     final selectorImage = await images.load('selector.png');
     add(selector = Selector(destTileSize, selectorImage));
   }
+
+  @override
+  void onMouseMove(PointerHoverInfo info) {
+    final screenPosition = info.eventPosition.game;
+    selector.position.setFrom(screenPosition);
+  }
 }
 
 class Selector extends SpriteComponent {
