@@ -85,15 +85,22 @@ class Tile9x9 extends FlameGame with HasTappables {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    final tileImage = await loadSprite('tile.png');
-
     final onTapDowned = () {
       print('ontapp!!!');
       selector.show = !selector.show;
     };
 
-    final oneTile = OneTile(onTapDowned, destTileSize, tileImage);
-    add(oneTile);
+// これだと何も表示されなくなった
+    for (int i = 0; i < rowCount; i++) {
+      // for (int j = 0; j < columnCount; j++) {
+      final tileImage = await loadSprite('tile.png',
+          // srcPosition: Vector2.all(i * destTileSize),
+          srcPosition: Vector2(i * 10, 10));
+
+      final oneTile = OneTile(onTapDowned, destTileSize, tileImage);
+      add(oneTile);
+      // }
+    }
 
     final selectorImage = await images.load('selector.png');
     add(selector = Selector(destTileSize, selectorImage));
