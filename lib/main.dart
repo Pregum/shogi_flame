@@ -85,42 +85,64 @@ class Tile9x9 extends FlameGame with HasTappables {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    final onTapDowned = () {
+    final OnTileTapDowned onTapDowned = (info) {
       print('ontapp!!!');
       selector.show = !selector.show;
+      selector.position = info;
     };
 
 // これだと何も表示されなくなった
-    for (int i = 0; i < rowCount; i++) {
-      // for (int j = 0; j < columnCount; j++) {
-      final tileImage = await loadSprite('tile.png',
-          // srcPosition: Vector2.all(i * destTileSize),
-          srcPosition: Vector2(i * 10, 10));
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        final tileImage = await loadSprite(
+          'tile.png',
+          // srcSize: Vector2.all(destTileSize),
+          // srcPosition: Vector2(i * destTileSize, 5 * destTileSize),
+        );
+        // srcPosition: Vector2(i * 10, 10));
 
-      final oneTile = OneTile(onTapDowned, destTileSize, tileImage);
-      add(oneTile);
-      // }
+        final oneTile = OneTile(
+            onTapDowned,
+            Vector2(i * destTileSize, j * destTileSize),
+            destTileSize,
+            tileImage)
+          ..anchor = Anchor.topLeft;
+        add(oneTile);
+        print('i: $i, srcPosition: ${tileImage.srcPosition}');
+      }
     }
 
     final selectorImage = await images.load('selector.png');
-    add(selector = Selector(destTileSize, selectorImage));
+    add(selector = Selector(destTileSize, selectorImage)..x = 10);
+    print('selector.x: ${selector.x}, selector.y: ${selector.y}');
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
   }
 }
 
-typedef OnTileTapDowned = void Function();
+typedef OnTileTapDowned = void Function(Vector2 xy);
 
 /// 将棋盤の1盤面を描画するcomponent
 class OneTile extends SpriteComponent with Tappable {
   /// tapdown時のcallback
   late OnTileTapDowned? callback;
 
+  /// 左上の座標(xy)
+  late Vector2 topLeft;
+
   /// ctor
-  OneTile(this.callback, double s, Sprite spriteImage)
-      : super(sprite: spriteImage, size: Vector2.all(s));
+  OneTile(this.callback, this.topLeft, double s, Sprite spriteImage)
+      : super(sprite: spriteImage, size: Vector2.all(s)) {
+    this.x = topLeft.x;
+    this.y = topLeft.y;
+  }
 
   @override
   bool onTapDown(TapDownInfo info) {
-    callback?.call();
+    callback?.call(this.topLeft);
     return super.onTapDown(info);
   }
 
