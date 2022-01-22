@@ -4,11 +4,14 @@ import 'package:shogi_game/widget/piece/gold/sprite_gold.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 
+/// [IPiece] のインスタンスを生成するutility
 class PieceFactory {
+  /// PieceTypeがBlankの [IPiece] のインスタンスを生成します。
   static IPiece createBlankPiece() {
     return BlankPiece();
   }
 
+  /// [PieceType] に応じて [IPiece] のインスタンスを生成します。
   static Future<IPiece?> createSpritePiece(PieceType pieceType) async {
     if (pieceType != PieceType.GoldGeneral) {
       throw Exception(
