@@ -21,52 +21,9 @@ Future<void> main() async {
   )));
 }
 
-// class HomeView extends StatefulWidget {
-//   @override
-//   State<StatefulWidget> createState() {
-//     return _HomeViewState();
-//   }
-// }
-
-// class _HomeViewState extends State<HomeView> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         // body: GameWidget(game: IsometricMapGame()),
-//         body: GameWidget(game: Tile9x9()),
-//       ),
-//     );
-//   }
-// }
-
-class IsometricMapGame extends FlameGame with MouseMovementDetector {
-  static const scale = 2.0;
-  static const srcTileSize = 32.0;
-  static const destTileSize = scale * srcTileSize;
-
-  late Selector selector;
-  IsometricMapGame();
-  @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-    final sprite = await loadSprite('normal_shogi_tile.png');
-    add(SpriteComponent(
-      sprite: sprite,
-      position: Vector2(size.x / 2, size.y / 2),
-      size: sprite.srcSize * 2,
-      anchor: Anchor.center,
-    ));
-
-    final selectorImage = await images.load('selector.png');
-    add(selector = Selector(destTileSize, selectorImage));
-  }
-
-  @override
-  void onMouseMove(PointerHoverInfo info) {
-    final screenPosition = info.eventPosition.game;
-    selector.position.setFrom(screenPosition);
-  }
+class PieceStand extends SpriteComponent {
+  PieceStand(double size, Sprite sprite)
+      : super(size: Vector2.all(size), sprite: sprite);
 }
 
 /// 9x9の将棋盤を描画するcomponent
@@ -105,7 +62,6 @@ class Tile9x9 extends FlameGame with HasTappables {
             tileImage)
           ..anchor = Anchor.topLeft;
         add(oneTile);
-        print('i: $i, srcPosition: ${tileImage.srcPosition}');
       }
     }
 
@@ -132,8 +88,8 @@ class OneTile extends SpriteComponent with Tappable {
   /// ctor
   OneTile(this.callback, this.topLeft, double s, Sprite spriteImage)
       : super(sprite: spriteImage, size: Vector2.all(s)) {
-    this.x = topLeft.x;
-    this.y = topLeft.y;
+    x = topLeft.x;
+    y = topLeft.y;
   }
 
   @override
