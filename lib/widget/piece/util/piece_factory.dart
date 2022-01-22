@@ -57,6 +57,8 @@ class PieceFactory {
       case PieceType.PromotedPawn:
         // TODO: Handle this case.
         break;
+      case PieceType.Blank:
+        return BlankPiece();
     }
   }
 }
