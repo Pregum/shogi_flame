@@ -69,6 +69,7 @@ class IsometricMapGame extends FlameGame with MouseMovementDetector {
   }
 }
 
+/// 9x9の将棋盤を描画するcomponent
 class Tile9x9 extends FlameGame with HasTappables {
   late Selector selector;
 
@@ -91,15 +92,11 @@ class Tile9x9 extends FlameGame with HasTappables {
       selector.position = info;
     };
 
-// これだと何も表示されなくなった
-    for (int i = 0; i < 9; i++) {
-      for (int j = 0; j < 9; j++) {
+    for (int i = 0; i < rowCount; i++) {
+      for (int j = 0; j < columnCount; j++) {
         final tileImage = await loadSprite(
           'tile.png',
-          // srcSize: Vector2.all(destTileSize),
-          // srcPosition: Vector2(i * destTileSize, 5 * destTileSize),
         );
-        // srcPosition: Vector2(i * 10, 10));
 
         final oneTile = OneTile(
             onTapDowned,
@@ -113,8 +110,7 @@ class Tile9x9 extends FlameGame with HasTappables {
     }
 
     final selectorImage = await images.load('selector.png');
-    add(selector = Selector(destTileSize, selectorImage)..x = 10);
-    print('selector.x: ${selector.x}, selector.y: ${selector.y}');
+    add(selector = Selector(destTileSize, selectorImage));
   }
 
   @override
@@ -125,7 +121,7 @@ class Tile9x9 extends FlameGame with HasTappables {
 
 typedef OnTileTapDowned = void Function(Vector2 xy);
 
-/// 将棋盤の1盤面を描画するcomponent
+/// 将棋盤の1マスを描画するcomponent
 class OneTile extends SpriteComponent with Tappable {
   /// tapdown時のcallback
   late OnTileTapDowned? callback;
@@ -152,6 +148,7 @@ class OneTile extends SpriteComponent with Tappable {
   }
 }
 
+/// 選択マスを表すcomponent
 class Selector extends SpriteComponent {
   bool show = true;
 
