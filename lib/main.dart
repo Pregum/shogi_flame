@@ -1,26 +1,28 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
-import 'package:flame/src/game/game_render_box.dart';
-import 'package:flame/src/assets/images.dart';
-import 'package:flame/src/assets/assets_cache.dart';
 
 import 'package:flutter/material.dart';
 
 import 'dart:ui' as ui;
 
-import 'package:flutter/src/rendering/object.dart';
-
 Future<void> main() async {
-  runApp(MaterialApp(
+  runApp(
+    MaterialApp(
       home: Scaffold(
-    body: GameWidget(
-      // game: IsometricMapGame(),
-      game: Tile9x9(),
+        body: GameWidget(
+          game: Tile9x9(),
+        ),
+      ),
     ),
-  )));
+  );
 }
 
+class SandBox extends FlameGame {
+  SandBox();
+}
+
+/// 駒台
 class PieceStand extends SpriteComponent {
   PieceStand(double size, Sprite sprite)
       : super(size: Vector2.all(size), sprite: sprite);
@@ -28,50 +30,59 @@ class PieceStand extends SpriteComponent {
 
 /// 9x9の将棋盤を描画するcomponent
 class Tile9x9 extends FlameGame with HasTappables {
-  late Selector selector;
+  /// 選択マスを表示するselector
+  late Selector _selector;
 
   Tile9x9();
 
-  static const scale = 2.0;
-  static const srcTileSize = 32.0;
-  static const destTileSize = scale * srcTileSize;
+  static const _scale = 2.0;
+  static const _srcTileSize = 32.0;
+  static const _destTileSize = _scale * _srcTileSize;
 
-  static const rowCount = 9;
-  static const columnCount = 9;
+  static const _rowCount = 9;
+  static const _columnCount = 9;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
 
-    final OnTileTapDowned onTapDowned = (info) {
-      print('ontapp!!!');
-      selector.show = !selector.show;
-      selector.position = info;
-    };
+    await _prepare9x9Tile();
 
-    for (int i = 0; i < rowCount; i++) {
-      for (int j = 0; j < columnCount; j++) {
-        final tileImage = await loadSprite(
-          'tile.png',
-        );
+    await _prepareSelector();
+  }
 
-        final oneTile = OneTile(
-            onTapDowned,
-            Vector2(i * destTileSize, j * destTileSize),
-            destTileSize,
-            tileImage)
-          ..anchor = Anchor.topLeft;
-        add(oneTile);
-      }
-    }
-
+  Future<void> _prepareSelector() async {
     final selectorImage = await images.load('selector.png');
-    add(selector = Selector(destTileSize, selectorImage));
+    add(_selector = Selector(_destTileSize, selectorImage));
   }
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
+  }
+
+  /// 9x9の初期設定を行う
+  Future<void> _prepare9x9Tile() async {
+    final OnTileTapDowned onTapDowned = (info) {
+      print('ontapp!!!');
+      _selector.visible = !_selector.visible;
+      _selector.position = info;
+    };
+
+    for (int i = 0; i < _rowCount; i++) {
+      for (int j = 0; j < _columnCount; j++) {
+        final tileImage = await loadSprite(
+          'tile.png',
+        );
+        final oneTile = OneTile(
+            onTapDowned,
+            Vector2(i * _destTileSize, j * _destTileSize),
+            _destTileSize,
+            tileImage)
+          ..anchor = Anchor.topLeft;
+        add(oneTile);
+      }
+    }
   }
 }
 
@@ -84,6 +95,9 @@ class OneTile extends SpriteComponent with Tappable {
 
   /// 左上の座標(xy)
   late Vector2 topLeft;
+
+  // 表示する駒
+  late Component? stackedPiece;
 
   /// ctor
   OneTile(this.callback, this.topLeft, double s, Sprite spriteImage)
@@ -106,16 +120,20 @@ class OneTile extends SpriteComponent with Tappable {
 
 /// 選択マスを表すcomponent
 class Selector extends SpriteComponent {
-  bool show = true;
+  /// 表示されているかどうか.
+  /// trueに設定すると表示されます.
+  bool visible = true;
 
+  /// ctor
   Selector(double s, ui.Image img)
       : super(
           sprite: Sprite(img, srcSize: Vector2.all(32.0)),
           size: Vector2.all(s),
         );
+
   @override
   void render(Canvas canvas) {
-    if (!show) {
+    if (!visible) {
       return;
     }
 
