@@ -3,8 +3,12 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 
 import 'package:flutter/material.dart';
+import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 
 import 'dart:ui' as ui;
+
+import 'widget/piece/model/piece_type.dart';
+import 'widget/piece/util/piece_factory.dart';
 
 Future<void> main() async {
   runApp(
@@ -70,6 +74,9 @@ class Tile9x9 extends FlameGame with HasTappables {
       _selector.position = info;
     };
 
+    // 最初はブランクを入れておく
+    final blankPiece = PieceFactory.createBlankPiece();
+
     for (int i = 0; i < _rowCount; i++) {
       for (int j = 0; j < _columnCount; j++) {
         final tileImage = await loadSprite(
@@ -79,7 +86,8 @@ class Tile9x9 extends FlameGame with HasTappables {
             onTapDowned,
             Vector2(i * _destTileSize, j * _destTileSize),
             _destTileSize,
-            tileImage)
+            tileImage,
+            stackedPiece: blankPiece)
           ..anchor = Anchor.topLeft;
         add(oneTile);
       }
@@ -98,11 +106,21 @@ class OneTile extends SpriteComponent with Tappable {
   late Vector2 topLeft;
 
   // 表示する駒
-  late Component? stackedPiece;
+  late IPiece _stackedPiece;
+  IPiece get stackedPiece => _stackedPiece;
+  set stackedPiece(IPiece piece) {
+    stackedPiece = piece;
+  }
+
+  /// 選択されているか.
+  /// trueの場合選択フラグを立てる
+  bool isSelected = false;
 
   /// ctor
-  OneTile(this.callback, this.topLeft, double s, Sprite spriteImage)
+  OneTile(this.callback, this.topLeft, double s, Sprite spriteImage,
+      {required IPiece stackedPiece})
       : super(sprite: spriteImage, size: Vector2.all(s)) {
+    _stackedPiece = stackedPiece;
     x = topLeft.x;
     y = topLeft.y;
   }
@@ -110,11 +128,17 @@ class OneTile extends SpriteComponent with Tappable {
   @override
   bool onTapDown(TapDownInfo info) {
     callback?.call(this.topLeft);
+    isSelected = !isSelected;
     return super.onTapDown(info);
   }
 
   @override
   void render(Canvas canvas) {
+    if (isSelected == false) {
+      remove(_stackedPiece);
+    } else {
+      add(_stackedPiece);
+    }
     super.render(canvas);
   }
 }
