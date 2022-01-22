@@ -51,14 +51,15 @@ class Tile9x9 extends FlameGame with HasTappables {
     await _prepareSelector();
   }
 
-  Future<void> _prepareSelector() async {
-    final selectorImage = await images.load('selector.png');
-    add(_selector = Selector(_destTileSize, selectorImage));
-  }
-
   @override
   void render(Canvas canvas) {
     super.render(canvas);
+  }
+
+  /// [Selector] の初期設定を行う
+  Future<void> _prepareSelector() async {
+    final selectorImage = await images.load('selector.png');
+    add(_selector = Selector(_destTileSize, selectorImage));
   }
 
   /// 9x9の初期設定を行う
