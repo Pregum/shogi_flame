@@ -49,6 +49,7 @@ class Tile9x9 extends FlameGame with HasTappables {
 
   /// [IPiece] を選択中のマスに設定します。
   /// 設定の成否で [bool] を返します
+  /// true: 成功, false: 失敗
   bool setPiece(IPiece piece) {
     final rowIndex = _selectedRowIndex;
     final columnIndex = _selectedColumnIndex;

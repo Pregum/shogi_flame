@@ -5,7 +5,7 @@ import 'package:flame/input.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 
 /// タップしたマスの左上のxy座標が [Vector2] から与えられる.
-/// タップ箇所のマスのindexを **rowIndex** と **columnIndex** から与えられる。
+/// タップ箇所のマスのindexを **rowIndex** と **columnIndex** から与えられる.
 typedef OnTileTapDowned = void Function(
     Vector2 xy, int? rowIndex, int? columnIndex);
 
@@ -25,9 +25,9 @@ class OneTile extends SpriteComponent with Tappable {
 
   // 表示する駒
   late IPiece _stackedPiece;
-  IPiece get stackedPiece => _stackedPiece;
+  // IPiece get stackedPiece => _stackedPiece;
   set stackedPiece(IPiece piece) {
-    stackedPiece = piece;
+    _stackedPiece = piece;
   }
 
   /// 選択されているか.
