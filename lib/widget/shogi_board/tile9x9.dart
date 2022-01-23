@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
+import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/selector.dart';
 
@@ -11,6 +12,18 @@ class Tile9x9 extends FlameGame with HasTappables {
   /// 選択マスを表示するselector
   late Selector _selector;
 
+  /// マス単位のインスタンスを保持するフィールド
+  late List<List<OneTile>> _matrixTiles;
+
+  /// 選択中の行index(0始まり)
+  /// デフォルトはnull
+  int? _selectedRowIndex;
+
+  /// 選択中の列index(0始まり)
+  /// デフォルトはnull
+  int? _selectedColumnIndex;
+
+  /// ctor
   Tile9x9();
 
   static const _scale = 2.0;
@@ -34,6 +47,26 @@ class Tile9x9 extends FlameGame with HasTappables {
     super.render(canvas);
   }
 
+  /// [IPiece] を選択中のマスに設定します。
+  /// 設定の成否で [bool] を返します
+  bool setPiece(IPiece piece) {
+    final rowIndex = _selectedRowIndex;
+    final columnIndex = _selectedColumnIndex;
+    if (rowIndex == null || columnIndex == null) {
+      return false;
+    }
+
+    if (_matrixTiles.length <= rowIndex ||
+        _matrixTiles[rowIndex].length <= columnIndex) {
+      // matrix内に収まっていない場合もfalseを返す.
+      return false;
+    }
+
+    var targetOneTile = _matrixTiles[rowIndex][columnIndex];
+    targetOneTile.stackedPiece = piece;
+    return true;
+  }
+
   /// [Selector] の初期設定を行う
   Future<void> _prepareSelector() async {
     final selectorImage = await images.load('selector.png');
@@ -42,29 +75,49 @@ class Tile9x9 extends FlameGame with HasTappables {
 
   /// 9x9の初期設定を行う
   Future<void> _prepare9x9Tile() async {
-    final OnTileTapDowned onTapDowned = (info) {
+    final OnTileTapDowned onTapDowned = (info, rowIndex, columnIndex) {
       print('ontapp!!!');
       _selector.visible = !_selector.visible;
       _selector.position = info;
+      _selectedRowIndex = rowIndex;
+      _selectedColumnIndex = columnIndex;
     };
 
     // 最初はブランクを入れておく
     final blankPiece = PieceFactory.createBlankPiece();
 
+    /// 内部操作用フィールドの初期化処理
+    _matrixTiles = <List<OneTile>>[];
+
+    // 9x9マスのComponentを作成し、内部操作用フィールドへ1行毎に追加していく
     for (int i = 0; i < _rowCount; i++) {
+      final rowTiles = <OneTile>[];
+
       for (int j = 0; j < _columnCount; j++) {
         final tileImage = await loadSprite(
           'tile.png',
         );
         final oneTile = OneTile(
-            onTapDowned,
-            Vector2(i * _destTileSize, j * _destTileSize),
-            _destTileSize,
-            tileImage,
-            stackedPiece: blankPiece)
-          ..anchor = Anchor.topLeft;
+          onTapDowned,
+          Vector2(i * _destTileSize, j * _destTileSize),
+          _destTileSize,
+          tileImage,
+          stackedPiece: blankPiece,
+          rowIndex: i,
+          columnIndex: j,
+        )..anchor = Anchor.topLeft;
         add(oneTile);
+
+        // 操作用フィールドへ追加
+        rowTiles.add(oneTile);
       }
+
+      // ここで1行分のList<OneTile>を追加
+      _matrixTiles.add(rowTiles);
     }
+
+    // check
+    assert(_matrixTiles.length == _rowCount);
+    assert(_matrixTiles[0].length == _columnCount);
   }
 }
