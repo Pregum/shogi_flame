@@ -2,7 +2,9 @@ import 'package:flame/components.dart';
 import 'package:shogi_game/widget/piece/blank/blank_piece.dart';
 import 'package:shogi_game/widget/piece/gold/sprite_gold.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
+import 'package:shogi_game/widget/piece/king/sprite_king.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
+import 'package:shogi_game/widget/piece/rook/sprite_rook.dart';
 
 /// [IPiece] のインスタンスを生成するutility
 class PieceFactory {
@@ -19,11 +21,11 @@ class PieceFactory {
     }
     switch (pieceType) {
       case PieceType.King:
-        // TODO: Handle this case.
-        break;
+        final sprite = await Sprite.load('king.png');
+        return SpriteKing(sprite);
       case PieceType.Rook:
-        // TODO: Handle this case.
-        break;
+        final sprite = await Sprite.load('rook.png');
+        return SpriteRook(sprite);
       case PieceType.Bishop:
         // TODO: Handle this case.
         break;
