@@ -48,6 +48,6 @@ class _PieceCreateButton extends TextComponent with Tappable {
   @override
   bool onTapDown(TapDownInfo info) {
     callback();
-    return true;
+    return super.onTapDown(info);
   }
 }

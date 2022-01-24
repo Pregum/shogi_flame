@@ -27,7 +27,10 @@ class OneTile extends SpriteComponent with Tappable {
   late IPiece _stackedPiece;
   // IPiece get stackedPiece => _stackedPiece;
   set stackedPiece(IPiece piece) {
+    final oldPiece = _stackedPiece;
     _stackedPiece = piece;
+    remove(oldPiece);
+    add(_stackedPiece);
   }
 
   /// 選択されているか.
@@ -52,11 +55,7 @@ class OneTile extends SpriteComponent with Tappable {
 
   @override
   void render(Canvas canvas) {
-    if (isSelected == false) {
-      remove(_stackedPiece);
-    } else {
-      add(_stackedPiece);
-    }
+    _stackedPiece.render(canvas);
     super.render(canvas);
   }
 }
