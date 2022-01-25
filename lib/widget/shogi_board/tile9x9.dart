@@ -48,7 +48,7 @@ class Tile9x9 extends FlameGame with HasTappables {
   }
 
   /// [IPiece] を選択中のマスに設定します。
-  /// 設定の成否で [bool] を返します
+  /// 設定の成否で [bool] を返します。
   /// true: 成功, false: 失敗
   bool setPiece(IPiece piece) {
     final rowIndex = _selectedRowIndex;
@@ -68,13 +68,22 @@ class Tile9x9 extends FlameGame with HasTappables {
     return true;
   }
 
-  /// [Selector] の初期設定を行う
+  /// 9x9タイルの状態をリセットします。
+  void resetBoard() {
+    for (var row in _matrixTiles) {
+      for (var aTile in row) {
+        aTile.stackedPiece = PieceFactory.createBlankPiece();
+      }
+    }
+  }
+
+  /// [Selector] の初期設定を行います。
   Future<void> _prepareSelector() async {
     final selectorImage = await images.load('selector.png');
     add(_selector = Selector(_destTileSize, selectorImage));
   }
 
-  /// 9x9の初期設定を行う
+  /// 9x9の初期設定を行います。
   Future<void> _prepare9x9Tile() async {
     final OnTileTapDowned onTapDowned = (info, rowIndex, columnIndex) {
       print('ontapp!!!');

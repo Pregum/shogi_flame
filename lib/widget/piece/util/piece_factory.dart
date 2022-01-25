@@ -20,10 +20,6 @@ class PieceFactory {
 
   /// [PieceType] に応じて [IPiece] のインスタンスを生成します。
   static Future<IPiece?> createSpritePiece(PieceType pieceType) async {
-    if (pieceType != PieceType.GoldGeneral) {
-      throw Exception(
-          'It has not been implemented except for the gold general.');
-    }
     switch (pieceType) {
       case PieceType.King:
         final sprite = await Sprite.load('king.png');

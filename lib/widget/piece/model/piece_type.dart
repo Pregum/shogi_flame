@@ -11,7 +11,7 @@ enum PieceType {
   /// 飛車(R)
   Rook,
 
-  /// 各行(B)
+  /// 角行(B)
   Bishop,
 
   /// 金将(G)
@@ -26,7 +26,7 @@ enum PieceType {
   /// 香車(L)
   Lance,
 
-  /// 歩兵
+  /// 歩兵(P)
   Pawn,
 
   // 成駒 --------------------
