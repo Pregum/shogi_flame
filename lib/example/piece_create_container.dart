@@ -90,6 +90,25 @@ class PieceCreateContainer extends FlameGame with HasTappables {
     })
       ..x = 64 * 10 + 120
       ..y = 20);
+
+    add(_PieceCreateButton('pawn', () async {
+      print('set pawn piece!!!');
+      final pawnPiece = await PieceFactory.createSpritePiece(PieceType.Pawn);
+      if (pawnPiece != null) {
+        board.setPiece(pawnPiece);
+      }
+    })
+      ..x = 64 * 10 + 120
+      ..y = 100);
+    add(_PieceCreateButton('king', () async {
+      print('set king piece!!!');
+      final kingPiece = await PieceFactory.createSpritePiece(PieceType.King);
+      if (kingPiece != null) {
+        board.setPiece(kingPiece);
+      }
+    })
+      ..x = 64 * 10 + 120
+      ..y = 200);
   }
 }
 
