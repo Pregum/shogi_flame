@@ -1,10 +1,15 @@
 import 'package:flame/components.dart';
+import 'package:shogi_game/widget/piece/bishop/sprite_bishop.dart';
 import 'package:shogi_game/widget/piece/blank/blank_piece.dart';
 import 'package:shogi_game/widget/piece/gold/sprite_gold.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/king/sprite_king.dart';
+import 'package:shogi_game/widget/piece/knight/sprite_knight.dart';
+import 'package:shogi_game/widget/piece/lance/sprite_lance.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
+import 'package:shogi_game/widget/piece/pawn/sprite_pawn.dart';
 import 'package:shogi_game/widget/piece/rook/sprite_rook.dart';
+import 'package:shogi_game/widget/piece/silver/sprite_silver.dart';
 
 /// [IPiece] のインスタンスを生成するutility
 class PieceFactory {
@@ -27,23 +32,23 @@ class PieceFactory {
         final sprite = await Sprite.load('rook.png');
         return SpriteRook(sprite);
       case PieceType.Bishop:
-        // TODO: Handle this case.
-        break;
+        final sprite = await Sprite.load('bishop.png');
+        return SpriteBishop(sprite);
       case PieceType.GoldGeneral:
-        var sprite = await Sprite.load('gold_general.png');
+        final sprite = await Sprite.load('gold_general.png');
         return SpriteGold(sprite);
       case PieceType.SilverGeneral:
-        // TODO: Handle this case.
-        break;
+        final sprite = await Sprite.load('silver_general.png');
+        return SpriteSilver(sprite);
       case PieceType.Knight:
-        // TODO: Handle this case.
-        break;
+        final sprite = await Sprite.load('knight.png');
+        return SpriteKnight(sprite);
       case PieceType.Lance:
-        // TODO: Handle this case.
-        break;
+        final sprite = await Sprite.load('lance.png');
+        return SpriteLance(sprite);
       case PieceType.Pawn:
-        // TODO: Handle this case.
-        break;
+        final sprite = await Sprite.load('pawn.png');
+        return SpritePawn(sprite);
       case PieceType.PromotedRook:
         // TODO: Handle this case.
         break;
