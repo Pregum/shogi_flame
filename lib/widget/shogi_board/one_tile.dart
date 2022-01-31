@@ -23,9 +23,11 @@ class OneTile extends SpriteComponent with Tappable {
   /// 列のindex
   int? columnIndex;
 
-  // 表示する駒
+  // 表示する駒のバッキングフィールドです。
   late IPiece _stackedPiece;
-  // IPiece get stackedPiece => _stackedPiece;
+  // 表示する駒へアクセスするプロパティです。
+  IPiece get stackedPiece => _stackedPiece;
+  // 表示する駒を設定するプロパティです。
   set stackedPiece(IPiece piece) {
     final oldPiece = _stackedPiece;
     _stackedPiece = piece;

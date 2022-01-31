@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
+import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/selector.dart';
 
@@ -45,6 +46,27 @@ class Tile9x9 extends FlameGame with HasTappables {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
+  }
+
+  /// 現在 [OneTile] から 対象の [OneTile] へ piece を移動させます。
+  bool _movePiece(OneTile currentTile, OneTile destinationTile) {
+    // 移動元のピースのtypeがblankである場合はfalseを返す。
+    final currentPiece = currentTile.stackedPiece;
+    if (currentPiece.pieceType == PieceType.Blank) {
+      return false;
+    }
+
+    // 移動先のピースのtypeがblankでない場合はfalseを返す。
+    final destnationPiece = destinationTile.stackedPiece;
+    if (destnationPiece.pieceType != PieceType.Blank) {
+      return false;
+    }
+
+    // TODO: この辺りに間にpieceがないかなどの細かい条件判定を追加する。
+
+    destinationTile.stackedPiece = currentPiece;
+    currentTile.stackedPiece = PieceFactory.createBlankPiece();
+    return true;
   }
 
   /// [IPiece] を選択中のマスに設定します。
