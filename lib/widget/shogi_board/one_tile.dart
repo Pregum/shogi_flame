@@ -52,7 +52,11 @@ class OneTile extends SpriteComponent with Tappable {
   bool onTapDown(TapDownInfo info) {
     callback?.call(this.topLeft, rowIndex, columnIndex);
     isSelected = !isSelected;
-    return super.onTapDown(info);
+
+    // 子供に伝播させるフラグを返す
+    // true: 伝播させる, false: 伝播させない
+    // ref: https://docs.flame-engine.org/1.0.0/gesture-input.html?highlight=tappable#tappable-draggable-and-hoverable-components
+    return false;
   }
 
   @override

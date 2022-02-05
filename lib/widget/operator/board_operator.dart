@@ -54,7 +54,9 @@ class BoardOperator {
     }
 
     // 選択されていれば移動処理を行う。
-    if (_movingStartTile?.stackedPiece.pieceType != PieceType.Blank &&
+    if (_movingStartTile != null &&
+        _movingStartTile?.stackedPiece.pieceType != PieceType.Blank &&
+        _movingEndTile != null &&
         _movingEndTile?.stackedPiece.pieceType == PieceType.Blank) {
       final firstPos = PiecePosition.fromOneTile(_movingStartTile!);
       final endPos = PiecePosition.fromOneTile(_movingEndTile!);
