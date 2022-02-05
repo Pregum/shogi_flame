@@ -9,6 +9,8 @@ import 'package:shogi_game/widget/shogi_board/selector.dart';
 
 import 'one_tile.dart';
 
+typedef OnTapTileEventHandler = void Function(OneTile tile);
+
 /// 9x9の将棋盤を描画するcomponent
 class Tile9x9 extends FlameGame with HasTappables {
   /// 選択マスを表示するselector
@@ -24,6 +26,9 @@ class Tile9x9 extends FlameGame with HasTappables {
   /// 選択中の列index(0始まり)
   /// デフォルトはnull
   int? _selectedColumnIndex;
+
+  /// タイルをタップした時に呼ばれるハンドラーです。
+  final List<OnTapTileEventHandler> _eventListeners = <OnTapTileEventHandler>[];
 
   /// ctor
   Tile9x9();
@@ -47,6 +52,16 @@ class Tile9x9 extends FlameGame with HasTappables {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
+  }
+
+  /// eventHandlerのリスナーを登録します。
+  void addListener(OnTapTileEventHandler listener) {
+    _eventListeners.add(listener);
+  }
+
+  /// リスナーを全て解除します。
+  void removeListeners() {
+    _eventListeners.removeRange(0, _eventListeners.length);
   }
 
   /// [ rowIndex ], [ columnIndex ]のタイルを取得します。
@@ -159,6 +174,19 @@ class Tile9x9 extends FlameGame with HasTappables {
       _selector.position = info;
       _selectedRowIndex = rowIndex;
       _selectedColumnIndex = columnIndex;
+
+      if (rowIndex == null ||
+          columnIndex == null ||
+          _matrixTiles.length <= rowIndex ||
+          _matrixTiles[0].length <= columnIndex) {
+        return;
+      }
+
+      // 将棋盤の操作オブジェクトへ伝播する。
+      for (var listener in _eventListeners) {
+        // listener.call(_matrixTiles[rowIndex][columnIndex]);
+        listener.call(_matrixTiles[0][0]);
+      }
     };
 
     // 最初はブランクを入れておく

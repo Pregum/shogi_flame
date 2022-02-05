@@ -20,6 +20,11 @@ class PieceCreateContainer extends FlameGame with HasTappables {
 
     // ひとまず金銀あたりの駒生成ボタンを表示する
     add(board = Tile9x9());
+    operator = BoardOperator(board);
+    board.addListener((tile) {
+      print('on call board click');
+      operator.onClickBoard(tile);
+    });
     add(_PieceCreateButton('reset', () {
       board.resetBoard();
     })

@@ -29,7 +29,7 @@ class BoardOperator {
   BoardOperator(this.board);
 
   /// 将棋盤に対してアクションします。
-  void clickBoard(OneTile targetTile) {
+  void onClickBoard(OneTile targetTile) {
     if (movingStartTile == null) {
       movingStartTile = targetTile;
     } else if (movingEndTile == null) {
@@ -182,8 +182,7 @@ class BoardOperator {
 
     // 履歴の更新
     final nextIndex = _currentHistoryIndex + 1;
-    if (movementHistory.isNotEmpty &&
-        movementHistory[_currentHistoryIndex] != movementHistory.last) {
+    if (movementHistory.isNotEmpty && nextIndex < movementHistory.length) {
       movementHistory.removeRange(nextIndex, movementHistory.length);
     }
     movementHistory.add(movement);
