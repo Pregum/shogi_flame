@@ -184,8 +184,8 @@ class Tile9x9 extends FlameGame with HasTappables {
 
       // 将棋盤の操作オブジェクトへ伝播する。
       for (var listener in _eventListeners) {
-        // listener.call(_matrixTiles[rowIndex][columnIndex]);
-        listener.call(_matrixTiles[0][0]);
+        listener.call(_matrixTiles[rowIndex][columnIndex]);
+        // listener.call(_matrixTiles[0][0]);
       }
     };
 
