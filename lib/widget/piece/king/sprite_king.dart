@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
+import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 
 /// 王将を表すクラス
@@ -10,6 +11,6 @@ class SpriteKing extends SpriteComponent implements IPiece {
   PieceType pieceType = PieceType.King;
 
   @override
-  // TODO: implement nextMovableSqure
-  bool get nextMovableSqure => throw UnimplementedError();
+  // TODO: implement movableRoutes
+  List<PieceRoute> get movableRoutes => throw UnimplementedError();
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
+import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/selector.dart';
@@ -31,8 +32,8 @@ class Tile9x9 extends FlameGame with HasTappables {
   static const _srcTileSize = 32.0;
   static const _destTileSize = _scale * _srcTileSize;
 
-  static const _rowCount = 9;
-  static const _columnCount = 9;
+  static const _ROW_COUNT = 9;
+  static const _COLUMN_COUNT = 9;
 
   @override
   Future<void> onLoad() async {
@@ -46,6 +47,30 @@ class Tile9x9 extends FlameGame with HasTappables {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
+  }
+
+  /// [ rowIndex ], [ columnIndex ]のタイルを取得します。
+  /// 盤上の範囲外の場合はnullを返します
+  OneTile? _getTile(int rowIndex, int columnIndex) {
+    if (!(rowIndex >= 0 && rowIndex < _ROW_COUNT)) {
+      return null;
+    }
+    if (!(columnIndex >= 0 && columnIndex < _COLUMN_COUNT)) {
+      return null;
+    }
+
+    return _matrixTiles[rowIndex][columnIndex];
+  }
+
+  /// Tile情報を取得します。
+  /// [ destinationPosition ] が盤上の範囲外の場合[ null ]を返します。
+  OneTile? getTile(PiecePosition destinationPosition) {
+    final row = destinationPosition.row;
+    final column = destinationPosition.column;
+    if (row == null || column == null) {
+      return null;
+    }
+    return _getTile(row, column);
   }
 
   /// 現在 [OneTile] から 対象の [OneTile] へ piece を移動させます。
@@ -90,6 +115,27 @@ class Tile9x9 extends FlameGame with HasTappables {
     return true;
   }
 
+  /// 選択中のマスの [row] と [column] を変更します。
+  bool changeSelectedTile(PiecePosition destination) {
+    final row = destination.row;
+    final column = destination.column;
+    if (row == null || column == null) {
+      return false;
+    }
+
+    if (row >= 0 && row < _ROW_COUNT) {
+      return false;
+    }
+
+    if (column >= 0 && column < _COLUMN_COUNT) {
+      return false;
+    }
+
+    _selectedRowIndex = row;
+    _selectedColumnIndex = column;
+    return true;
+  }
+
   /// 9x9タイルの状態をリセットします。
   void resetBoard() {
     for (var row in _matrixTiles) {
@@ -122,10 +168,10 @@ class Tile9x9 extends FlameGame with HasTappables {
     _matrixTiles = <List<OneTile>>[];
 
     // 9x9マスのComponentを作成し、内部操作用フィールドへ1行毎に追加していく
-    for (int i = 0; i < _rowCount; i++) {
+    for (int i = 0; i < _ROW_COUNT; i++) {
       final rowTiles = <OneTile>[];
 
-      for (int j = 0; j < _columnCount; j++) {
+      for (int j = 0; j < _COLUMN_COUNT; j++) {
         final tileImage = await loadSprite(
           'tile.png',
         );
@@ -149,7 +195,7 @@ class Tile9x9 extends FlameGame with HasTappables {
     }
 
     // check
-    assert(_matrixTiles.length == _rowCount);
-    assert(_matrixTiles[0].length == _columnCount);
+    assert(_matrixTiles.length == _ROW_COUNT);
+    assert(_matrixTiles[0].length == _COLUMN_COUNT);
   }
 }

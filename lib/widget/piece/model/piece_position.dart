@@ -24,6 +24,11 @@ class PiecePosition {
   /// ctor
   PiecePosition(this.row, this.column, this.positionFieldType, this.pieceType);
 
+  @override
+  String toString() {
+    return 'row: $row, column: $column, pieceType: $pieceType';
+  }
+
   /// [OneTile] から [PiecePosition] を生成します。
   factory PiecePosition.fromOneTile(OneTile tile) {
     final positionFieldType = tile.rowIndex != null && tile.columnIndex != null
