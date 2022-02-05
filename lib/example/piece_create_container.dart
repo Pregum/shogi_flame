@@ -3,12 +3,14 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:shogi_game/widget/operator/board_operator.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/tile9x9.dart';
 
 class PieceCreateContainer extends FlameGame with HasTappables {
   late Tile9x9 board;
+  late BoardOperator operator;
 
   PieceCreateContainer() : super();
 

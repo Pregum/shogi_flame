@@ -28,6 +28,31 @@ class BoardOperator {
   /// ctor
   BoardOperator(this.board);
 
+  /// 将棋盤に対してアクションします。
+  void clickBoard(OneTile targetTile) {
+    if (movingStartTile == null) {
+      movingStartTile = targetTile;
+    } else if (movingEndTile == null) {
+      movingEndTile = targetTile;
+    }
+
+    // movingStartTile()
+    if (movingStartTile != null && movingEndTile != null) {
+      final firstPos = PiecePosition.fromOneTile(movingStartTile!);
+      final endPos = PiecePosition.fromOneTile(movingEndTile!);
+      final movement =
+          PieceMovement(firstPos, endPos, movingEndTile!.stackedPiece);
+      _movePiece(movement);
+      _forgetMovingPiece();
+    }
+  }
+
+  /// 選択中の[movingStartTile] と [movingEndTile] の手を忘れます。
+  void _forgetMovingPiece() {
+    movingStartTile = null;
+    movingEndTile = null;
+  }
+
   /// 駒の移動を行います。
   /// 戻り値に討ち取った[ IPiece ]を取得します。
   /// 討ち取った駒がなければ[ null ]を返します。
@@ -86,6 +111,7 @@ class BoardOperator {
 
     final lastMovement = movementHistory[pastIndex];
     _moveReversePiece(lastMovement);
+    _forgetMovingPiece();
   }
 
   /// １つ先の配置に進めます。
@@ -100,6 +126,7 @@ class BoardOperator {
 
     final futureMovement = movementHistory[futureIndex];
     _movePiece(futureMovement);
+    _forgetMovingPiece();
   }
 
   void _moveReversePiece(PieceMovement movement) {
@@ -152,5 +179,14 @@ class BoardOperator {
     if (killedPiece != null) {
       // TODO: 駒台クラスへ駒を渡す処理を実装する
     }
+
+    // 履歴の更新
+    final nextIndex = _currentHistoryIndex + 1;
+    if (movementHistory.isNotEmpty &&
+        movementHistory[_currentHistoryIndex] != movementHistory.last) {
+      movementHistory.removeRange(nextIndex, movementHistory.length);
+    }
+    movementHistory.add(movement);
+    _currentHistoryIndex = nextIndex;
   }
 }
