@@ -33,37 +33,33 @@ class _SandboxViewState extends State<SandboxView> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Row(
-          children: [
-            Flexible(
-              fit: FlexFit.tight,
-              flex: 3,
-              child: GameWidget(game: PieceCreateContainer()),
-            ),
-            Flexible(
-              child: StreamBuilder(
-                stream: this.stream,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return CircularProgressIndicator();
-                  }
-                  return ListView.builder(
-                      itemBuilder: (context, index) {
-                        final item = NormalLogger.singleton().logData[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Text(item.message),
-                        );
-                      },
-                      itemCount: NormalLogger.singleton().logData.length);
-                },
-              ),
-            ),
-          ],
+    return Row(
+      children: [
+        Flexible(
+          fit: FlexFit.tight,
+          flex: 3,
+          child: GameWidget(game: PieceCreateContainer()),
         ),
-      ),
+        Flexible(
+          child: StreamBuilder(
+            stream: this.stream,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              }
+              return ListView.builder(
+                  itemBuilder: (context, index) {
+                    final item = NormalLogger.singleton().logData[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(item.message),
+                    );
+                  },
+                  itemCount: NormalLogger.singleton().logData.length);
+            },
+          ),
+        ),
+      ],
     );
   }
 }
