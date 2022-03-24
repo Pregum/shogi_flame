@@ -9,8 +9,8 @@ class NormalLogger implements Loggingable {
 
   NormalLogger._();
 
-  NormalLogger? _ins;
-  NormalLogger get singleton {
+  static NormalLogger? _ins;
+  factory NormalLogger.singleton() {
     return (_ins ??= NormalLogger._());
   }
 
@@ -18,28 +18,28 @@ class NormalLogger implements Loggingable {
   List<ILogData> get logData => _logData;
 
   @override
-  void error(String message, Object? otherData) {
+  void error(String message, {Object? otherData}) {
     final data = NormalLogData(
         message: message, otherData: otherData, logType: LogType.Error);
     _logData.add(data);
   }
 
   @override
-  void info(String message, Object? otherData) {
+  void info(String message, {Object? otherData}) {
     final data = NormalLogData(
         message: message, otherData: otherData, logType: LogType.Info);
     _logData.add(data);
   }
 
   @override
-  void log(String message, Object? otherData) {
+  void log(String message, {Object? otherData}) {
     final data = NormalLogData(
         message: message, otherData: otherData, logType: LogType.Debug);
     _logData.add(data);
   }
 
   @override
-  void warn(String message, Object? otherData) {
+  void warn(String message, {Object? otherData}) {
     final data = NormalLogData(
         message: message, otherData: otherData, logType: LogType.Warn);
     _logData.add(data);

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
+import 'package:shogi_game/model/interface/loggingable.dart';
+import 'package:shogi_game/model/normal_logger.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
@@ -26,6 +28,9 @@ class Tile9x9 extends FlameGame with HasTappables {
   /// 選択中の列index(0始まり)
   /// デフォルトはnull
   int? _selectedColumnIndex;
+
+  /// 駒操作のロギングインスタンス
+  Loggingable _logger = NormalLogger.singleton();
 
   /// タイルをタップした時に呼ばれるハンドラーです。
   final List<OnTapTileEventHandler> _eventListeners = <OnTapTileEventHandler>[];
@@ -82,6 +87,7 @@ class Tile9x9 extends FlameGame with HasTappables {
   OneTile? getTile(PiecePosition destinationPosition) {
     final row = destinationPosition.row;
     final column = destinationPosition.column;
+    _logger.info('[tile9x9#getTile]: タイルを取得します. row: $row, column: $row');
     if (row == null || column == null) {
       return null;
     }
@@ -116,17 +122,23 @@ class Tile9x9 extends FlameGame with HasTappables {
     final rowIndex = _selectedRowIndex;
     final columnIndex = _selectedColumnIndex;
     if (rowIndex == null || columnIndex == null) {
+      _logger.info('[tile9x9#setPiece]: row or column が null です。');
       return false;
     }
 
     if (_matrixTiles.length <= rowIndex ||
         _matrixTiles[rowIndex].length <= columnIndex) {
       // matrix内に収まっていない場合もfalseを返す.
+      _logger.info(
+          '[tile9x9#setPiece]: マス目の範囲内ではないです。 row: $rowIndex, column: $columnIndex');
+
       return false;
     }
 
     var targetOneTile = _matrixTiles[rowIndex][columnIndex];
     targetOneTile.stackedPiece = piece;
+    _logger.info(
+        '[tile9x9#setPiece]: タイルを取得しました。, piece: ${targetOneTile.stackedPiece}');
     return true;
   }
 
@@ -134,6 +146,8 @@ class Tile9x9 extends FlameGame with HasTappables {
   bool changeSelectedTile(PiecePosition destination) {
     final row = destination.row;
     final column = destination.column;
+    _logger.info(
+        '[tile9x9#changeSelectedTile]: row: $row, column: $column が選択されました。');
     if (row == null || column == null) {
       return false;
     }
@@ -153,6 +167,7 @@ class Tile9x9 extends FlameGame with HasTappables {
 
   /// 9x9タイルの状態をリセットします。
   void resetBoard() {
+    _logger.info('[tile9x9#resetBoard]: ボードをリセットします。');
     for (var row in _matrixTiles) {
       for (var aTile in row) {
         aTile.stackedPiece = PieceFactory.createBlankPiece();
