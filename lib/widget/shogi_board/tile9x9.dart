@@ -185,7 +185,6 @@ class Tile9x9 extends FlameGame with HasTappables {
   Future<void> _prepare9x9Tile() async {
     final OnTileTapDowned onTapDowned = (info, rowIndex, columnIndex) {
       print('ontapp!!! row: $rowIndex, column: $columnIndex');
-      _selector.visible = !_selector.visible;
       _selector.position = info;
       _selectedRowIndex = rowIndex;
       _selectedColumnIndex = columnIndex;
@@ -200,7 +199,6 @@ class Tile9x9 extends FlameGame with HasTappables {
       // 将棋盤の操作オブジェクトへ伝播する。
       for (var listener in _eventListeners) {
         listener.call(_matrixTiles[rowIndex][columnIndex]);
-        // listener.call(_matrixTiles[0][0]);
       }
     };
 

@@ -26,7 +26,7 @@ class _SandboxViewState extends State<SandboxView> {
       print('on call log stream... length: ${event.length}');
       if (_scontroller.hasClients) {
         _scontroller.animateTo(_scontroller.position.maxScrollExtent,
-            duration: Duration(milliseconds: 700), curve: Curves.easeIn);
+            duration: Duration(milliseconds: 300), curve: Curves.easeIn);
       }
     });
   }
