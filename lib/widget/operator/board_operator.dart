@@ -48,10 +48,11 @@ class BoardOperator {
         targetTile.stackedPiece.pieceType != PieceType.Blank) {
       _movingStartTile = targetTile;
       _logger.info('[BoardOperator#onClickBoard]: _movingStartTileにセットしました。');
-    } else if (_movingEndTile == null &&
+    } else if (_movingStartTile != null &&
+        _movingEndTile == null &&
         targetTile.stackedPiece.pieceType == PieceType.Blank) {
-      _logger.info('[BoardOperator#onClickBoard]: _movingEndTileにセットしました。');
       _movingEndTile = targetTile;
+      _logger.info('[BoardOperator#onClickBoard]: _movingEndTileにセットしました。');
     }
 
     if (_movingStartTile == null || _movingEndTile == null) {
@@ -111,6 +112,7 @@ class BoardOperator {
   }
 
   void changeActionMode(ActionMode nextMode) {
+    _logger.info('[BoardOperator#changeActionMode]: モードを変更します。 new: $nextMode');
     _mode = nextMode;
     _forgetMovingPiece();
   }
