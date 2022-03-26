@@ -42,7 +42,7 @@ class NormalLogger implements Loggingable {
   }
 
   @override
-  void log(String message, {Object? otherData}) {
+  void debug(String message, {Object? otherData}) {
     final data = NormalLogData(
         message: message, otherData: otherData, logType: LogType.Debug);
     _logData.add(data);

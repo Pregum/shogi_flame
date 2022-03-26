@@ -6,7 +6,7 @@ abstract class Loggingable {
   void info(String message, {Object? otherData});
 
   /// [info] と同等です。
-  void log(String message, {Object? otherData});
+  void debug(String message, {Object? otherData});
 
   /// エラーが発生した時に使用します。
   void error(String message, {Object? otherData});

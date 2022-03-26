@@ -1,3 +1,4 @@
+import 'package:shogi_game/model/normal_logger.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/model/piece_movement.dart';
 import 'package:shogi_game/widget/piece/model/piece_position.dart';
@@ -31,25 +32,30 @@ class BoardOperator {
   /// 操作対象のboard
   final Tile9x9 _board;
 
+  /// ロガー
+  final NormalLogger _logger = NormalLogger.singleton();
+
   /// ctor
   BoardOperator(this._board);
 
   /// 将棋盤に対してアクションします。
   void onClickBoard(OneTile targetTile) {
     if (_mode != ActionMode.Move) {
+      _logger.debug('[BoardOperator#onClickBoard]: ActionModeがMoveではないです。');
       return;
     }
     if (_movingStartTile == null &&
         targetTile.stackedPiece.pieceType != PieceType.Blank) {
-      print('set moving start tile');
       _movingStartTile = targetTile;
+      _logger.info('[BoardOperator#onClickBoard]: _movingStartTileにセットしました。');
     } else if (_movingEndTile == null &&
         targetTile.stackedPiece.pieceType == PieceType.Blank) {
-      print('set moving end tile');
+      _logger.info('[BoardOperator#onClickBoard]: _movingEndTileにセットしました。');
       _movingEndTile = targetTile;
     }
 
     if (_movingStartTile == null || _movingEndTile == null) {
+      _logger.debug('[BoardOperator#onClickBoard]: 開始地点のタイルもしくは目標地点のタイルが空です。');
       return;
     }
 
@@ -62,6 +68,7 @@ class BoardOperator {
       final endPos = PiecePosition.fromOneTile(_movingEndTile!);
       final movement =
           PieceMovement(firstPos, endPos, _movingEndTile!.stackedPiece);
+      _logger.info('[BoardOperator#onClickBoard]: pieceを移動します。');
       _movePiece(movement);
       _forgetMovingPiece();
     }
@@ -183,6 +190,7 @@ class BoardOperator {
     if (startTile == null || endTile == null) {
       // 'tile at startPos or endPos is null. startPos: $startPos, endPos: $endPos';
       // TODO: 他に良いエラー記述方法がないか検討する。
+      _logger.error('[BoardOperator#_movePiece]: 開始地点、もしくは終了地点のタイルがnullです。');
       throw new Error();
     }
 
@@ -210,6 +218,7 @@ class BoardOperator {
 
   /// 選択中の[_movingStartTile] と [_movingEndTile] の手を忘れます。
   void _forgetMovingPiece() {
+    _logger.debug('[BoardOperator#_forgetMovingPiece]: 開始地点と終了地点をクリアします。');
     _movingStartTile = null;
     _movingEndTile = null;
   }

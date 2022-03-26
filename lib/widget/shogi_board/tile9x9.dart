@@ -122,7 +122,7 @@ class Tile9x9 extends FlameGame with HasTappables {
     final rowIndex = _selectedRowIndex;
     final columnIndex = _selectedColumnIndex;
     if (rowIndex == null || columnIndex == null) {
-      _logger.info('[tile9x9#setPiece]: row or column が null です。');
+      _logger.info('[tile9x9#setPiece]: row もしくは column が null です。');
       return false;
     }
 
@@ -138,7 +138,7 @@ class Tile9x9 extends FlameGame with HasTappables {
     var targetOneTile = _matrixTiles[rowIndex][columnIndex];
     targetOneTile.stackedPiece = piece;
     _logger.info(
-        '[tile9x9#setPiece]: タイルを取得しました。, piece: ${targetOneTile.stackedPiece}');
+        '[tile9x9#setPiece]: row: $rowIndex, column: $columnIndex にタイルを設定しました, piece: ${targetOneTile.stackedPiece.pieceType}');
     return true;
   }
 
