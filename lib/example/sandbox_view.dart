@@ -15,6 +15,7 @@ class SandboxView extends StatefulWidget {
 
 class _SandboxViewState extends State<SandboxView> {
   late final Stream stream;
+  final ScrollController _scontroller = ScrollController();
 
   @override
   void initState() {
@@ -23,6 +24,10 @@ class _SandboxViewState extends State<SandboxView> {
     this.stream = NormalLogger.singleton().sc.stream;
     this.stream.listen((event) {
       print('on call log stream... length: ${event.length}');
+      if (_scontroller.hasClients) {
+        _scontroller.animateTo(_scontroller.position.maxScrollExtent,
+            duration: Duration(milliseconds: 700), curve: Curves.easeIn);
+      }
     });
   }
 
@@ -48,6 +53,7 @@ class _SandboxViewState extends State<SandboxView> {
                 return CircularProgressIndicator();
               }
               return ListView.builder(
+                  controller: _scontroller,
                   itemBuilder: (context, index) {
                     final item = NormalLogger.singleton().logData[index];
                     return Padding(
