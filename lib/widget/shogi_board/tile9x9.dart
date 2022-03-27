@@ -1,3 +1,4 @@
+import 'package:flame/layers.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
@@ -9,6 +10,7 @@ import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/selector.dart';
 
+import 'board_state.dart';
 import 'one_tile.dart';
 
 typedef OnTapTileEventHandler = void Function(OneTile tile);
@@ -31,6 +33,18 @@ class Tile9x9 extends FlameGame with HasTappables {
 
   /// 駒操作のロギングインスタンス
   Loggingable _logger = NormalLogger.singleton();
+
+  /// ボードの操作状態
+  var _operationStatus = BoardState.Select;
+  set operationStatus(BoardState newValue) {
+    _operationStatus = newValue;
+    for (int i = 0; i < _matrixTiles.length; i++) {
+      for (int j = 0; j < _matrixTiles[i].length; j++) {
+        final tile = _matrixTiles[i][j];
+        tile.isVisibleMovableTile = newValue == BoardState.Select;
+      }
+    }
+  }
 
   /// タイルをタップした時に呼ばれるハンドラーです。
   final List<OnTapTileEventHandler> _eventListeners = <OnTapTileEventHandler>[];

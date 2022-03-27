@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/material.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 
 /// タップしたマスの左上のxy座標が [Vector2] から与えられる.
@@ -39,6 +41,12 @@ class OneTile extends SpriteComponent with Tappable {
   /// trueの場合選択フラグを立てる
   bool isSelected = false;
 
+  /// 移動できるタイル描画用Component
+  late PositionComponent _movableTile;
+
+  bool _isVisibleMovableTile = false;
+  set isVisibleMovableTile(bool newValue) => _isVisibleMovableTile = newValue;
+
   /// ctor
   OneTile(this.callback, this.topLeft, double s, Sprite spriteImage,
       {required IPiece stackedPiece, this.rowIndex, this.columnIndex})
@@ -46,6 +54,12 @@ class OneTile extends SpriteComponent with Tappable {
     _stackedPiece = stackedPiece;
     x = topLeft.x;
     y = topLeft.y;
+
+    _movableTile = PositionComponent(
+      size: Vector2.all(s),
+      anchor: Anchor.topLeft,
+    );
+    add(_movableTile);
   }
 
   @override
@@ -61,7 +75,12 @@ class OneTile extends SpriteComponent with Tappable {
 
   @override
   void render(Canvas canvas) {
-    _stackedPiece.render(canvas);
     super.render(canvas);
+    _stackedPiece.render(canvas);
+
+    if (_isVisibleMovableTile) {
+      final opacityPaint = Paint()..color = Colors.blue.withOpacity(0.6);
+      canvas.drawRect(_movableTile.toRect(), opacityPaint);
+    }
   }
 }

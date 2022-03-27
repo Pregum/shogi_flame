@@ -35,6 +35,7 @@ class BoardOperator {
   OperatorPhaseType _operatorStatus = OperatorPhaseType.StartTileSelect;
   set operatorStatus(OperatorPhaseType newValue) {
     _operatorStatus = newValue;
+    _board.operationStatus = _operatorStatus.toBoardState();
     _logger.info(
         '[BoardOperator#operatorStatus::setter]: フェーズが変更されました。 new phase: $newValue');
   }
