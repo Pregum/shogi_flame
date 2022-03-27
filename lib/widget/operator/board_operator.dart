@@ -118,6 +118,7 @@ class BoardOperator {
     return killedPiece;
   }
 
+  /// モードを [ nextMode ] のモードに変更します。
   void changeActionMode(ActionMode nextMode) {
     _logger.info('[BoardOperator#changeActionMode]: モードを変更します。 new: $nextMode');
     _mode = nextMode;
