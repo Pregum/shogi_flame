@@ -9,6 +9,7 @@ import 'package:shogi_game/widget/shogi_board/one_tile.dart';
 import 'package:shogi_game/widget/shogi_board/tile9x9.dart';
 
 import 'action_mode.dart';
+import 'operator_phase_type.dart';
 
 /// 盤上の操作を行うクラスです。
 /// 具体的には [Tile9x9] クラスを操作します。
@@ -29,6 +30,15 @@ class BoardOperator {
   ActionMode _mode = ActionMode.Put;
   ActionMode get mode => _mode;
 
+  /// 操作フェーズです。
+  /// [OperatorPhaseType.StartTileSelect] や [OperatorPhaseType.EndTileSelect] があります。
+  OperatorPhaseType _operatorStatus = OperatorPhaseType.StartTileSelect;
+  set operatorStatus(OperatorPhaseType newValue) {
+    _operatorStatus = newValue;
+    _logger.info(
+        '[BoardOperator#operatorStatus::setter]: フェーズが変更されました。 new phase: $newValue');
+  }
+
   /// 操作対象のboard
   final Tile9x9 _board;
 
@@ -38,21 +48,48 @@ class BoardOperator {
   /// ctor
   BoardOperator(this._board);
 
+  /// 引数の [ targetTile ] が開始地点の条件を満たしているか判定します。
+  bool _verifySatisfiedStartTile({required OneTile targetTile}) {
+    return _operatorStatus == OperatorPhaseType.StartTileSelect &&
+        _movingStartTile == null &&
+        targetTile.stackedPiece.pieceType != PieceType.Blank;
+  }
+
+  /// 引数の [ targetTile ] が終了地点の条件を満たしているか判定します。
+  bool _verifySatisfiedEndTile({required OneTile targetTile}) {
+    return _operatorStatus == OperatorPhaseType.EndTileSelect &&
+        _movingStartTile != null &&
+        _movingEndTile == null &&
+        targetTile.stackedPiece.pieceType == PieceType.Blank;
+  }
+
+  /// 移動条件を満たしているか判定します。
+  bool _verifySatisfiedMoveCondition({
+    required OneTile? startTile,
+    required OneTile? endTile,
+  }) {
+    return startTile != null &&
+        startTile.stackedPiece.pieceType != PieceType.Blank &&
+        endTile != null &&
+        endTile.stackedPiece.pieceType == PieceType.Blank;
+  }
+
   /// 将棋盤に対してアクションします。
   void onClickBoard(OneTile targetTile) {
     if (_mode != ActionMode.Move) {
       _logger.debug('[BoardOperator#onClickBoard]: ActionModeがMoveではないです。');
       return;
     }
-    if (_movingStartTile == null &&
-        targetTile.stackedPiece.pieceType != PieceType.Blank) {
+
+    if (_verifySatisfiedStartTile(targetTile: targetTile)) {
       _movingStartTile = targetTile;
       _logger.info('[BoardOperator#onClickBoard]: _movingStartTileにセットしました。');
-    } else if (_movingStartTile != null &&
-        _movingEndTile == null &&
-        targetTile.stackedPiece.pieceType == PieceType.Blank) {
+      operatorStatus = OperatorPhaseType.EndTileSelect;
+      return;
+    } else if (_verifySatisfiedEndTile(targetTile: targetTile)) {
       _movingEndTile = targetTile;
       _logger.info('[BoardOperator#onClickBoard]: _movingEndTileにセットしました。');
+      operatorStatus = OperatorPhaseType.StartTileSelect;
     }
 
     if (_movingStartTile == null || _movingEndTile == null) {
@@ -61,10 +98,10 @@ class BoardOperator {
     }
 
     // 選択されていれば移動処理を行う。
-    if (_movingStartTile != null &&
-        _movingStartTile?.stackedPiece.pieceType != PieceType.Blank &&
-        _movingEndTile != null &&
-        _movingEndTile?.stackedPiece.pieceType == PieceType.Blank) {
+    if (_verifySatisfiedMoveCondition(
+      startTile: _movingStartTile,
+      endTile: _movingEndTile,
+    )) {
       final firstPos = PiecePosition.fromOneTile(_movingStartTile!);
       final endPos = PiecePosition.fromOneTile(_movingEndTile!);
       final movement =
