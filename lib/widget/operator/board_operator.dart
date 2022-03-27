@@ -60,7 +60,8 @@ class BoardOperator {
       _logger.info('[BoardOperator#onClickBoard]: _movingStartTileにセットしました。');
       operatorStatus = OperatorPhaseType.EndTileSelect;
       return;
-    } else if (_verifySatisfiedEndTile(targetTile: targetTile)) {
+    } else if (_verifySatisfiedEndTile(
+        targetTile: targetTile, startTile: _movingStartTile)) {
       _movingEndTile = targetTile;
       _logger.info('[BoardOperator#onClickBoard]: _movingEndTileにセットしました。');
       operatorStatus = OperatorPhaseType.StartTileSelect;
@@ -76,12 +77,7 @@ class BoardOperator {
       startTile: _movingStartTile,
       endTile: _movingEndTile,
     )) {
-      final firstPos = PiecePosition.fromOneTile(_movingStartTile!);
-      final endPos = PiecePosition.fromOneTile(_movingEndTile!);
-      final movement =
-          PieceMovement(firstPos, endPos, _movingEndTile!.stackedPiece);
-      _logger.info('[BoardOperator#onClickBoard]: pieceを移動します。');
-      _movePiece(movement);
+      _movePiece(startTile: _movingStartTile!, endTile: _movingEndTile!);
       _forgetMovingPiece();
     }
   }
@@ -156,7 +152,7 @@ class BoardOperator {
     _currentHistoryIndex = futureIndex;
 
     final futureMovement = _movementHistory[futureIndex];
-    _movePiece(futureMovement);
+    _emulateMovingPiece(futureMovement);
     _forgetMovingPiece();
   }
 
@@ -186,9 +182,27 @@ class BoardOperator {
     }
   }
 
-  void _movePiece(PieceMovement movement) {
-    final startPos = movement.movingStartPosition;
-    final endPos = movement.movingEndPosition;
+  void _emulateMovingPiece(PieceMovement movement) {
+    final startTile = _board.getTile(movement.movingStartPosition);
+    final endTile = _board.getTile(movement.movingEndPosition);
+
+    if (startTile == null || endTile == null) {
+      // 'tile at startPos or endPos is null. startPos: $startPos, endPos: $endPos';
+      // TODO: 他に良いエラー記述方法がないか検討する。
+      _logger.error(
+          '[BoardOperator#_emulateMovingPiece]: 開始地点、もしくは終了地点のタイルがnullです。');
+      throw Error();
+    }
+
+    _movePiece(startTile: startTile, endTile: endTile);
+  }
+
+  void _movePiece({required OneTile startTile, required OneTile endTile}) {
+    final startPos = PiecePosition.fromOneTile(_movingStartTile!);
+    final endPos = PiecePosition.fromOneTile(_movingEndTile!);
+    final movement =
+        PieceMovement(startPos, endPos, _movingEndTile!.stackedPiece);
+    _logger.info('[BoardOperator#_movePiece]: pieceを移動します。');
 
     final startTile = _board.getTile(startPos);
     final endTile = _board.getTile(endPos);
@@ -239,15 +253,16 @@ class BoardOperator {
   /// 引数の [ targetTile ] が開始地点の条件を満たしているか判定します。
   bool _verifySatisfiedStartTile({required OneTile targetTile}) {
     return _operatorStatus == OperatorPhaseType.StartTileSelect &&
-        _movingStartTile == null &&
         targetTile.stackedPiece.pieceType != PieceType.Blank;
   }
 
   /// 引数の [ targetTile ] が終了地点の条件を満たしているか判定します。
-  bool _verifySatisfiedEndTile({required OneTile targetTile}) {
+  bool _verifySatisfiedEndTile({
+    required OneTile targetTile,
+    required OneTile? startTile,
+  }) {
     return _operatorStatus == OperatorPhaseType.EndTileSelect &&
-        _movingStartTile != null &&
-        _movingEndTile == null &&
+        startTile != null &&
         targetTile.stackedPiece.pieceType == PieceType.Blank;
   }
 
