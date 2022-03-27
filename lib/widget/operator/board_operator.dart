@@ -48,32 +48,6 @@ class BoardOperator {
   /// ctor
   BoardOperator(this._board);
 
-  /// 引数の [ targetTile ] が開始地点の条件を満たしているか判定します。
-  bool _verifySatisfiedStartTile({required OneTile targetTile}) {
-    return _operatorStatus == OperatorPhaseType.StartTileSelect &&
-        _movingStartTile == null &&
-        targetTile.stackedPiece.pieceType != PieceType.Blank;
-  }
-
-  /// 引数の [ targetTile ] が終了地点の条件を満たしているか判定します。
-  bool _verifySatisfiedEndTile({required OneTile targetTile}) {
-    return _operatorStatus == OperatorPhaseType.EndTileSelect &&
-        _movingStartTile != null &&
-        _movingEndTile == null &&
-        targetTile.stackedPiece.pieceType == PieceType.Blank;
-  }
-
-  /// 移動条件を満たしているか判定します。
-  bool _verifySatisfiedMoveCondition({
-    required OneTile? startTile,
-    required OneTile? endTile,
-  }) {
-    return startTile != null &&
-        startTile.stackedPiece.pieceType != PieceType.Blank &&
-        endTile != null &&
-        endTile.stackedPiece.pieceType == PieceType.Blank;
-  }
-
   /// 将棋盤に対してアクションします。
   void onClickBoard(OneTile targetTile) {
     if (_mode != ActionMode.Move) {
@@ -152,14 +126,6 @@ class BoardOperator {
     _logger.info('[BoardOperator#changeActionMode]: モードを変更します。 new: $nextMode');
     _mode = nextMode;
     _forgetMovingPiece();
-  }
-
-  /// [startPos] から [trialRoute] を通って移動が可能か検証します。
-  ///
-  /// 可能: true, 不可能: false を返します。
-  bool _verifyMovingRoute(PiecePosition startPos, PieceRoute trialRoute) {
-    final path = trialRoute.route;
-    throw UnimplementedError();
   }
 
   /// 一つ前の配置に戻します。
@@ -260,5 +226,39 @@ class BoardOperator {
     _logger.debug('[BoardOperator#_forgetMovingPiece]: 開始地点と終了地点をクリアします。');
     _movingStartTile = null;
     _movingEndTile = null;
+  }
+
+  /// [startPos] から [trialRoute] を通って移動が可能か検証します。
+  ///
+  /// 可能: true, 不可能: false を返します。
+  bool _verifyMovingRoute(PiecePosition startPos, PieceRoute trialRoute) {
+    final path = trialRoute.route;
+    throw UnimplementedError();
+  }
+
+  /// 引数の [ targetTile ] が開始地点の条件を満たしているか判定します。
+  bool _verifySatisfiedStartTile({required OneTile targetTile}) {
+    return _operatorStatus == OperatorPhaseType.StartTileSelect &&
+        _movingStartTile == null &&
+        targetTile.stackedPiece.pieceType != PieceType.Blank;
+  }
+
+  /// 引数の [ targetTile ] が終了地点の条件を満たしているか判定します。
+  bool _verifySatisfiedEndTile({required OneTile targetTile}) {
+    return _operatorStatus == OperatorPhaseType.EndTileSelect &&
+        _movingStartTile != null &&
+        _movingEndTile == null &&
+        targetTile.stackedPiece.pieceType == PieceType.Blank;
+  }
+
+  /// 移動条件を満たしているか判定します。
+  bool _verifySatisfiedMoveCondition({
+    required OneTile? startTile,
+    required OneTile? endTile,
+  }) {
+    return startTile != null &&
+        startTile.stackedPiece.pieceType != PieceType.Blank &&
+        endTile != null &&
+        endTile.stackedPiece.pieceType == PieceType.Blank;
   }
 }
