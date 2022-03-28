@@ -5,6 +5,7 @@ import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
+import 'package:shogi_game/widget/shogi_board/movable_tile.dart';
 
 /// タップしたマスの左上のxy座標が [Vector2] から与えられる.
 /// タップ箇所のマスのindexを **rowIndex** と **columnIndex** から与えられる.
@@ -42,10 +43,13 @@ class OneTile extends SpriteComponent with Tappable {
   bool isSelected = false;
 
   /// 移動できるタイル描画用Component
-  late PositionComponent _movableTile;
+  late MovableTile _movableTile;
 
   bool _isVisibleMovableTile = false;
-  set isVisibleMovableTile(bool newValue) => _isVisibleMovableTile = newValue;
+  set isVisibleMovableTile(bool newValue) {
+    _isVisibleMovableTile = newValue;
+    _movableTile.isVisible = newValue;
+  }
 
   /// ctor
   OneTile(this.callback, this.topLeft, double s, Sprite spriteImage,
@@ -54,12 +58,6 @@ class OneTile extends SpriteComponent with Tappable {
     _stackedPiece = stackedPiece;
     x = topLeft.x;
     y = topLeft.y;
-
-    _movableTile = PositionComponent(
-      size: Vector2.all(s),
-      anchor: Anchor.topLeft,
-    );
-    add(_movableTile);
   }
 
   @override
@@ -71,6 +69,25 @@ class OneTile extends SpriteComponent with Tappable {
     // true: 伝播させる, false: 伝播させない
     // ref: https://docs.flame-engine.org/1.0.0/gesture-input.html?highlight=tappable#tappable-draggable-and-hoverable-components
     return false;
+  }
+
+  @override
+  Future<void>? onLoad() async {
+    await super.onLoad();
+
+    _movableTile = MovableTile(
+      size.x,
+      await Sprite.load('movable_tile_sprite.png'),
+    )..add(
+        OpacityEffect.fadeOut(
+          EffectController(
+            duration: 1.5,
+            reverseDuration: 1.5,
+            infinite: true,
+          ),
+        ),
+      );
+    add(_movableTile);
   }
 
   @override
