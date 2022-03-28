@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,10 @@ class _SandboxViewState extends State<SandboxView> {
         Flexible(
           fit: FlexFit.tight,
           flex: 3,
-          child: GameWidget(game: PieceCreateContainer()),
+          child: GameWidget(
+              game: (Platform.isIOS || Platform.isAndroid)
+                  ? PieceCreateContainerOfPhone()
+                  : PieceCreateContainer()),
         ),
         Flexible(
           child: StreamBuilder(

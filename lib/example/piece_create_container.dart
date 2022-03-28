@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/material.dart';
 import 'package:shogi_game/widget/operator/action_mode.dart';
 import 'package:shogi_game/widget/operator/board_operator.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
@@ -129,6 +130,129 @@ class PieceCreateContainer extends FlameGame with HasTappables {
     })
       ..x = 64 * 10 + 120
       ..y = 300);
+  }
+}
+
+class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
+  late Tile9x9 board;
+  late BoardOperator operator;
+
+  late _PieceCreateButton changeText;
+
+  PieceCreateContainerOfPhone() : super();
+
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+
+    // ひとまず金銀あたりの駒生成ボタンを表示する
+    add(board = (Tile9x9(scale: 1)));
+    operator = BoardOperator(board);
+    board.addListener((tile) {
+      print('on call board click');
+      operator.onClickBoard(tile);
+    });
+    add(_PieceCreateButton('reset', () {
+      board.resetBoard();
+    })
+      ..x = 20
+      ..y = 400);
+    add(_PieceCreateButton('blank', () {
+      print('set blank piece!!!');
+      final blankPiece = PieceFactory.createBlankPiece();
+      board.setPiece(blankPiece);
+    })
+      ..x = 20
+      ..y = 500);
+    add(_PieceCreateButton('gold', () async {
+      print('set gold piece!!!');
+      final goldPiece =
+          await PieceFactory.createSpritePiece(PieceType.GoldGeneral);
+      if (goldPiece != null) {
+        board.setPiece(goldPiece);
+      } else {
+        print('generated piece is null...');
+      }
+    })
+      ..x = 20
+      ..y = 600);
+    add(_PieceCreateButton('silver', () async {
+      print('set silver piece!!!');
+      final silverPiece =
+          await PieceFactory.createSpritePiece(PieceType.SilverGeneral);
+      if (silverPiece != null) {
+        board.setPiece(silverPiece);
+      }
+    })
+      ..x = 20
+      ..y = 700);
+    add(_PieceCreateButton('knight', () async {
+      print('set knight piece!!!');
+      final knightPiece =
+          await PieceFactory.createSpritePiece(PieceType.Knight);
+      if (knightPiece != null) {
+        board.setPiece(knightPiece);
+      }
+    })
+      ..x = 20
+      ..y = 800);
+    add(_PieceCreateButton('lance', () async {
+      print('set lance piece!!!');
+      final lancePiece = await PieceFactory.createSpritePiece(PieceType.Lance);
+      if (lancePiece != null) {
+        board.setPiece(lancePiece);
+      }
+    })
+      ..x = 120
+      ..y = 400);
+    add(_PieceCreateButton('bishop', () async {
+      print('set bishop piece!!!');
+      final bishopPiece =
+          await PieceFactory.createSpritePiece(PieceType.Bishop);
+      if (bishopPiece != null) {
+        board.setPiece(bishopPiece);
+      }
+    })
+      ..x = 120
+      ..y = 500);
+    add(_PieceCreateButton('rook', () async {
+      print('set rook piece!!!');
+      final rookPiece = await PieceFactory.createSpritePiece(PieceType.Rook);
+      if (rookPiece != null) {
+        board.setPiece(rookPiece);
+      }
+    })
+      ..x = 120
+      ..y = 600);
+
+    add(_PieceCreateButton('pawn', () async {
+      print('set pawn piece!!!');
+      final pawnPiece = await PieceFactory.createSpritePiece(PieceType.Pawn);
+      if (pawnPiece != null) {
+        board.setPiece(pawnPiece);
+      }
+    })
+      ..x = 120
+      ..y = 700);
+    add(_PieceCreateButton('king', () async {
+      print('set king piece!!!');
+      final kingPiece = await PieceFactory.createSpritePiece(PieceType.King);
+      if (kingPiece != null) {
+        board.setPiece(kingPiece);
+      }
+    })
+      ..x = 120
+      ..y = 800);
+    add(changeText = _PieceCreateButton('change mode', () async {
+      if (operator.mode == ActionMode.Put) {
+        operator.changeActionMode(ActionMode.Move);
+      } else {
+        operator.changeActionMode(ActionMode.Put);
+      }
+      print('change operator mode!!! ${operator.mode}');
+    })
+      ..x = 120
+      ..y = 900);
   }
 }
 

@@ -49,12 +49,15 @@ class Tile9x9 extends FlameGame with HasTappables {
   /// タイルをタップした時に呼ばれるハンドラーです。
   final List<OnTapTileEventHandler> _eventListeners = <OnTapTileEventHandler>[];
 
-  /// ctor
-  Tile9x9();
+  double scale;
+  double srcTileSize;
+  double get destTileSize => scale * srcTileSize;
 
-  static const _scale = 2.0;
-  static const _srcTileSize = 32.0;
-  static const _destTileSize = _scale * _srcTileSize;
+  /// ctor
+  Tile9x9({
+    this.scale = 2.0,
+    this.srcTileSize = 32.0,
+  });
 
   static const _ROW_COUNT = 9;
   static const _COLUMN_COUNT = 9;
@@ -192,7 +195,7 @@ class Tile9x9 extends FlameGame with HasTappables {
   /// [Selector] の初期設定を行います。
   Future<void> _prepareSelector() async {
     final selectorImage = await images.load('selector.png');
-    add(_selector = Selector(_destTileSize, selectorImage));
+    add(_selector = Selector(destTileSize, selectorImage));
   }
 
   /// 9x9の初期設定を行います。
@@ -232,8 +235,8 @@ class Tile9x9 extends FlameGame with HasTappables {
         );
         final oneTile = OneTile(
           onTapDowned,
-          Vector2(i * _destTileSize, j * _destTileSize),
-          _destTileSize,
+          Vector2(i * destTileSize, j * destTileSize),
+          destTileSize,
           tileImage,
           stackedPiece: blankPiece,
           rowIndex: i,
