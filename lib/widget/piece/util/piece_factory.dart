@@ -19,32 +19,33 @@ class PieceFactory {
   }
 
   /// [PieceType] に応じて [IPiece] のインスタンスを生成します。
-  static Future<IPiece?> createSpritePiece(PieceType pieceType) async {
+  static Future<IPiece?> createSpritePiece(
+      PieceType pieceType, double size) async {
     switch (pieceType) {
       case PieceType.King:
         final sprite = await Sprite.load('king.png');
-        return SpriteKing(sprite);
+        return SpriteKing(sprite)..size = Vector2.all(size);
       case PieceType.Rook:
         final sprite = await Sprite.load('rook.png');
-        return SpriteRook(sprite);
+        return SpriteRook(sprite)..size = Vector2.all(size);
       case PieceType.Bishop:
         final sprite = await Sprite.load('bishop.png');
-        return SpriteBishop(sprite);
+        return SpriteBishop(sprite)..size = Vector2.all(size);
       case PieceType.GoldGeneral:
         final sprite = await Sprite.load('gold_general.png');
-        return SpriteGold(sprite);
+        return SpriteGold(sprite)..size = Vector2.all(size);
       case PieceType.SilverGeneral:
         final sprite = await Sprite.load('silver_general.png');
-        return SpriteSilver(sprite);
+        return SpriteSilver(sprite)..size = Vector2.all(size);
       case PieceType.Knight:
         final sprite = await Sprite.load('knight.png');
-        return SpriteKnight(sprite);
+        return SpriteKnight(sprite)..size = Vector2.all(size);
       case PieceType.Lance:
         final sprite = await Sprite.load('lance.png');
-        return SpriteLance(sprite);
+        return SpriteLance(sprite)..size = Vector2.all(size);
       case PieceType.Pawn:
         final sprite = await Sprite.load('pawn.png');
-        return SpritePawn(sprite);
+        return SpritePawn(sprite)..size = Vector2.all(size);
       case PieceType.PromotedRook:
         // TODO: Handle this case.
         break;

@@ -23,7 +23,9 @@ class PieceCreateContainer extends FlameGame with HasTappables {
     super.onLoad();
 
     // ひとまず金銀あたりの駒生成ボタンを表示する
-    add(board = Tile9x9());
+    final scale = 2.0;
+    final srcTileSize = 32.0;
+    add(board = Tile9x9(scale: scale, srcTileSize: srcTileSize));
     operator = BoardOperator(board);
     board.addListener((tile) {
       print('on call board click');
@@ -43,8 +45,8 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       ..y = 100);
     add(_PieceCreateButton('gold', () async {
       print('set gold piece!!!');
-      final goldPiece =
-          await PieceFactory.createSpritePiece(PieceType.GoldGeneral);
+      final goldPiece = await PieceFactory.createSpritePiece(
+          PieceType.GoldGeneral, scale * srcTileSize);
       if (goldPiece != null) {
         board.setPiece(goldPiece);
       } else {
@@ -55,8 +57,8 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       ..y = 200);
     add(_PieceCreateButton('silver', () async {
       print('set silver piece!!!');
-      final silverPiece =
-          await PieceFactory.createSpritePiece(PieceType.SilverGeneral);
+      final silverPiece = await PieceFactory.createSpritePiece(
+          PieceType.SilverGeneral, scale * srcTileSize);
       if (silverPiece != null) {
         board.setPiece(silverPiece);
       }
@@ -65,8 +67,8 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       ..y = 300);
     add(_PieceCreateButton('knight', () async {
       print('set knight piece!!!');
-      final knightPiece =
-          await PieceFactory.createSpritePiece(PieceType.Knight);
+      final knightPiece = await PieceFactory.createSpritePiece(
+          PieceType.Knight, scale * srcTileSize);
       if (knightPiece != null) {
         board.setPiece(knightPiece);
       }
@@ -75,7 +77,8 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       ..y = 400);
     add(_PieceCreateButton('lance', () async {
       print('set lance piece!!!');
-      final lancePiece = await PieceFactory.createSpritePiece(PieceType.Lance);
+      final lancePiece = await PieceFactory.createSpritePiece(
+          PieceType.Lance, scale * srcTileSize);
       if (lancePiece != null) {
         board.setPiece(lancePiece);
       }
@@ -84,8 +87,8 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       ..y = 500);
     add(_PieceCreateButton('bishop', () async {
       print('set bishop piece!!!');
-      final bishopPiece =
-          await PieceFactory.createSpritePiece(PieceType.Bishop);
+      final bishopPiece = await PieceFactory.createSpritePiece(
+          PieceType.Bishop, scale * srcTileSize);
       if (bishopPiece != null) {
         board.setPiece(bishopPiece);
       }
@@ -94,7 +97,8 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       ..y = 600);
     add(_PieceCreateButton('rook', () async {
       print('set rook piece!!!');
-      final rookPiece = await PieceFactory.createSpritePiece(PieceType.Rook);
+      final rookPiece = await PieceFactory.createSpritePiece(
+          PieceType.Rook, scale * srcTileSize);
       if (rookPiece != null) {
         board.setPiece(rookPiece);
       }
@@ -104,7 +108,8 @@ class PieceCreateContainer extends FlameGame with HasTappables {
 
     add(_PieceCreateButton('pawn', () async {
       print('set pawn piece!!!');
-      final pawnPiece = await PieceFactory.createSpritePiece(PieceType.Pawn);
+      final pawnPiece = await PieceFactory.createSpritePiece(
+          PieceType.Pawn, scale * srcTileSize);
       if (pawnPiece != null) {
         board.setPiece(pawnPiece);
       }
@@ -113,7 +118,8 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       ..y = 100);
     add(_PieceCreateButton('king', () async {
       print('set king piece!!!');
-      final kingPiece = await PieceFactory.createSpritePiece(PieceType.King);
+      final kingPiece = await PieceFactory.createSpritePiece(
+          PieceType.King, scale * srcTileSize);
       if (kingPiece != null) {
         board.setPiece(kingPiece);
       }
@@ -145,8 +151,10 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
   Future<void> onLoad() async {
     super.onLoad();
 
+    final scale = 1.0;
+    final srcTileSize = 32.0;
     // ひとまず金銀あたりの駒生成ボタンを表示する
-    add(board = (Tile9x9(scale: 1)));
+    add(board = (Tile9x9(scale: scale, srcTileSize: srcTileSize)));
     operator = BoardOperator(board);
     board.addListener((tile) {
       print('on call board click');
@@ -166,8 +174,8 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       ..y = 500);
     add(_PieceCreateButton('gold', () async {
       print('set gold piece!!!');
-      final goldPiece =
-          await PieceFactory.createSpritePiece(PieceType.GoldGeneral);
+      final goldPiece = await PieceFactory.createSpritePiece(
+          PieceType.GoldGeneral, scale * srcTileSize);
       if (goldPiece != null) {
         board.setPiece(goldPiece);
       } else {
@@ -178,8 +186,8 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       ..y = 600);
     add(_PieceCreateButton('silver', () async {
       print('set silver piece!!!');
-      final silverPiece =
-          await PieceFactory.createSpritePiece(PieceType.SilverGeneral);
+      final silverPiece = await PieceFactory.createSpritePiece(
+          PieceType.SilverGeneral, scale * srcTileSize);
       if (silverPiece != null) {
         board.setPiece(silverPiece);
       }
@@ -188,8 +196,8 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       ..y = 700);
     add(_PieceCreateButton('knight', () async {
       print('set knight piece!!!');
-      final knightPiece =
-          await PieceFactory.createSpritePiece(PieceType.Knight);
+      final knightPiece = await PieceFactory.createSpritePiece(
+          PieceType.Knight, scale * srcTileSize);
       if (knightPiece != null) {
         board.setPiece(knightPiece);
       }
@@ -198,7 +206,8 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       ..y = 800);
     add(_PieceCreateButton('lance', () async {
       print('set lance piece!!!');
-      final lancePiece = await PieceFactory.createSpritePiece(PieceType.Lance);
+      final lancePiece = await PieceFactory.createSpritePiece(
+          PieceType.Lance, scale * srcTileSize);
       if (lancePiece != null) {
         board.setPiece(lancePiece);
       }
@@ -207,8 +216,8 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       ..y = 400);
     add(_PieceCreateButton('bishop', () async {
       print('set bishop piece!!!');
-      final bishopPiece =
-          await PieceFactory.createSpritePiece(PieceType.Bishop);
+      final bishopPiece = await PieceFactory.createSpritePiece(
+          PieceType.Bishop, scale * srcTileSize);
       if (bishopPiece != null) {
         board.setPiece(bishopPiece);
       }
@@ -217,7 +226,8 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       ..y = 500);
     add(_PieceCreateButton('rook', () async {
       print('set rook piece!!!');
-      final rookPiece = await PieceFactory.createSpritePiece(PieceType.Rook);
+      final rookPiece = await PieceFactory.createSpritePiece(
+          PieceType.Rook, scale * srcTileSize);
       if (rookPiece != null) {
         board.setPiece(rookPiece);
       }
@@ -227,7 +237,8 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
 
     add(_PieceCreateButton('pawn', () async {
       print('set pawn piece!!!');
-      final pawnPiece = await PieceFactory.createSpritePiece(PieceType.Pawn);
+      final pawnPiece = await PieceFactory.createSpritePiece(
+          PieceType.Pawn, scale * srcTileSize);
       if (pawnPiece != null) {
         board.setPiece(pawnPiece);
       }
@@ -236,7 +247,8 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       ..y = 700);
     add(_PieceCreateButton('king', () async {
       print('set king piece!!!');
-      final kingPiece = await PieceFactory.createSpritePiece(PieceType.King);
+      final kingPiece = await PieceFactory.createSpritePiece(
+          PieceType.King, scale * srcTileSize);
       if (kingPiece != null) {
         board.setPiece(kingPiece);
       }
