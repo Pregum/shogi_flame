@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shogi_game/model/normal_logger.dart';
 
@@ -45,7 +46,7 @@ class _SandboxViewState extends State<SandboxView> {
           fit: FlexFit.tight,
           flex: 3,
           child: GameWidget(
-              game: (Platform.isIOS || Platform.isAndroid)
+              game: (!kIsWeb)
                   ? PieceCreateContainerOfPhone()
                   : PieceCreateContainer()),
         ),

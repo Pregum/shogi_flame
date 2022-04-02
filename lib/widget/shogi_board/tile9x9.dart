@@ -195,6 +195,7 @@ class Tile9x9 extends FlameGame with HasTappables {
   /// [Selector] の初期設定を行います。
   Future<void> _prepareSelector() async {
     final selectorImage = await images.load('selector.png');
+    // TODO: ios or androidだと表示されないため原因を調べる
     add(_selector = Selector(destTileSize, selectorImage));
   }
 
