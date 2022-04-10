@@ -11,6 +11,9 @@ enum OperatorPhaseType {
 
   /// 終了地点を選択するフェーズです。
   EndTileSelect,
+
+  /// 移動開始フェーズです。
+  MoveTile,
 }
 
 extension OperatorPhaseTypeEx on OperatorPhaseType {
@@ -20,6 +23,8 @@ extension OperatorPhaseTypeEx on OperatorPhaseType {
         return BoardState.Move;
       case OperatorPhaseType.EndTileSelect:
         return BoardState.Select;
+      case OperatorPhaseType.MoveTile:
+        return BoardState.Move;
       case OperatorPhaseType.Unknwon:
       default:
         throw Error();

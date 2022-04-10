@@ -8,7 +8,7 @@ import '../model/piece_type.dart';
 abstract class IPiece extends Component {
   /// 次に移動できる場所のルートリスト
   /// PieceRouteが移動可能な１パターンです。
-  List<PieceRoute> get movableRoutes;
+  PieceRoute get movableRoutes;
 
   /// 駒の種類
   PieceType get pieceType;

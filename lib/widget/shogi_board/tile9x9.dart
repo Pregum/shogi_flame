@@ -6,6 +6,7 @@ import 'package:shogi_game/model/interface/loggingable.dart';
 import 'package:shogi_game/model/normal_logger.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/model/piece_position.dart';
+import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/selector.dart';
@@ -188,6 +189,21 @@ class Tile9x9 extends FlameGame with HasTappables {
     for (var row in _matrixTiles) {
       for (var aTile in row) {
         aTile.stackedPiece = PieceFactory.createBlankPiece();
+      }
+    }
+  }
+
+  /// 移動可能な位置を更新します。
+  void configureMovablePice(OneTile startTile, PieceRoute movableRoutes) {
+    throw UnimplementedError();
+  }
+
+  /// 移動可能な場所を忘れます。
+  void forgetMovablePiece() {
+    for (var i = 0; i < _matrixTiles.length; i++) {
+      for (var j = 0; j < _matrixTiles[i].length; j++) {
+        final tile = _matrixTiles[i][j];
+        tile.isVisibleMovableTile = false;
       }
     }
   }

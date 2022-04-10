@@ -10,5 +10,5 @@ class SpriteRook extends SpriteComponent implements IPiece {
 
   @override
   // TODO: implement movableRoutes
-  List<PieceRoute> get movableRoutes => throw UnimplementedError();
+  PieceRoute get movableRoutes => throw UnimplementedError();
 }

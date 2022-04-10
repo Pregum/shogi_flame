@@ -2,48 +2,31 @@
 ///
 class PieceRoute {
   /// 移動方向のリスト
-  /// 0要素目から順番に入っている
-  final List<MovingDirection> route;
+  ///
+  /// 0要素目から順番に入っています。
+  ///
+  final List<List<MoveType>> routeMatrix;
 
-  /// 移動限界距離
-  final int limitDistance;
+  /// １辺の長さです。
+  ///
+  /// confition:
+  ///
+  ///   * 1 < [widthTileLnegth] <= 9
+  ///   * [widthTileLnegth] % 2 == 1
+  final int widthTileLnegth;
 
   /// ctor
-  PieceRoute(this.route, this.limitDistance);
+  PieceRoute(this.routeMatrix, this.widthTileLnegth);
 }
 
-/// 移動方向
-enum MovingDirection {
-  /// 不明
+/// 移動の種類
+enum MoveType {
+  /// 不明(default値)
   Unknown,
 
-  /// 左上
-  LeftUp,
+  /// 移動不可
+  UnMovable,
 
-  /// 上方向
-  Up,
-
-  /// 右上
-  RightUp,
-
-  /// 左方向
-  Left,
-
-  /// 右方向
-  Right,
-
-  /// 左下
-  LeftDown,
-
-  /// 下方向
-  Down,
-
-  /// 右下
-  RightDown,
-
-  /// 桂馬の右上
-  RightJump,
-
-  /// 桂馬の左上
-  LeftJump
+  /// 移動可能
+  Movable,
 }

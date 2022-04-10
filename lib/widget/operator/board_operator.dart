@@ -30,6 +30,10 @@ class BoardOperator {
   ActionMode _mode = ActionMode.Put;
   ActionMode get mode => _mode;
 
+  /// 現在移動可能なルートです。
+  PieceRoute? get currentMovableRoutes =>
+      _movingStartTile?.stackedPiece.movableRoutes;
+
   /// 操作フェーズです。
   /// [OperatorPhaseType.StartTileSelect] や [OperatorPhaseType.EndTileSelect] があります。
   OperatorPhaseType _operatorStatus = OperatorPhaseType.StartTileSelect;
@@ -57,15 +61,11 @@ class BoardOperator {
     }
 
     if (_verifySatisfiedStartTile(targetTile: targetTile)) {
-      _movingStartTile = targetTile;
-      _logger.info('[BoardOperator#onClickBoard]: _movingStartTileにセットしました。');
-      operatorStatus = OperatorPhaseType.EndTileSelect;
+      _setMovingStartTile(targetTile);
       return;
     } else if (_verifySatisfiedEndTile(
         targetTile: targetTile, startTile: _movingStartTile)) {
-      _movingEndTile = targetTile;
-      _logger.info('[BoardOperator#onClickBoard]: _movingEndTileにセットしました。');
-      operatorStatus = OperatorPhaseType.StartTileSelect;
+      _setMovingEndTile(targetTile);
     }
 
     if (_movingStartTile == null || _movingEndTile == null) {
@@ -189,7 +189,6 @@ class BoardOperator {
     final endTile = _board.getTile(movement.movingEndPosition);
 
     if (startTile == null || endTile == null) {
-      // 'tile at startPos or endPos is null. startPos: $startPos, endPos: $endPos';
       // TODO: 他に良いエラー記述方法がないか検討する。
       _logger.error(
           '[BoardOperator#_emulateMovingPiece]: 開始地点、もしくは終了地点のタイルがnullです。');
@@ -209,7 +208,6 @@ class BoardOperator {
     final startTile = _board.getTile(startPos);
     final endTile = _board.getTile(endPos);
     if (startTile == null || endTile == null) {
-      // 'tile at startPos or endPos is null. startPos: $startPos, endPos: $endPos';
       // TODO: 他に良いエラー記述方法がないか検討する。
       _logger.error('[BoardOperator#_movePiece]: 開始地点、もしくは終了地点のタイルがnullです。');
       throw new Error();
@@ -227,6 +225,7 @@ class BoardOperator {
     if (killedPiece != null) {
       // TODO: 駒台クラスへ駒を渡す処理を実装する
     }
+    operatorStatus = OperatorPhaseType.StartTileSelect;
 
     // 履歴の更新
     final nextIndex = _currentHistoryIndex + 1;
@@ -242,13 +241,14 @@ class BoardOperator {
     _logger.debug('[BoardOperator#_forgetMovingPiece]: 開始地点と終了地点をクリアします。');
     _movingStartTile = null;
     _movingEndTile = null;
+    _board.forgetMovablePiece();
   }
 
   /// [startPos] から [trialRoute] を通って移動が可能か検証します。
   ///
   /// 可能: true, 不可能: false を返します。
   bool _verifyMovingRoute(PiecePosition startPos, PieceRoute trialRoute) {
-    final path = trialRoute.route;
+    final path = trialRoute.routeMatrix;
     throw UnimplementedError();
   }
 
@@ -277,5 +277,23 @@ class BoardOperator {
         startTile.stackedPiece.pieceType != PieceType.Blank &&
         endTile != null &&
         endTile.stackedPiece.pieceType == PieceType.Blank;
+  }
+
+  /// [targetTile] を終了地点のタイルに設定します。
+  /// 同時に [operatorStatus] を開始地点選択フェーズへ変更します。
+  void _setMovingStartTile(OneTile targetTile) {
+    _movingStartTile = targetTile;
+    _board.configureMovablePice(
+        targetTile, targetTile.stackedPiece.movableRoutes);
+    _logger.info('[BoardOperator#onClickBoard]: _movingStartTileにセットしました。');
+    operatorStatus = OperatorPhaseType.EndTileSelect;
+  }
+
+  /// [targetTile] を開始地点のタイルに設定します。
+  /// 同時に [operatorStatus] をタイル移動フェーズへ変更します。
+  void _setMovingEndTile(OneTile targetTile) {
+    _movingEndTile = targetTile;
+    _logger.info('[BoardOperator#onClickBoard]: _movingEndTileにセットしました。');
+    operatorStatus = OperatorPhaseType.MoveTile;
   }
 }
