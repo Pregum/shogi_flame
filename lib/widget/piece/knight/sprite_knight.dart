@@ -11,6 +11,45 @@ class SpriteKnight extends SpriteComponent implements IPiece {
   PieceType pieceType = PieceType.Knight;
 
   @override
-  // TODO: implement movableRoutes
-  PieceRoute get movableRoutes => throw UnimplementedError();
+  PieceRoute get movableRoutes => _movableRoutes;
+  PieceRoute _movableRoutes = PieceRoute(
+    <List<MoveType>>[
+      <MoveType>[
+        MoveType.UnMovable,
+        MoveType.Movable,
+        MoveType.UnMovable,
+        MoveType.Movable,
+        MoveType.UnMovable
+      ],
+      <MoveType>[
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable
+      ],
+      <MoveType>[
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable
+      ],
+      <MoveType>[
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable
+      ],
+      <MoveType>[
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable,
+        MoveType.UnMovable
+      ],
+    ],
+    5,
+  );
 }

@@ -11,6 +11,13 @@ class SpriteSilver extends SpriteComponent implements IPiece {
   PieceType pieceType = PieceType.SilverGeneral;
 
   @override
-  // TODO: implement movableRoutes
-  PieceRoute get movableRoutes => throw UnimplementedError();
+  PieceRoute get movableRoutes => _movableRoutes;
+  PieceRoute _movableRoutes = PieceRoute(
+    <List<MoveType>>[
+      <MoveType>[MoveType.Movable, MoveType.Movable, MoveType.Movable],
+      <MoveType>[MoveType.UnMovable, MoveType.UnMovable, MoveType.UnMovable],
+      <MoveType>[MoveType.Movable, MoveType.UnMovable, MoveType.Movable],
+    ],
+    3,
+  );
 }

@@ -9,6 +9,6 @@ class BlankPiece extends Component implements IPiece {
   PieceType pieceType = PieceType.Blank;
 
   @override
-  // TODO: implement movableRoutes
-  PieceRoute get movableRoutes => throw UnimplementedError();
+  PieceRoute get movableRoutes => _movableRoutes;
+  PieceRoute _movableRoutes = PieceRoute(<List<MoveType>>[], 1);
 }
