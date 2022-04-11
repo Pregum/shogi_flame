@@ -244,14 +244,6 @@ class BoardOperator {
     _board.forgetMovablePiece();
   }
 
-  /// [startPos] から [trialRoute] を通って移動が可能か検証します。
-  ///
-  /// 可能: true, 不可能: false を返します。
-  bool _verifyMovingRoute(PiecePosition startPos, PieceRoute trialRoute) {
-    final path = trialRoute.routeMatrix;
-    throw UnimplementedError();
-  }
-
   /// 引数の [ targetTile ] が開始地点の条件を満たしているか判定します。
   bool _verifySatisfiedStartTile({required OneTile targetTile}) {
     return _operatorStatus == OperatorPhaseType.StartTileSelect &&
