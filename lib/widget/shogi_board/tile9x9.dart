@@ -215,7 +215,7 @@ class Tile9x9 extends FlameGame with HasTappables {
         continue;
       }
 
-      for (var j = 0; i < movableRoutes.widthTileLnegth; i++) {
+      for (var j = 0; j < movableRoutes.widthTileLnegth; j++) {
         final currColumnIndex = j + leftIndex;
         // 左右が盤面外の場合はcontinue
         if (currColumnIndex < 0 || currColumnIndex >= _matrixTiles[i].length) {

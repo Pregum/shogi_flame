@@ -11,6 +11,13 @@ class SpriteKing extends SpriteComponent implements IPiece {
   PieceType pieceType = PieceType.King;
 
   @override
-  // TODO: implement movableRoutes
-  PieceRoute get movableRoutes => throw UnimplementedError();
+  PieceRoute get movableRoutes => _movableRoutes;
+  PieceRoute _movableRoutes = PieceRoute(
+    <List<MoveType>>[
+      <MoveType>[MoveType.Movable, MoveType.Movable, MoveType.Movable],
+      <MoveType>[MoveType.Movable, MoveType.Movable, MoveType.Movable],
+      <MoveType>[MoveType.Movable, MoveType.Movable, MoveType.Movable],
+    ],
+    3,
+  );
 }
