@@ -209,14 +209,14 @@ class Tile9x9 extends FlameGame with HasTappables {
     // 計算処理を実行する
     // 左上から右下に向かって計算を行う
     for (var i = 0; i < movableRoutes.widthTileLnegth; i++) {
-      final currRowIndex = i + topIndex;
+      final currRowIndex = topIndex + i;
       // 上下が盤面外の場合はcontinue
       if (currRowIndex < 0 || currRowIndex >= _matrixTiles.length) {
         continue;
       }
 
       for (var j = 0; j < movableRoutes.widthTileLnegth; j++) {
-        final currColumnIndex = j + leftIndex;
+        final currColumnIndex = leftIndex + j;
         // 左右が盤面外の場合はcontinue
         if (currColumnIndex < 0 || currColumnIndex >= _matrixTiles[i].length) {
           continue;
@@ -288,7 +288,7 @@ class Tile9x9 extends FlameGame with HasTappables {
         );
         final oneTile = OneTile(
           onTapDowned,
-          Vector2(i * destTileSize, j * destTileSize),
+          Vector2(j * destTileSize, i * destTileSize),
           destTileSize,
           tileImage,
           stackedPiece: blankPiece,
