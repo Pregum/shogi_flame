@@ -283,7 +283,7 @@ class BoardOperator {
   /// 同時に [operatorStatus] を開始地点選択フェーズへ変更します。
   void _setMovingStartTile(OneTile targetTile) {
     _movingStartTile = targetTile;
-    _board.configureMovablePice(
+    _board.configureMovablePiece(
         targetTile, targetTile.stackedPiece.movableRoutes);
     _logger.info('[BoardOperator#onClickBoard]: _movingStartTileにセットしました。');
     operatorStatus = OperatorPhaseType.EndTileSelect;

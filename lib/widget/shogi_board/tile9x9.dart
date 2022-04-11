@@ -197,7 +197,7 @@ class Tile9x9 extends FlameGame with HasTappables {
 
   /// 移動可能な位置を更新します。
   /// [centerTile] を中心に左右と上下に半分の辺の長さ分更新処理をかけます。
-  void configureMovablePice(OneTile centerTile, PieceRoute movableRoutes) {
+  void configureMovablePiece(OneTile centerTile, PieceRoute movableRoutes) {
     final centerColumn = centerTile.columnIndex ?? 0;
     final centerRow = centerTile.rowIndex ?? 0;
 
@@ -248,7 +248,8 @@ class Tile9x9 extends FlameGame with HasTappables {
   /// [currMovableType] に応じて、[currTile] の移動可能フラグの更新を行います。
   void _updateMovableState(MoveType currMovableType, OneTile currTile,
       int currRowIndex, int centerRow, int currColumnIndex, int centerColumn) {
-    if (currMovableType == MoveType.Movable) {
+    if (currMovableType == MoveType.Movable &&
+        currTile.stackedPiece.pieceType == PieceType.Blank) {
       currTile.isVisibleMovableTile = true;
     } else if (currMovableType == MoveType.Infinite) {
       // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
@@ -273,6 +274,12 @@ class Tile9x9 extends FlameGame with HasTappables {
         column >= 0 &&
         column < _matrixTiles[row].length) {
       final tile = _matrixTiles[row][column];
+
+      // 空でなければ止める
+      if (tile.stackedPiece.pieceType != PieceType.Blank) {
+        break;
+      }
+
       tile.isVisibleMovableTile = true;
 
       row += deltaRow;
