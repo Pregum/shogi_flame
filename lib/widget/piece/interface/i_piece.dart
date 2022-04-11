@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_route.dart';
 
 import '../model/piece_type.dart';

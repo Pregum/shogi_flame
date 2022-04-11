@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/layers.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
@@ -39,12 +41,12 @@ class Tile9x9 extends FlameGame with HasTappables {
   var _operationStatus = BoardState.Select;
   set operationStatus(BoardState newValue) {
     _operationStatus = newValue;
-    for (int i = 0; i < _matrixTiles.length; i++) {
-      for (int j = 0; j < _matrixTiles[i].length; j++) {
-        final tile = _matrixTiles[i][j];
-        tile.isVisibleMovableTile = newValue == BoardState.Select;
-      }
-    }
+    // for (int i = 0; i < _matrixTiles.length; i++) {
+    //   for (int j = 0; j < _matrixTiles[i].length; j++) {
+    //     final tile = _matrixTiles[i][j];
+    //     tile.isVisibleMovableTile = newValue == BoardState.Select;
+    //   }
+    // }
   }
 
   /// タイルをタップした時に呼ばれるハンドラーです。
@@ -194,8 +196,42 @@ class Tile9x9 extends FlameGame with HasTappables {
   }
 
   /// 移動可能な位置を更新します。
-  void configureMovablePice(OneTile startTile, PieceRoute movableRoutes) {
-    throw UnimplementedError();
+  /// [centerTile] を中心に左右と上下に半分の辺の長さ分更新処理をかけます。
+  void configureMovablePice(OneTile centerTile, PieceRoute movableRoutes) {
+    final centerColumn = centerTile.columnIndex ?? 0;
+    final centerRow = centerTile.rowIndex ?? 0;
+
+    final halfWidth = movableRoutes.widthTileLnegth ~/ 2;
+
+    final leftIndex = centerColumn - halfWidth;
+    final topIndex = centerRow - halfWidth;
+
+    // 計算処理を実行する
+    // 左上から右下に向かって計算を行う
+    for (var i = 0; i < movableRoutes.widthTileLnegth; i++) {
+      final currRowIndex = i + topIndex;
+      // 上下が盤面外の場合はcontinue
+      if (currRowIndex < 0 || currRowIndex >= _matrixTiles.length) {
+        continue;
+      }
+
+      for (var j = 0; i < movableRoutes.widthTileLnegth; i++) {
+        final currColumnIndex = j + leftIndex;
+        // 左右が盤面外の場合はcontinue
+        if (currColumnIndex < 0 || currColumnIndex >= _matrixTiles[i].length) {
+          continue;
+        }
+
+        // 中心も除く
+        if (currRowIndex == centerRow && currColumnIndex == centerColumn) {
+          continue;
+        }
+
+        final currTile = _matrixTiles[currRowIndex][currColumnIndex];
+        final currMovableType = movableRoutes.routeMatrix[i][j];
+        currTile.isVisibleMovableTile = currMovableType == MoveType.Movable;
+      }
+    }
   }
 
   /// 移動可能な場所を忘れます。
