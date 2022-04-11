@@ -19,9 +19,9 @@ class SpriteBishop extends SpriteComponent implements IPiece {
   PieceRoute get movableRoutes => _movableRoutes;
   PieceRoute _movableRoutes = PieceRoute(
     <List<MoveType>>[
-      <MoveType>[MoveType.Movable, MoveType.UnMovable, MoveType.Movable],
+      <MoveType>[MoveType.Infinite, MoveType.UnMovable, MoveType.Infinite],
       <MoveType>[MoveType.UnMovable, MoveType.UnMovable, MoveType.UnMovable],
-      <MoveType>[MoveType.Movable, MoveType.UnMovable, MoveType.Movable],
+      <MoveType>[MoveType.Infinite, MoveType.UnMovable, MoveType.Infinite],
     ],
     3,
   );

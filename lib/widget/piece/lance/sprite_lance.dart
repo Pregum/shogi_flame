@@ -14,7 +14,7 @@ class SpriteLance extends SpriteComponent implements IPiece {
   PieceRoute get movableRoutes => _movableRoutes;
   PieceRoute _movableRoutes = PieceRoute(
     <List<MoveType>>[
-      <MoveType>[MoveType.UnMovable, MoveType.Movable, MoveType.UnMovable],
+      <MoveType>[MoveType.UnMovable, MoveType.Infinite, MoveType.UnMovable],
       <MoveType>[MoveType.UnMovable, MoveType.UnMovable, MoveType.UnMovable],
       <MoveType>[MoveType.UnMovable, MoveType.UnMovable, MoveType.UnMovable],
     ],

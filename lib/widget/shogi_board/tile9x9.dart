@@ -229,8 +229,35 @@ class Tile9x9 extends FlameGame with HasTappables {
 
         final currTile = _matrixTiles[currRowIndex][currColumnIndex];
         final currMovableType = movableRoutes.routeMatrix[i][j];
-        currTile.isVisibleMovableTile = currMovableType == MoveType.Movable;
+        if (currMovableType == MoveType.Movable) {
+          currTile.isVisibleMovableTile = true;
+        } else if (currMovableType == MoveType.Infinite) {
+          // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
+          _updateInifiteTiles(
+              currRowIndex, centerRow, currColumnIndex, centerColumn);
+        } else {
+          currTile.isVisibleMovableTile = false;
+        }
       }
+    }
+  }
+
+  void _updateInifiteTiles(
+      int currRowIndex, int centerRow, int currColumnIndex, int centerColumn) {
+    // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
+    final deltaRow = currRowIndex - centerRow;
+    final deltaColumn = currColumnIndex - centerColumn;
+    var row = currRowIndex;
+    var column = currColumnIndex;
+    while (row >= 0 &&
+        row < _matrixTiles.length &&
+        column >= 0 &&
+        column < _matrixTiles[row].length) {
+      final tile = _matrixTiles[row][column];
+      tile.isVisibleMovableTile = true;
+
+      row += deltaRow;
+      column += deltaColumn;
     }
   }
 

@@ -29,4 +29,7 @@ enum MoveType {
 
   /// 移動可能
   Movable,
+
+  /// 無限超
+  Infinite,
 }
