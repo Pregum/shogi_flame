@@ -229,20 +229,39 @@ class Tile9x9 extends FlameGame with HasTappables {
 
         final currTile = _matrixTiles[currRowIndex][currColumnIndex];
         final currMovableType = movableRoutes.routeMatrix[i][j];
-        if (currMovableType == MoveType.Movable) {
-          currTile.isVisibleMovableTile = true;
-        } else if (currMovableType == MoveType.Infinite) {
-          // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
-          _updateInifiteTiles(
-              currRowIndex, centerRow, currColumnIndex, centerColumn);
-        } else {
-          currTile.isVisibleMovableTile = false;
-        }
+        _updateMovableState(currMovableType, currTile, currRowIndex, centerRow,
+            currColumnIndex, centerColumn);
       }
     }
   }
 
-  void _updateInifiteTiles(
+  /// 移動可能な場所を忘れます。
+  void forgetMovablePiece() {
+    for (var i = 0; i < _matrixTiles.length; i++) {
+      for (var j = 0; j < _matrixTiles[i].length; j++) {
+        final tile = _matrixTiles[i][j];
+        tile.isVisibleMovableTile = false;
+      }
+    }
+  }
+
+  /// [currMovableType] に応じて、[currTile] の移動可能フラグの更新を行います。
+  void _updateMovableState(MoveType currMovableType, OneTile currTile,
+      int currRowIndex, int centerRow, int currColumnIndex, int centerColumn) {
+    if (currMovableType == MoveType.Movable) {
+      currTile.isVisibleMovableTile = true;
+    } else if (currMovableType == MoveType.Infinite) {
+      // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
+      _setMovableTypeToInifiteTiles(
+          currRowIndex, centerRow, currColumnIndex, centerColumn);
+    } else {
+      currTile.isVisibleMovableTile = false;
+    }
+  }
+
+  /// 無限超の移動可能タイルのフラグ更新を行います。
+  /// [centerRow], [centerColumn]から[currRowIndex], [currColumnIndex] の差分を端までループしてフラグを立てていきます。
+  void _setMovableTypeToInifiteTiles(
       int currRowIndex, int centerRow, int currColumnIndex, int centerColumn) {
     // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
     final deltaRow = currRowIndex - centerRow;
@@ -258,16 +277,6 @@ class Tile9x9 extends FlameGame with HasTappables {
 
       row += deltaRow;
       column += deltaColumn;
-    }
-  }
-
-  /// 移動可能な場所を忘れます。
-  void forgetMovablePiece() {
-    for (var i = 0; i < _matrixTiles.length; i++) {
-      for (var j = 0; j < _matrixTiles[i].length; j++) {
-        final tile = _matrixTiles[i][j];
-        tile.isVisibleMovableTile = false;
-      }
     }
   }
 
