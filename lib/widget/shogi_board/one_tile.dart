@@ -46,6 +46,7 @@ class OneTile extends SpriteComponent with Tappable {
   late MovableTile _movableTile;
 
   bool _isVisibleMovableTile = false;
+  bool get isVisibleMovableTile => _isVisibleMovableTile;
   set isVisibleMovableTile(bool newValue) {
     _isVisibleMovableTile = newValue;
     _movableTile.isVisible = newValue;

@@ -199,19 +199,16 @@ class BoardOperator {
   }
 
   void _movePiece({required OneTile startTile, required OneTile endTile}) {
-    final startPos = PiecePosition.fromOneTile(_movingStartTile!);
-    final endPos = PiecePosition.fromOneTile(_movingEndTile!);
-    final movement =
-        PieceMovement(startPos, endPos, _movingEndTile!.stackedPiece);
-    _logger.info('[BoardOperator#_movePiece]: pieceを移動します。');
-
-    final startTile = _board.getTile(startPos);
-    final endTile = _board.getTile(endPos);
-    if (startTile == null || endTile == null) {
-      // TODO: 他に良いエラー記述方法がないか検討する。
-      _logger.error('[BoardOperator#_movePiece]: 開始地点、もしくは終了地点のタイルがnullです。');
-      throw new Error();
+    operatorStatus = OperatorPhaseType.StartTileSelect;
+    // 移動可能タイルでない場合は移動処理を行わない。
+    if (!endTile.isVisibleMovableTile) {
+      return;
     }
+
+    final startPos = PiecePosition.fromOneTile(startTile);
+    final endPos = PiecePosition.fromOneTile(endTile);
+    final movement = PieceMovement(startPos, endPos, endTile.stackedPiece);
+    _logger.info('[BoardOperator#_movePiece]: pieceを移動します。');
 
     final movingPiece = startTile.stackedPiece;
     _board.changeSelectedTile(endPos);
@@ -225,7 +222,6 @@ class BoardOperator {
     if (killedPiece != null) {
       // TODO: 駒台クラスへ駒を渡す処理を実装する
     }
-    operatorStatus = OperatorPhaseType.StartTileSelect;
 
     // 履歴の更新
     final nextIndex = _currentHistoryIndex + 1;
