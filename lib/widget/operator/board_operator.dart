@@ -139,7 +139,7 @@ class BoardOperator {
     _currentHistoryIndex = pastIndex;
 
     final lastMovement = _movementHistory[pastIndex];
-    _moveReversePiece(lastMovement);
+    _emulatePreviousPieceMovement(lastMovement);
     _forgetMovingPiece();
   }
 
@@ -147,18 +147,18 @@ class BoardOperator {
   void redo() {
     final futureIndex = _currentHistoryIndex + 1;
     if (_movementHistory.isEmpty ||
-        _currentHistoryIndex <= 0 ||
+        _currentHistoryIndex < 0 ||
         _movementHistory.length <= futureIndex) {
       return;
     }
     _currentHistoryIndex = futureIndex;
 
     final futureMovement = _movementHistory[futureIndex];
-    _emulateMovingPiece(futureMovement);
+    _emulateNextPieceMovement(futureMovement);
     _forgetMovingPiece();
   }
 
-  void _moveReversePiece(PieceMovement movement) {
+  void _emulatePreviousPieceMovement(PieceMovement movement) {
     // 先に移動した駒を前の位置に戻す
     final startPos = movement.movingStartPosition;
     final endPos = movement.movingEndPosition;
@@ -166,8 +166,9 @@ class BoardOperator {
     final startTile = _board.getTile(startPos);
     final endTile = _board.getTile(endPos);
     if (startTile == null || endTile == null) {
-      // 'tile at startPos or endPos is null. startPos: $startPos, endPos: $endPos';
       // TODO: 他に良いエラー記述方法がないか検討する。
+      _logger.error(
+          '[BoardOperator#_emulateMovingPiece]: 開始地点、もしくは終了地点のタイルがnullです。');
       throw Error();
     }
 
@@ -184,7 +185,7 @@ class BoardOperator {
     }
   }
 
-  void _emulateMovingPiece(PieceMovement movement) {
+  void _emulateNextPieceMovement(PieceMovement movement) {
     final startTile = _board.getTile(movement.movingStartPosition);
     final endTile = _board.getTile(movement.movingEndPosition);
 

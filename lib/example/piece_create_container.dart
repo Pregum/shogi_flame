@@ -136,6 +136,18 @@ class PieceCreateContainer extends FlameGame with HasTappables {
     })
       ..x = 64 * 10 + 120
       ..y = 300);
+    // TODO: 現状うまく動かないので修正必要
+    add(changeText = _PieceCreateButton('undo', () {
+      operator.undo();
+    })
+      ..x = 64 * 10 + 120
+      ..y = 400);
+    // TODO: 現状うまく動かないので修正必要
+    add(changeText = _PieceCreateButton('redo', () {
+      operator.redo();
+    })
+      ..x = 64 * 10 + 120
+      ..y = 500);
   }
 }
 
@@ -265,6 +277,16 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
     })
       ..x = 120
       ..y = 900);
+    add(changeText = _PieceCreateButton('undo', () {
+      operator.undo();
+    })
+      ..x = 120
+      ..y = 1000);
+    add(changeText = _PieceCreateButton('redo', () {
+      operator.redo();
+    })
+      ..x = 120
+      ..y = 1100);
   }
 }
 
