@@ -39,7 +39,7 @@ class PieceCreateContainer extends FlameGame with HasTappables {
     add(_PieceCreateButton('blank', () {
       print('set blank piece!!!');
       final blankPiece = PieceFactory.createBlankPiece();
-      board.setPiece(blankPiece);
+      operator.putPiece(blankPiece);
     })
       ..x = 64 * 10
       ..y = 100);
@@ -48,7 +48,7 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       final goldPiece = await PieceFactory.createSpritePiece(
           PieceType.GoldGeneral, scale * srcTileSize);
       if (goldPiece != null) {
-        board.setPiece(goldPiece);
+        operator.putPiece(goldPiece);
       } else {
         print('generated piece is null...');
       }
@@ -60,7 +60,7 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       final silverPiece = await PieceFactory.createSpritePiece(
           PieceType.SilverGeneral, scale * srcTileSize);
       if (silverPiece != null) {
-        board.setPiece(silverPiece);
+        operator.putPiece(silverPiece);
       }
     })
       ..x = 64 * 10
@@ -70,7 +70,7 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       final knightPiece = await PieceFactory.createSpritePiece(
           PieceType.Knight, scale * srcTileSize);
       if (knightPiece != null) {
-        board.setPiece(knightPiece);
+        operator.putPiece(knightPiece);
       }
     })
       ..x = 64 * 10
@@ -80,7 +80,7 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       final lancePiece = await PieceFactory.createSpritePiece(
           PieceType.Lance, scale * srcTileSize);
       if (lancePiece != null) {
-        board.setPiece(lancePiece);
+        operator.putPiece(lancePiece);
       }
     })
       ..x = 64 * 10
@@ -90,7 +90,7 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       final bishopPiece = await PieceFactory.createSpritePiece(
           PieceType.Bishop, scale * srcTileSize);
       if (bishopPiece != null) {
-        board.setPiece(bishopPiece);
+        operator.putPiece(bishopPiece);
       }
     })
       ..x = 64 * 10
@@ -100,7 +100,7 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       final rookPiece = await PieceFactory.createSpritePiece(
           PieceType.Rook, scale * srcTileSize);
       if (rookPiece != null) {
-        board.setPiece(rookPiece);
+        operator.putPiece(rookPiece);
       }
     })
       ..x = 64 * 10 + 120
@@ -111,7 +111,7 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       final pawnPiece = await PieceFactory.createSpritePiece(
           PieceType.Pawn, scale * srcTileSize);
       if (pawnPiece != null) {
-        board.setPiece(pawnPiece);
+        operator.putPiece(pawnPiece);
       }
     })
       ..x = 64 * 10 + 120
@@ -121,7 +121,7 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       final kingPiece = await PieceFactory.createSpritePiece(
           PieceType.King, scale * srcTileSize);
       if (kingPiece != null) {
-        board.setPiece(kingPiece);
+        operator.putPiece(kingPiece);
       }
     })
       ..x = 64 * 10 + 120
@@ -180,7 +180,7 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
     add(_PieceCreateButton('blank', () {
       print('set blank piece!!!');
       final blankPiece = PieceFactory.createBlankPiece();
-      board.setPiece(blankPiece);
+      operator.putPiece(blankPiece);
     })
       ..x = 20
       ..y = 500);
@@ -189,7 +189,7 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       final goldPiece = await PieceFactory.createSpritePiece(
           PieceType.GoldGeneral, scale * srcTileSize);
       if (goldPiece != null) {
-        board.setPiece(goldPiece);
+        operator.putPiece(goldPiece);
       } else {
         print('generated piece is null...');
       }
@@ -201,7 +201,7 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       final silverPiece = await PieceFactory.createSpritePiece(
           PieceType.SilverGeneral, scale * srcTileSize);
       if (silverPiece != null) {
-        board.setPiece(silverPiece);
+        operator.putPiece(silverPiece);
       }
     })
       ..x = 20
@@ -211,7 +211,7 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       final knightPiece = await PieceFactory.createSpritePiece(
           PieceType.Knight, scale * srcTileSize);
       if (knightPiece != null) {
-        board.setPiece(knightPiece);
+        operator.putPiece(knightPiece);
       }
     })
       ..x = 20
@@ -221,7 +221,7 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       final lancePiece = await PieceFactory.createSpritePiece(
           PieceType.Lance, scale * srcTileSize);
       if (lancePiece != null) {
-        board.setPiece(lancePiece);
+        operator.putPiece(lancePiece);
       }
     })
       ..x = 120
@@ -231,7 +231,7 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       final bishopPiece = await PieceFactory.createSpritePiece(
           PieceType.Bishop, scale * srcTileSize);
       if (bishopPiece != null) {
-        board.setPiece(bishopPiece);
+        operator.putPiece(bishopPiece);
       }
     })
       ..x = 120
@@ -241,7 +241,7 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       final rookPiece = await PieceFactory.createSpritePiece(
           PieceType.Rook, scale * srcTileSize);
       if (rookPiece != null) {
-        board.setPiece(rookPiece);
+        operator.putPiece(rookPiece);
       }
     })
       ..x = 120
@@ -252,7 +252,7 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       final pawnPiece = await PieceFactory.createSpritePiece(
           PieceType.Pawn, scale * srcTileSize);
       if (pawnPiece != null) {
-        board.setPiece(pawnPiece);
+        operator.putPiece(pawnPiece);
       }
     })
       ..x = 120
@@ -262,7 +262,7 @@ class PieceCreateContainerOfPhone extends FlameGame with HasTappables {
       final kingPiece = await PieceFactory.createSpritePiece(
           PieceType.King, scale * srcTileSize);
       if (kingPiece != null) {
-        board.setPiece(kingPiece);
+        operator.putPiece(kingPiece);
       }
     })
       ..x = 120

@@ -37,4 +37,8 @@ class PiecePosition {
     return PiecePosition(tile.rowIndex, tile.columnIndex, positionFieldType,
         tile.stackedPiece.pieceType);
   }
+
+  factory PiecePosition.createNew({required PieceType pieceType}) {
+    return PiecePosition(null, null, PositionFieldType.None, pieceType);
+  }
 }

@@ -4,6 +4,7 @@ import 'package:shogi_game/widget/piece/model/piece_movement.dart';
 import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
+import 'package:shogi_game/widget/piece/model/position_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/one_tile.dart';
 import 'package:shogi_game/widget/shogi_board/tile9x9.dart';
@@ -24,7 +25,7 @@ class BoardOperator {
   List<PieceMovement> _movementHistory = <PieceMovement>[];
 
   /// 現在の履歴のindex
-  int _currentHistoryIndex = 0;
+  int _currentHistoryIndex = -1;
 
   /// 操作モードです。
   ActionMode _mode = ActionMode.Put;
@@ -126,36 +127,59 @@ class BoardOperator {
     _forgetMovingPiece();
   }
 
+  /// [piece] を配置します。
+  /// 併せて履歴にも追加します。
+  void putPiece(IPiece piece) {
+    final tile = _board.selectedTile;
+    if (tile == null) {
+      _logger.debug('[BoardOperator#putPiece]: 設置タイルがnullです。');
+      return;
+    }
+
+    final alreadyPiece = tile.stackedPiece;
+
+    _board.setPiece(piece);
+
+    final endPosition = PiecePosition.fromOneTile(tile);
+    final movement = PieceMovement.putOnly(
+        putPosition: endPosition, killedPiece: alreadyPiece);
+
+    // 履歴の更新
+    _addHistory(movement);
+  }
+
   /// 一つ前の配置に戻します。
   /// [_movementHistory] が空、もしくは戻れる過去がない場合、何も処理を行いません。
   void undo() {
     final pastIndex = _currentHistoryIndex - 1;
     if (_movementHistory.isEmpty ||
-        _currentHistoryIndex <= 0 ||
-        _movementHistory.length <= pastIndex) {
+        _currentHistoryIndex < 0 ||
+        _movementHistory.length <= _currentHistoryIndex) {
       return;
     }
 
-    _currentHistoryIndex = pastIndex;
-
-    final lastMovement = _movementHistory[pastIndex];
+    // FIXME: 2回連続でundoすると正常に動作しないため修正する
+    final lastMovement = _movementHistory[_currentHistoryIndex];
     _emulatePreviousPieceMovement(lastMovement);
     _forgetMovingPiece();
+
+    _currentHistoryIndex = pastIndex;
   }
 
   /// １つ先の配置に進めます。
   void redo() {
     final futureIndex = _currentHistoryIndex + 1;
     if (_movementHistory.isEmpty ||
-        _currentHistoryIndex < 0 ||
+        futureIndex < 0 ||
         _movementHistory.length <= futureIndex) {
       return;
     }
-    _currentHistoryIndex = futureIndex;
 
     final futureMovement = _movementHistory[futureIndex];
     _emulateNextPieceMovement(futureMovement);
     _forgetMovingPiece();
+
+    _currentHistoryIndex = futureIndex;
   }
 
   void _emulatePreviousPieceMovement(PieceMovement movement) {
@@ -165,10 +189,29 @@ class BoardOperator {
 
     final startTile = _board.getTile(startPos);
     final endTile = _board.getTile(endPos);
+
+    // noneの場合は外部要因で作成されている為、startPosのPieceは消えて良い
+    if (startPos.positionFieldType == PositionFieldType.None) {
+      _emulatePreviousPieceMovementWhenPutingPiece(
+          endTile, movement.killedPiece, endPos);
+      return;
+    }
+
+    // 上記以外は盤上の移動 or 持ち駒を打ったと認識して処理を行う
+    _emulatePreviousPieceMovementWhenMovingPiece(
+        startTile, endTile, startPos, movement.killedPiece, endPos);
+  }
+
+  void _emulatePreviousPieceMovementWhenMovingPiece(
+      OneTile? startTile,
+      OneTile? endTile,
+      PiecePosition startPos,
+      IPiece? killedPiece,
+      PiecePosition endPos) {
     if (startTile == null || endTile == null) {
       // TODO: 他に良いエラー記述方法がないか検討する。
       _logger.error(
-          '[BoardOperator#_emulateMovingPiece]: 開始地点、もしくは終了地点のタイルがnullです。');
+          '[BoardOperator#_emulatePreviousPieceMovement]: 開始地点、もしくは終了地点のタイルがnullです。');
       throw Error();
     }
 
@@ -177,9 +220,22 @@ class BoardOperator {
     // TODO: ここで成り、不成の分岐を実装する。
     _board.setPiece(movingPiece);
 
-    final killedPiece = movement.killedPiece;
     if (killedPiece != null) {
       // TODO: 駒台クラスからPieceを受け取る処理を記載する。
+      _board.changeSelectedTile(endPos);
+      _board.setPiece(killedPiece);
+    }
+  }
+
+  void _emulatePreviousPieceMovementWhenPutingPiece(
+      OneTile? endTile, IPiece? killedPiece, PiecePosition endPos) {
+    if (endTile == null) {
+      _logger.error(
+          '[BoardOperator#_emulatePreviousPieceMovement]:終了地点のタイルがnullです。');
+      throw Error();
+    }
+
+    if (killedPiece != null) {
       _board.changeSelectedTile(endPos);
       _board.setPiece(killedPiece);
     }
@@ -226,8 +282,13 @@ class BoardOperator {
     }
 
     // 履歴の更新
+    _addHistory(movement);
+  }
+
+  /// [movement] を新しい履歴に追加します。
+  void _addHistory(PieceMovement movement) {
     final nextIndex = _currentHistoryIndex + 1;
-    if (_movementHistory.isNotEmpty && nextIndex < _movementHistory.length) {
+    if (_movementHistory.isNotEmpty && nextIndex <= _movementHistory.length) {
       _movementHistory.removeRange(nextIndex, _movementHistory.length);
     }
     _movementHistory.add(movement);

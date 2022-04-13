@@ -29,10 +29,12 @@ class Tile9x9 extends FlameGame with HasTappables {
   /// 選択中の行index(0始まり)
   /// デフォルトはnull
   int? _selectedRowIndex;
+  int? get selectedRowIndex => _selectedRowIndex;
 
   /// 選択中の列index(0始まり)
   /// デフォルトはnull
   int? _selectedColumnIndex;
+  int? get selectedColumnIndex => _selectedColumnIndex;
 
   /// 駒操作のロギングインスタンス
   Loggingable _logger = NormalLogger.singleton();
@@ -41,12 +43,6 @@ class Tile9x9 extends FlameGame with HasTappables {
   var _operationStatus = BoardState.Select;
   set operationStatus(BoardState newValue) {
     _operationStatus = newValue;
-    // for (int i = 0; i < _matrixTiles.length; i++) {
-    //   for (int j = 0; j < _matrixTiles[i].length; j++) {
-    //     final tile = _matrixTiles[i][j];
-    //     tile.isVisibleMovableTile = newValue == BoardState.Select;
-    //   }
-    // }
   }
 
   /// タイルをタップした時に呼ばれるハンドラーです。
@@ -55,6 +51,18 @@ class Tile9x9 extends FlameGame with HasTappables {
   double scale;
   double srcTileSize;
   double get destTileSize => scale * srcTileSize;
+
+  /// 選択中のタイル
+  OneTile? get selectedTile {
+    final rowIndex = _selectedRowIndex;
+    final columnIndex = _selectedColumnIndex;
+    if (rowIndex == null || columnIndex == null) {
+      return null;
+    }
+
+    final tile = _getTile(rowIndex, columnIndex);
+    return tile;
+  }
 
   /// ctor
   Tile9x9({
@@ -240,7 +248,7 @@ class Tile9x9 extends FlameGame with HasTappables {
     for (var i = 0; i < _matrixTiles.length; i++) {
       for (var j = 0; j < _matrixTiles[i].length; j++) {
         final tile = _matrixTiles[i][j];
-        tile.isVisibleMovableTile = false;
+        tile.isMovableTile = false;
       }
     }
   }
@@ -250,13 +258,13 @@ class Tile9x9 extends FlameGame with HasTappables {
       int currRowIndex, int centerRow, int currColumnIndex, int centerColumn) {
     if (currMovableType == MoveType.Movable &&
         currTile.stackedPiece.pieceType == PieceType.Blank) {
-      currTile.isVisibleMovableTile = true;
+      currTile.isMovableTile = true;
     } else if (currMovableType == MoveType.Infinite) {
       // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
       _setMovableTypeToInifiteTiles(
           currRowIndex, centerRow, currColumnIndex, centerColumn);
     } else {
-      currTile.isVisibleMovableTile = false;
+      currTile.isMovableTile = false;
     }
   }
 
@@ -280,7 +288,7 @@ class Tile9x9 extends FlameGame with HasTappables {
         break;
       }
 
-      tile.isVisibleMovableTile = true;
+      tile.isMovableTile = true;
 
       row += deltaRow;
       column += deltaColumn;

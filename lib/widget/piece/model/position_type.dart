@@ -7,5 +7,9 @@ enum PositionFieldType {
   Square,
 
   /// 駒台
-  PieceStand
+  PieceStand,
+
+  /// なし
+  /// exampleなどで配置する際に使用されます。
+  None,
 }
