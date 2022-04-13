@@ -192,7 +192,7 @@ class BoardOperator {
     if (startTile == null || endTile == null) {
       // TODO: 他に良いエラー記述方法がないか検討する。
       _logger.error(
-          '[BoardOperator#_emulateMovingPiece]: 開始地点、もしくは終了地点のタイルがnullです。');
+          '[BoardOperator#_emulateNextPieceMovement]: 開始地点、もしくは終了地点のタイルがnullです。');
       throw Error();
     }
 
@@ -202,7 +202,8 @@ class BoardOperator {
   void _movePiece({required OneTile startTile, required OneTile endTile}) {
     operatorStatus = OperatorPhaseType.StartTileSelect;
     // 移動可能タイルでない場合は移動処理を行わない。
-    if (!endTile.isVisibleMovableTile) {
+    if (!endTile.isMovableTile) {
+      _logger.debug('[BoardOperator#_movePiece]: 移動先のタイルが移動可能タイルではないです。');
       return;
     }
 

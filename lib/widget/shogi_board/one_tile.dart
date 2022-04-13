@@ -45,10 +45,10 @@ class OneTile extends SpriteComponent with Tappable {
   /// 移動できるタイル描画用Component
   late MovableTile _movableTile;
 
-  bool _isVisibleMovableTile = false;
-  bool get isVisibleMovableTile => _isVisibleMovableTile;
-  set isVisibleMovableTile(bool newValue) {
-    _isVisibleMovableTile = newValue;
+  bool _isMovableTile = false;
+  bool get isMovableTile => _isMovableTile;
+  set isMovableTile(bool newValue) {
+    _isMovableTile = newValue;
     _movableTile.isVisible = newValue;
   }
 
@@ -96,7 +96,7 @@ class OneTile extends SpriteComponent with Tappable {
     super.render(canvas);
     _stackedPiece.render(canvas);
 
-    if (_isVisibleMovableTile) {
+    if (_isMovableTile) {
       final opacityPaint = Paint()..color = Colors.blue.withOpacity(0.6);
       canvas.drawRect(_movableTile.toRect(), opacityPaint);
     }
