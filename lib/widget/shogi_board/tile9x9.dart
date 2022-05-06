@@ -346,7 +346,7 @@ class Tile9x9 extends FlameGame with HasTappables {
           rowIndex: i,
           columnIndex: j,
         )..anchor = Anchor.topLeft;
-        add(oneTile);
+        await add(oneTile);
 
         // 操作用フィールドへ追加
         rowTiles.add(oneTile);
