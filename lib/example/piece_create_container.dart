@@ -139,18 +139,27 @@ class PieceCreateContainer extends FlameGame with HasTappables {
     })
       ..x = 64 * 10 + 120
       ..y = 300);
-    // TODO: 現状うまく動かないので修正必要
     add(changeText = _PieceCreateButton('undo', () {
       operator.undo();
     })
       ..x = 64 * 10 + 120
       ..y = 400);
-    // TODO: 現状うまく動かないので修正必要
     add(changeText = _PieceCreateButton('redo', () {
       operator.redo();
     })
       ..x = 64 * 10 + 120
       ..y = 500);
+    add(changeText = _PieceCreateButton('MoveEffect.by', () async {
+      await operator.startStage(isTo: false);
+    })
+      ..x = 64 * 10 + 120
+      ..y = 600);
+    add(
+      changeText = _PieceCreateButton('MoveEffect.to ', () async {
+        await operator.startStage(isTo: true);
+      })
+        ..topLeftPosition = Vector2(64 * 10 + 120, 700),
+    );
   }
 }
 

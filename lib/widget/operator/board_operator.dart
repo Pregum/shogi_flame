@@ -176,6 +176,10 @@ class BoardOperator {
     _addHistory(movement);
   }
 
+  Future<void> startStage({bool isTo = true}) async {
+    await _board.startAnimation(isTo: isTo);
+  }
+
   /// 一つ前の配置に戻します。
   /// [_movementHistory] が空、もしくは戻れる過去がない場合、何も処理を行いません。
   Future<void> undo() async {

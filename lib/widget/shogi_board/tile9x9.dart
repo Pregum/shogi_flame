@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flame/effects.dart';
 import 'package:flame/layers.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
@@ -19,12 +20,14 @@ import 'one_tile.dart';
 typedef OnTapTileEventHandler = void Function(OneTile tile);
 
 /// 9x9の将棋盤を描画するcomponent
-class Tile9x9 extends FlameGame with HasTappables {
+class Tile9x9 extends FlameGame with HasTappables, HasPaint {
   /// 選択マスを表示するselector
   late Selector _selector;
 
   /// マス単位のインスタンスを保持するフィールド
   late List<List<OneTile>> _matrixTiles;
+
+  late Component _effectControllerObject = Component();
 
   /// タイル上のpieceTypeを取得するgetter
   List<List<PieceType>> get pieceTypesOnTiles {
@@ -91,6 +94,8 @@ class Tile9x9 extends FlameGame with HasTappables {
     await _prepare9x9Tile();
 
     await _prepareSelector();
+
+    await add(_effectControllerObject);
   }
 
   @override
@@ -108,19 +113,6 @@ class Tile9x9 extends FlameGame with HasTappables {
     _eventListeners.removeRange(0, _eventListeners.length);
   }
 
-  /// [ rowIndex ], [ columnIndex ]のタイルを取得します。
-  /// 盤上の範囲外の場合はnullを返します
-  OneTile? _getTile(int rowIndex, int columnIndex) {
-    if (!(rowIndex >= 0 && rowIndex < defaultRowCount)) {
-      return null;
-    }
-    if (!(columnIndex >= 0 && columnIndex < defaultColumnCount)) {
-      return null;
-    }
-
-    return _matrixTiles[rowIndex][columnIndex];
-  }
-
   /// Tile情報を取得します。
   /// [ destinationPosition ] が盤上の範囲外の場合[ null ]を返します。
   OneTile? getTile(PiecePosition destinationPosition) {
@@ -131,27 +123,6 @@ class Tile9x9 extends FlameGame with HasTappables {
       return null;
     }
     return _getTile(row, column);
-  }
-
-  /// 現在 [OneTile] から 対象の [OneTile] へ piece を移動させます。
-  bool _movePiece(OneTile currentTile, OneTile destinationTile) {
-    // 移動元のピースのtypeがblankである場合はfalseを返す。
-    final currentPiece = currentTile.stackedPiece;
-    if (currentPiece.pieceType == PieceType.Blank) {
-      return false;
-    }
-
-    // 移動先のピースのtypeがblankでない場合はfalseを返す。
-    final destnationPiece = destinationTile.stackedPiece;
-    if (destnationPiece.pieceType != PieceType.Blank) {
-      return false;
-    }
-
-    // TODO: この辺りに間にpieceがないかなどの細かい条件判定を追加する。
-
-    destinationTile.stackedPiece = currentPiece;
-    currentTile.stackedPiece = PieceFactory.createBlankPiece();
-    return true;
   }
 
   /// [IPiece] を選択中のマスに設定します。
@@ -212,6 +183,7 @@ class Tile9x9 extends FlameGame with HasTappables {
         aTile.stackedPiece = PieceFactory.createBlankPiece();
       }
     }
+    _effectControllerObject.children.clear();
   }
 
   /// 移動可能な位置を更新します。
@@ -262,6 +234,57 @@ class Tile9x9 extends FlameGame with HasTappables {
         tile.isMovableTile = false;
       }
     }
+  }
+
+  Future<void> startAnimation({bool isTo = true}) async {
+    final textPaint = TextPaint(
+      style: TextStyle(
+        fontSize: 24,
+        color: Colors.greenAccent,
+        backgroundColor: Colors.blueGrey,
+      ),
+    );
+    final textComp = TextComponent(
+      text: 'Start!',
+      anchor: Anchor.centerLeft,
+      position: Vector2(10, Random().nextDouble() * 100.0),
+      priority: 1,
+      textRenderer: textPaint,
+      size: Vector2(64 * 9, 64 * 4),
+      // );
+    );
+
+    if (isTo) {
+      textComp
+        ..add(MoveEffect.to(
+          Vector2(150, 80),
+          EffectController(
+            duration: 1.5,
+          ),
+        ));
+    } else {
+      textComp
+        ..add(MoveEffect.by(
+          Vector2(150, 80),
+          EffectController(
+            duration: 1.5,
+          ),
+        ));
+    }
+    _effectControllerObject.add(textComp);
+  }
+
+  /// [ rowIndex ], [ columnIndex ]のタイルを取得します。
+  /// 盤上の範囲外の場合はnullを返します
+  OneTile? _getTile(int rowIndex, int columnIndex) {
+    if (!(rowIndex >= 0 && rowIndex < defaultRowCount)) {
+      return null;
+    }
+    if (!(columnIndex >= 0 && columnIndex < defaultColumnCount)) {
+      return null;
+    }
+
+    return _matrixTiles[rowIndex][columnIndex];
   }
 
   /// [currMovableType] に応じて、[currTile] の移動可能フラグの更新を行います。
