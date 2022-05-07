@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:shogi_game/model/normal_logger.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/model/piece_movement.dart';
@@ -23,6 +25,16 @@ class BoardOperator {
 
   /// 駒の移動履歴
   List<PieceMovement> _movementHistory = <PieceMovement>[];
+
+  /// 駒の移動履歴のsink/streamを扱う
+  /// 他オブジェクトで移動履歴を扱うときはlistenしてもらう
+  final _sc = StreamController<Iterable<PieceMovement>>();
+
+  /// 移動履歴のstream
+  Stream<Iterable<PieceMovement>> get historyStream => _sc.stream;
+
+  /// 移動履歴のsink
+  StreamSink<Iterable<PieceMovement>> get _sink => _sc.sink;
 
   /// 現在の履歴のindex
   int _currentHistoryIndex = -1;
@@ -53,6 +65,11 @@ class BoardOperator {
 
   /// ctor
   BoardOperator(this._board);
+
+  /// クラス破棄時に呼び出すメソッドです。
+  void dispose() {
+    _sc.close();
+  }
 
   /// 将棋盤に対してアクションします。
   void onClickBoard(OneTile targetTile) {
@@ -164,6 +181,7 @@ class BoardOperator {
     _forgetMovingPiece();
 
     _currentHistoryIndex = pastIndex;
+    _sink.add(_movementHistory.take(_currentHistoryIndex + 1));
   }
 
   /// １つ先の配置に進めます。
@@ -180,6 +198,7 @@ class BoardOperator {
     _forgetMovingPiece();
 
     _currentHistoryIndex = futureIndex;
+    _sink.add(_movementHistory.take(futureIndex));
   }
 
   void _emulatePreviousPieceMovement(PieceMovement movement) {
@@ -293,6 +312,8 @@ class BoardOperator {
     }
     _movementHistory.add(movement);
     _currentHistoryIndex = nextIndex;
+
+    _sink.add(_movementHistory);
   }
 
   /// 選択中の[_movingStartTile] と [_movingEndTile] の手を忘れます。
