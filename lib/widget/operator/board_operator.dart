@@ -64,7 +64,16 @@ class BoardOperator {
   final NormalLogger _logger = NormalLogger.singleton();
 
   /// ctor
-  BoardOperator(this._board);
+  BoardOperator(this._board) {
+    final firstSnapshot = List<List<PieceType>>.filled(_board.defaultRowCount,
+        List<PieceType>.filled(_board.defaultColumnCount, PieceType.Blank));
+    final movement = PieceMovement(
+        PiecePosition(0, 0, PositionFieldType.None, PieceType.Blank),
+        PiecePosition(0, 0, PositionFieldType.None, PieceType.Blank),
+        null,
+        snapshot: firstSnapshot);
+    _addHistory(movement);
+  }
 
   /// クラス破棄時に呼び出すメソッドです。
   void dispose() {
@@ -159,7 +168,9 @@ class BoardOperator {
 
     final endPosition = PiecePosition.fromOneTile(tile);
     final movement = PieceMovement.putOnly(
-        putPosition: endPosition, killedPiece: alreadyPiece);
+        putPosition: endPosition,
+        killedPiece: alreadyPiece,
+        snapshot: _board.pieceTypesOnTiles);
 
     // 履歴の更新
     _addHistory(movement);
@@ -167,21 +178,20 @@ class BoardOperator {
 
   /// 一つ前の配置に戻します。
   /// [_movementHistory] が空、もしくは戻れる過去がない場合、何も処理を行いません。
-  void undo() {
+  Future<void> undo() async {
     final pastIndex = _currentHistoryIndex - 1;
     if (_movementHistory.isEmpty ||
-        _currentHistoryIndex < 0 ||
-        _movementHistory.length <= _currentHistoryIndex) {
+        pastIndex < 0 ||
+        _movementHistory.length <= pastIndex) {
       return;
     }
 
-    // FIXME: 2回連続でundoすると正常に動作しないため修正する
-    final lastMovement = _movementHistory[_currentHistoryIndex];
-    _emulatePreviousPieceMovement(lastMovement);
+    final lastMovement = _movementHistory[pastIndex];
+    await _emulatePreviousPieceMovement(lastMovement);
     _forgetMovingPiece();
 
     _currentHistoryIndex = pastIndex;
-    _sink.add(_movementHistory.take(_currentHistoryIndex + 1));
+    _sink.add(_movementHistory.take(pastIndex + 1));
   }
 
   /// １つ先の配置に進めます。
@@ -198,80 +208,44 @@ class BoardOperator {
     _forgetMovingPiece();
 
     _currentHistoryIndex = futureIndex;
-    _sink.add(_movementHistory.take(futureIndex));
+    _sink.add(_movementHistory.take(futureIndex + 1));
   }
 
-  void _emulatePreviousPieceMovement(PieceMovement movement) {
-    // 先に移動した駒を前の位置に戻す
-    final startPos = movement.movingStartPosition;
-    final endPos = movement.movingEndPosition;
+  Future<void> _emulatePreviousPieceMovement(PieceMovement movement) async {
+    final snapshot = movement.snapshot;
 
-    final startTile = _board.getTile(startPos);
-    final endTile = _board.getTile(endPos);
-
-    // noneの場合は外部要因で作成されている為、startPosのPieceは消えて良い
-    if (startPos.positionFieldType == PositionFieldType.None) {
-      _emulatePreviousPieceMovementWhenPutingPiece(
-          endTile, movement.killedPiece, endPos);
+    if (snapshot == null) {
       return;
     }
 
-    // 上記以外は盤上の移動 or 持ち駒を打ったと認識して処理を行う
-    _emulatePreviousPieceMovementWhenMovingPiece(
-        startTile, endTile, startPos, movement.killedPiece, endPos);
+    // snapshotの盤面に戻す
+    await syncPiecesOnBoard(snapshot);
   }
 
-  void _emulatePreviousPieceMovementWhenMovingPiece(
-      OneTile? startTile,
-      OneTile? endTile,
-      PiecePosition startPos,
-      IPiece? killedPiece,
-      PiecePosition endPos) {
-    if (startTile == null || endTile == null) {
-      // TODO: 他に良いエラー記述方法がないか検討する。
-      _logger.error(
-          '[BoardOperator#_emulatePreviousPieceMovement]: 開始地点、もしくは終了地点のタイルがnullです。');
-      throw Error();
-    }
-
-    final movingPiece = endTile.stackedPiece;
-    _board.changeSelectedTile(startPos);
-    // TODO: ここで成り、不成の分岐を実装する。
-    _board.setPiece(movingPiece);
-
-    if (killedPiece != null) {
-      // TODO: 駒台クラスからPieceを受け取る処理を記載する。
-      _board.changeSelectedTile(endPos);
-      _board.setPiece(killedPiece);
+  Future<void> syncPiecesOnBoard(List<List<PieceType>> snapshot) async {
+    for (var i = 0; i < snapshot.length; i++) {
+      final row = snapshot[i];
+      for (var j = 0; j < row.length; j++) {
+        final tile = row[j];
+        _board.changeSelectedTile(
+            PiecePosition(i, j, PositionFieldType.None, PieceType.Blank));
+        final piece = await PieceFactory.createSpritePiece(
+            tile, _board.scale * _board.srcTileSize);
+        _board.setPiece(piece!);
+      }
+      final str = row.map((tile) => tile.describe()).join(' | ');
+      print('$i: $str');
     }
   }
 
-  void _emulatePreviousPieceMovementWhenPutingPiece(
-      OneTile? endTile, IPiece? killedPiece, PiecePosition endPos) {
-    if (endTile == null) {
-      _logger.error(
-          '[BoardOperator#_emulatePreviousPieceMovement]:終了地点のタイルがnullです。');
-      throw Error();
+  Future<void> _emulateNextPieceMovement(PieceMovement movement) async {
+    final snapshot = movement.snapshot;
+    if (snapshot == null) {
+      return;
     }
 
-    if (killedPiece != null) {
-      _board.changeSelectedTile(endPos);
-      _board.setPiece(killedPiece);
-    }
-  }
-
-  void _emulateNextPieceMovement(PieceMovement movement) {
-    final startTile = _board.getTile(movement.movingStartPosition);
-    final endTile = _board.getTile(movement.movingEndPosition);
-
-    if (startTile == null || endTile == null) {
-      // TODO: 他に良いエラー記述方法がないか検討する。
-      _logger.error(
-          '[BoardOperator#_emulateNextPieceMovement]: 開始地点、もしくは終了地点のタイルがnullです。');
-      throw Error();
-    }
-
-    _movePiece(startTile: startTile, endTile: endTile);
+    // snapshotの盤面に同期する
+    await syncPiecesOnBoard(snapshot);
   }
 
   void _movePiece({required OneTile startTile, required OneTile endTile}) {
@@ -284,7 +258,8 @@ class BoardOperator {
 
     final startPos = PiecePosition.fromOneTile(startTile);
     final endPos = PiecePosition.fromOneTile(endTile);
-    final movement = PieceMovement(startPos, endPos, endTile.stackedPiece);
+    final movement = PieceMovement(startPos, endPos, endTile.stackedPiece,
+        snapshot: _board.pieceTypesOnTiles);
     _logger.info('[BoardOperator#_movePiece]: pieceを移動します。');
 
     final movingPiece = startTile.stackedPiece;

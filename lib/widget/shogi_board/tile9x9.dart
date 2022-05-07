@@ -26,6 +26,17 @@ class Tile9x9 extends FlameGame with HasTappables {
   /// マス単位のインスタンスを保持するフィールド
   late List<List<OneTile>> _matrixTiles;
 
+  /// タイル上のpieceTypeを取得するgetter
+  List<List<PieceType>> get pieceTypesOnTiles {
+    final ret = _matrixTiles.map((row) {
+      return row.map((tile) {
+        final pt = tile.stackedPiece.pieceType;
+        return pt;
+      }).toList();
+    }).toList();
+    return ret;
+  }
+
   /// 選択中の行index(0始まり)
   /// デフォルトはnull
   int? _selectedRowIndex;
@@ -70,8 +81,8 @@ class Tile9x9 extends FlameGame with HasTappables {
     this.srcTileSize = 32.0,
   });
 
-  static const _ROW_COUNT = 9;
-  static const _COLUMN_COUNT = 9;
+  final defaultRowCount = 9;
+  final defaultColumnCount = 9;
 
   @override
   Future<void> onLoad() async {
@@ -100,10 +111,10 @@ class Tile9x9 extends FlameGame with HasTappables {
   /// [ rowIndex ], [ columnIndex ]のタイルを取得します。
   /// 盤上の範囲外の場合はnullを返します
   OneTile? _getTile(int rowIndex, int columnIndex) {
-    if (!(rowIndex >= 0 && rowIndex < _ROW_COUNT)) {
+    if (!(rowIndex >= 0 && rowIndex < defaultRowCount)) {
       return null;
     }
-    if (!(columnIndex >= 0 && columnIndex < _COLUMN_COUNT)) {
+    if (!(columnIndex >= 0 && columnIndex < defaultColumnCount)) {
       return null;
     }
 
@@ -180,11 +191,11 @@ class Tile9x9 extends FlameGame with HasTappables {
       return false;
     }
 
-    if (row >= 0 && row < _ROW_COUNT) {
+    if (row < 0 || defaultRowCount <= row) {
       return false;
     }
 
-    if (column >= 0 && column < _COLUMN_COUNT) {
+    if (column < 0 && defaultColumnCount <= column) {
       return false;
     }
 
@@ -330,10 +341,10 @@ class Tile9x9 extends FlameGame with HasTappables {
     _matrixTiles = <List<OneTile>>[];
 
     // 9x9マスのComponentを作成し、内部操作用フィールドへ1行毎に追加していく
-    for (int i = 0; i < _ROW_COUNT; i++) {
+    for (int i = 0; i < defaultRowCount; i++) {
       final rowTiles = <OneTile>[];
 
-      for (int j = 0; j < _COLUMN_COUNT; j++) {
+      for (int j = 0; j < defaultColumnCount; j++) {
         final tileImage = await loadSprite(
           'tile.png',
         );
@@ -357,7 +368,7 @@ class Tile9x9 extends FlameGame with HasTappables {
     }
 
     // check
-    assert(_matrixTiles.length == _ROW_COUNT);
-    assert(_matrixTiles[0].length == _COLUMN_COUNT);
+    assert(_matrixTiles.length == defaultRowCount);
+    assert(_matrixTiles[0].length == defaultColumnCount);
   }
 }
