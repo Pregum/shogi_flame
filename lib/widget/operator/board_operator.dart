@@ -258,8 +258,6 @@ class BoardOperator {
 
     final startPos = PiecePosition.fromOneTile(startTile);
     final endPos = PiecePosition.fromOneTile(endTile);
-    final movement = PieceMovement(startPos, endPos, endTile.stackedPiece,
-        snapshot: _board.pieceTypesOnTiles);
     _logger.info('[BoardOperator#_movePiece]: pieceを移動します。');
 
     final movingPiece = startTile.stackedPiece;
@@ -269,6 +267,9 @@ class BoardOperator {
 
     final blanckPiece = PieceFactory.createBlankPiece();
     startTile.stackedPiece = blanckPiece;
+
+    final movement = PieceMovement(startPos, endPos, endTile.stackedPiece,
+        snapshot: _board.pieceTypesOnTiles);
 
     final killedPiece = movement.killedPiece;
     if (killedPiece != null) {
