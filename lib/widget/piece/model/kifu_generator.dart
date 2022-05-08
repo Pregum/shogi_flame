@@ -26,14 +26,15 @@ class KifuGenerator {
   /// [length] の手数分生成します。
   List<MoveInfo> generateMoveInfos(int length) {
     // TODO: 前の手を考慮していない為、前の手を考慮した処理を加える必要がある。
-    return List<MoveInfo>.generate(length, (_) => _generateMoveInfo()).toList();
+    return List<MoveInfo>.generate(
+        length, (i) => _generateMoveInfo(isBlank: i % 2 == 0)).toList();
   }
 
-  MoveInfo _generateMoveInfo() {
+  MoveInfo _generateMoveInfo({bool? isBlank}) {
     final pt = PieceTypeEx.random();
     final col = Random().nextInt(_columnNum) + 1;
     final row = Random().nextInt(_rowNum) + 1;
-    final isBlack = Random().nextBool();
+    final isBlack = isBlank ?? Random().nextBool();
     final isPromotion = pt.isPromotion && Random().nextBool();
     final mt = Random().nextBool() ? MoveTypeEx.random() : null;
     final prt = Random().nextBool() ? PieceRelationTypeEx.random() : null;

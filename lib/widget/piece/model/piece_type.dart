@@ -93,7 +93,8 @@ extension PieceTypeEx on PieceType {
   /// [candidates] が与えられている場合は、その候補リストから選出されます。
   static PieceType random({List<PieceType>? candidates}) {
     // return PieceType.Blank;
-    var pieceTypes = PieceType.values;
+    var pieceTypes =
+        PieceType.values.where((pt) => pt != PieceType.Blank).toList();
     final filteredCandidates = candidates?.whereType<PieceType>().toList();
     if (filteredCandidates != null && filteredCandidates.isNotEmpty) {
       pieceTypes =

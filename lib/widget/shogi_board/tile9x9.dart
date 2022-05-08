@@ -66,6 +66,9 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint {
   double srcTileSize;
   double get destTileSize => scale * srcTileSize;
 
+  static double defaultScale = 2.0;
+  static double defaultSrcTileSize = 32.0;
+
   /// 選択中のタイル
   OneTile? get selectedTile {
     final rowIndex = _selectedRowIndex;
