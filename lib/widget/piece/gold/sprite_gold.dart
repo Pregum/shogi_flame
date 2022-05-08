@@ -3,9 +3,12 @@ import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
+import 'package:shogi_game/widget/piece/model/player_type.dart';
 
 class SpriteGold extends SpriteComponent implements IPiece {
-  SpriteGold(Sprite sprite) : super(sprite: sprite);
+  SpriteGold(Sprite sprite, {PlayerType? playerType}) : super(sprite: sprite) {
+    _playerType = playerType ?? PlayerType.Black;
+  }
 
   static Future<SpriteGold> initialize() async {
     final sprite = await Sprite.load('gold_general.png');
@@ -25,4 +28,8 @@ class SpriteGold extends SpriteComponent implements IPiece {
     ],
     3,
   );
+
+  @override
+  PlayerType get playerType => _playerType;
+  late PlayerType _playerType;
 }

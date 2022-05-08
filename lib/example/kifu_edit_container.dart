@@ -7,6 +7,7 @@ import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 
 import '../widget/piece/model/kifu_generator.dart';
 import '../widget/piece/model/piece_position.dart';
+import '../widget/piece/model/player_type.dart';
 import '../widget/shogi_board/tile9x9.dart';
 
 class KifuEditContainer extends FlameGame with HasTappables {
@@ -55,7 +56,7 @@ class KifuEditContainer extends FlameGame with HasTappables {
     );
     add(
       ButtonComponent(
-        button: TextComponent(text: '棋譜生成'),
+        button: TextComponent(text: '棋譜生成 generate'),
         onPressed: () async {
           final candidates = PieceTypeEx.unPromotedPieceTypes;
           final moveInfos = kifuGenerator.generateMoveInfos(generatedLength,
@@ -69,21 +70,6 @@ class KifuEditContainer extends FlameGame with HasTappables {
             ..topLeftPosition = Vector2(700, 140));
 
           // ここで盤面に反映させていく
-          // moveInfos.forEach((moveInfo) async {
-          //   final piecePosition = PiecePosition(
-          //     moveInfo.rowIndex,
-          //     moveInfo.columnIndex,
-          //     PositionFieldType.None,
-          //     PieceType.Blank,
-          //   );
-          //   board.changeSelectedTile(piecePosition);
-          //   final piece = await PieceFactory.createSpritePiece(
-          //       moveInfo.pieceType, board.destTileSize);
-
-          //   final ret = board.setPiece(piece!);
-          //   print('${moveInfo.toString()}: $ret');
-          // });
-
           for (var i = 0; i < moveInfos.length; i++) {
             final moveInfo = moveInfos[i];
             final piecePosition = PiecePosition(
@@ -93,8 +79,11 @@ class KifuEditContainer extends FlameGame with HasTappables {
               PieceType.Blank,
             );
             board.changeSelectedTile(piecePosition);
+            final playerType =
+                moveInfo.isBlack ? PlayerType.Black : PlayerType.White;
             final piece = await PieceFactory.createSpritePiece(
-                moveInfo.pieceType, board.destTileSize);
+                moveInfo.pieceType, board.destTileSize,
+                playerType: playerType);
 
             final ret = board.setPiece(piece!);
             print('${moveInfo.toString()}: $ret');
