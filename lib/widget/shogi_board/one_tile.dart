@@ -34,7 +34,8 @@ class OneTile extends SpriteComponent with Tappable {
   set stackedPiece(IPiece piece) {
     final oldPiece = _stackedPiece;
     _stackedPiece = piece;
-    remove(oldPiece);
+    // remove(oldPiece);
+    oldPiece.removeFromParent();
     add(_stackedPiece);
   }
 

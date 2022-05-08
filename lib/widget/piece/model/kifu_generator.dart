@@ -24,14 +24,21 @@ class KifuGenerator {
   /// 手を生成します。
   ///
   /// [length] の手数分生成します。
-  List<MoveInfo> generateMoveInfos(int length) {
+  List<MoveInfo> generateMoveInfos(int length,
+      {List<PieceType>? pieceTypeCandidates}) {
     // TODO: 前の手を考慮していない為、前の手を考慮した処理を加える必要がある。
     return List<MoveInfo>.generate(
-        length, (i) => _generateMoveInfo(isBlank: i % 2 == 0)).toList();
+      length,
+      (i) => _generateMoveInfo(
+        isBlank: i % 2 == 0,
+        pieceTypeCandidates: pieceTypeCandidates,
+      ),
+    ).toList();
   }
 
-  MoveInfo _generateMoveInfo({bool? isBlank}) {
-    final pt = PieceTypeEx.random();
+  MoveInfo _generateMoveInfo(
+      {bool? isBlank, List<PieceType>? pieceTypeCandidates}) {
+    final pt = PieceTypeEx.random(candidates: pieceTypeCandidates);
     final col = Random().nextInt(_columnNum) + 1;
     final row = Random().nextInt(_rowNum) + 1;
     final isBlack = isBlank ?? Random().nextBool();

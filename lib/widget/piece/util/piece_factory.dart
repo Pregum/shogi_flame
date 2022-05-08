@@ -47,23 +47,11 @@ class PieceFactory {
         final sprite = await Sprite.load('pawn.png');
         return SpritePawn(sprite)..size = Vector2.all(size);
       case PieceType.PromotedRook:
-        // TODO: Handle this case.
-        break;
       case PieceType.PromotedBishop:
-        // TODO: Handle this case.
-        break;
       case PieceType.PromotedSilver:
-        // TODO: Handle this case.
-        break;
       case PieceType.PromotedKnight:
-        // TODO: Handle this case.
-        break;
       case PieceType.PromotedLance:
-        // TODO: Handle this case.
-        break;
       case PieceType.PromotedPawn:
-        // TODO: Handle this case.
-        break;
       case PieceType.Blank:
         return BlankPiece();
     }

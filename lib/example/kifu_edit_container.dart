@@ -1,8 +1,12 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:shogi_game/widget/piece/model/piece_type.dart';
+import 'package:shogi_game/widget/piece/model/position_type.dart';
+import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 
 import '../widget/piece/model/kifu_generator.dart';
+import '../widget/piece/model/piece_position.dart';
 import '../widget/shogi_board/tile9x9.dart';
 
 class KifuEditContainer extends FlameGame with HasTappables {
@@ -49,16 +53,56 @@ class KifuEditContainer extends FlameGame with HasTappables {
         },
       )..topLeftPosition = Vector2(700, 10),
     );
-    await add(
+    add(
       ButtonComponent(
         button: TextComponent(text: '棋譜生成'),
-        onPressed: () {
-          final moveInfos = kifuGenerator.generateMoveInfos(generatedLength);
+        onPressed: () async {
+          final candidates = PieceTypeEx.unPromotedPieceTypes;
+          final moveInfos = kifuGenerator.generateMoveInfos(generatedLength,
+              pieceTypeCandidates: candidates);
           print(moveInfos.join('\n'));
           moveInfodsComponent.removeFromParent();
+          // await Future.delayed(const Duration(milliseconds: 500));
+          board.resetBoard();
 
           add(moveInfodsComponent = TextComponent(text: moveInfos.join('\n'))
             ..topLeftPosition = Vector2(700, 140));
+
+          // ここで盤面に反映させていく
+          // moveInfos.forEach((moveInfo) async {
+          //   final piecePosition = PiecePosition(
+          //     moveInfo.rowIndex,
+          //     moveInfo.columnIndex,
+          //     PositionFieldType.None,
+          //     PieceType.Blank,
+          //   );
+          //   board.changeSelectedTile(piecePosition);
+          //   final piece = await PieceFactory.createSpritePiece(
+          //       moveInfo.pieceType, board.destTileSize);
+
+          //   final ret = board.setPiece(piece!);
+          //   print('${moveInfo.toString()}: $ret');
+          // });
+
+          for (var i = 0; i < moveInfos.length; i++) {
+            final moveInfo = moveInfos[i];
+            final piecePosition = PiecePosition(
+              moveInfo.rowIndex,
+              moveInfo.columnIndex,
+              PositionFieldType.None,
+              PieceType.Blank,
+            );
+            board.changeSelectedTile(piecePosition);
+            final piece = await PieceFactory.createSpritePiece(
+                moveInfo.pieceType, board.destTileSize);
+
+            final ret = board.setPiece(piece!);
+            print('${moveInfo.toString()}: $ret');
+          }
+          for (var i = 0; i < board.pieceTypesOnTiles.length; i++) {
+            final oneLine = board.pieceTypesOnTiles[i];
+            print('$i: ${oneLine.map((pt) => pt.describe()).join(' | ')}');
+          }
         },
       )..topLeftPosition = Vector2(700, 80),
     );

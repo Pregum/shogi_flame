@@ -114,4 +114,15 @@ extension PieceTypeEx on PieceType {
         this == PieceType.PromotedLance ||
         this == PieceType.PromotedPawn;
   }
+
+  static List<PieceType> get unPromotedPieceTypes => <PieceType>[
+        PieceType.King,
+        PieceType.Rook,
+        PieceType.Bishop,
+        PieceType.GoldGeneral,
+        PieceType.SilverGeneral,
+        PieceType.Knight,
+        PieceType.Lance,
+        PieceType.Pawn,
+      ];
 }
