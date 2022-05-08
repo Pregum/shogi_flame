@@ -1,3 +1,5 @@
+import 'dart:math';
+
 /// 駒のタイプ
 enum PieceType {
   /// 空
@@ -84,5 +86,31 @@ extension PieceTypeEx on PieceType {
       case PieceType.PromotedPawn:
         return 'と金';
     }
+  }
+
+  /// ランダムな駒のタイプを返します。
+  ///
+  /// [candidates] が与えられている場合は、その候補リストから選出されます。
+  static PieceType random({List<PieceType>? candidates}) {
+    // return PieceType.Blank;
+    var pieceTypes = PieceType.values;
+    final filteredCandidates = candidates?.whereType<PieceType>().toList();
+    if (filteredCandidates != null && filteredCandidates.isNotEmpty) {
+      pieceTypes =
+          pieceTypes.where((pt) => filteredCandidates.contains(pt)).toList();
+    }
+
+    final selectedPieceTypeIndex = Random().nextInt(pieceTypes.length);
+    final selectedPieceType = pieceTypes[selectedPieceTypeIndex];
+    return selectedPieceType;
+  }
+
+  bool get isPromotion {
+    return this == PieceType.PromotedRook ||
+        this == PieceType.PromotedBishop ||
+        this == PieceType.PromotedSilver ||
+        this == PieceType.PromotedKnight ||
+        this == PieceType.PromotedLance ||
+        this == PieceType.PromotedPawn;
   }
 }
