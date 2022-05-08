@@ -98,6 +98,11 @@ class PieceCreateContainer extends FlameGame with HasTappables {
     })
       ..x = 64 * 10
       ..y = 600);
+    add(_PieceCreateButton('sprite', () async {
+      await operator.startSpriteAnimation();
+    })
+      ..x = 64 * 10
+      ..y = 700);
     add(_PieceCreateButton('rook', () async {
       print('set rook piece!!!');
       final rookPiece = await PieceFactory.createSpritePiece(

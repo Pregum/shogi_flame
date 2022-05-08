@@ -236,6 +236,22 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint {
     }
   }
 
+  Future<void> startSpriteAnimation() async {
+    final sprite = await Sprite.load('start_sprite.png');
+    final spriteComponent = SpriteComponent(
+      sprite: sprite,
+      anchor: Anchor.centerLeft,
+      size: Vector2(640, 320),
+      position: Vector2(0, 120),
+    )
+      ..setOpacity(0.0)
+      ..add(OpacityEffect.fadeIn(
+          EffectController(duration: 1.5, curve: Curves.bounceIn)))
+      ..add(OpacityEffect.fadeOut(
+          EffectController(duration: 1.5, startDelay: 3)));
+    add(spriteComponent);
+  }
+
   Future<void> startAnimation({bool isTo = true}) async {
     final textPaint = TextPaint(
       style: TextStyle(
