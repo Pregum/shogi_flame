@@ -1,15 +1,15 @@
 import 'package:flame/components.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
-import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 
-class SpriteGold extends SpriteComponent implements IPiece {
-  SpriteGold(Sprite sprite) : super(sprite: sprite);
+/// 角行のsprite
+class SpriteBishop extends SpriteComponent implements IPiece {
+  SpriteBishop(Sprite sprite) : super(sprite: sprite);
 
-  static Future<SpriteGold> initialize() async {
+  static Future<SpriteBishop> initialize() async {
     final sprite = await Sprite.load('gold_general.png');
-    return SpriteGold(sprite);
+    return SpriteBishop(sprite);
   }
 
   @override
@@ -19,9 +19,9 @@ class SpriteGold extends SpriteComponent implements IPiece {
   PieceRoute get movableRoutes => _movableRoutes;
   PieceRoute _movableRoutes = PieceRoute(
     <List<MoveType>>[
-      <MoveType>[MoveType.Movable, MoveType.Movable, MoveType.Movable],
-      <MoveType>[MoveType.Movable, MoveType.UnMovable, MoveType.Movable],
-      <MoveType>[MoveType.UnMovable, MoveType.Movable, MoveType.UnMovable],
+      <MoveType>[MoveType.Infinite, MoveType.UnMovable, MoveType.Infinite],
+      <MoveType>[MoveType.UnMovable, MoveType.UnMovable, MoveType.UnMovable],
+      <MoveType>[MoveType.Infinite, MoveType.UnMovable, MoveType.Infinite],
     ],
     3,
   );

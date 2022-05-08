@@ -11,7 +11,7 @@ enum PieceType {
   /// 飛車(R)
   Rook,
 
-  /// 各行(B)
+  /// 角行(B)
   Bishop,
 
   /// 金将(G)
@@ -26,7 +26,7 @@ enum PieceType {
   /// 香車(L)
   Lance,
 
-  /// 歩兵
+  /// 歩兵(P)
   Pawn,
 
   // 成駒 --------------------
@@ -48,4 +48,41 @@ enum PieceType {
 
   /// と金
   PromotedPawn,
+}
+
+extension PieceTypeEx on PieceType {
+  String describe() {
+    switch (this) {
+      case PieceType.Blank:
+        return '  ';
+      case PieceType.King:
+        return '王';
+      case PieceType.Rook:
+        return '飛';
+      case PieceType.Bishop:
+        return '角';
+      case PieceType.GoldGeneral:
+        return '金';
+      case PieceType.SilverGeneral:
+        return '銀';
+      case PieceType.Knight:
+        return '桂';
+      case PieceType.Lance:
+        return '香';
+      case PieceType.Pawn:
+        return '歩';
+      case PieceType.PromotedRook:
+        return '龍';
+      case PieceType.PromotedBishop:
+        return '馬';
+      case PieceType.PromotedSilver:
+        return '成銀';
+      case PieceType.PromotedKnight:
+        return '成桂';
+      case PieceType.PromotedLance:
+        return '成香';
+      case PieceType.PromotedPawn:
+        return 'と金';
+    }
+  }
 }
