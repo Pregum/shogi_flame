@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/shogi_board/movable_tile.dart';
 
+import '../piece/model/player_type.dart';
+
 /// タップしたマスの左上のxy座標が [Vector2] から与えられる.
 /// タップ箇所のマスのindexを **rowIndex** と **columnIndex** から与えられる.
 typedef OnTileTapDowned = void Function(
@@ -34,7 +36,10 @@ class OneTile extends SpriteComponent with Tappable {
   set stackedPiece(IPiece piece) {
     final oldPiece = _stackedPiece;
     _stackedPiece = piece;
-    remove(oldPiece);
+    oldPiece.removeFromParent();
+    if (piece.playerType == PlayerType.White) {
+      piece.flipVerticallyAroundCenter();
+    }
     add(_stackedPiece);
   }
 
@@ -94,7 +99,6 @@ class OneTile extends SpriteComponent with Tappable {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    _stackedPiece.render(canvas);
 
     if (_isMovableTile) {
       final opacityPaint = Paint()..color = Colors.blue.withOpacity(0.6);

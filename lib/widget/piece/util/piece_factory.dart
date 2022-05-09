@@ -11,6 +11,8 @@ import 'package:shogi_game/widget/piece/pawn/sprite_pawn.dart';
 import 'package:shogi_game/widget/piece/rook/sprite_rook.dart';
 import 'package:shogi_game/widget/piece/silver/sprite_silver.dart';
 
+import '../model/player_type.dart';
+
 /// [IPiece] のインスタンスを生成するutility
 class PieceFactory {
   /// PieceTypeがBlankの [IPiece] のインスタンスを生成します。
@@ -19,51 +21,47 @@ class PieceFactory {
   }
 
   /// [PieceType] に応じて [IPiece] のインスタンスを生成します。
-  static Future<IPiece?> createSpritePiece(
-      PieceType pieceType, double size) async {
+  static Future<IPiece?> createSpritePiece(PieceType pieceType, double size,
+      {PlayerType? playerType}) async {
     switch (pieceType) {
       case PieceType.King:
         final sprite = await Sprite.load('king.png');
-        return SpriteKing(sprite)..size = Vector2.all(size);
+        return SpriteKing(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.Rook:
         final sprite = await Sprite.load('rook.png');
-        return SpriteRook(sprite)..size = Vector2.all(size);
+        return SpriteRook(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.Bishop:
         final sprite = await Sprite.load('bishop.png');
-        return SpriteBishop(sprite)..size = Vector2.all(size);
+        return SpriteBishop(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.GoldGeneral:
         final sprite = await Sprite.load('gold_general.png');
-        return SpriteGold(sprite)..size = Vector2.all(size);
+        return SpriteGold(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.SilverGeneral:
         final sprite = await Sprite.load('silver_general.png');
-        return SpriteSilver(sprite)..size = Vector2.all(size);
+        return SpriteSilver(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.Knight:
         final sprite = await Sprite.load('knight.png');
-        return SpriteKnight(sprite)..size = Vector2.all(size);
+        return SpriteKnight(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.Lance:
         final sprite = await Sprite.load('lance.png');
-        return SpriteLance(sprite)..size = Vector2.all(size);
+        return SpriteLance(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.Pawn:
         final sprite = await Sprite.load('pawn.png');
-        return SpritePawn(sprite)..size = Vector2.all(size);
+        return SpritePawn(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedRook:
-        // TODO: Handle this case.
-        break;
       case PieceType.PromotedBishop:
-        // TODO: Handle this case.
-        break;
       case PieceType.PromotedSilver:
-        // TODO: Handle this case.
-        break;
       case PieceType.PromotedKnight:
-        // TODO: Handle this case.
-        break;
       case PieceType.PromotedLance:
-        // TODO: Handle this case.
-        break;
       case PieceType.PromotedPawn:
-        // TODO: Handle this case.
-        break;
       case PieceType.Blank:
         return BlankPiece();
     }
