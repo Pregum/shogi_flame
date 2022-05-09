@@ -53,7 +53,7 @@ enum PieceType {
 }
 
 extension PieceTypeEx on PieceType {
-  String describe() {
+  String get describe {
     switch (this) {
       case PieceType.Blank:
         return '  ';

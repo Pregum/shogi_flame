@@ -57,6 +57,6 @@ class MoveInfo {
     final pieceRelationTypeStr = pieceRelationType?.describe ?? '';
     final moveTypeStr = moveType?.decribe ?? '';
     final promotionStr = isPromotion ? '成' : '';
-    return '$playerStr $column $row ${pieceType.describe()} $pieceRelationTypeStr $moveTypeStr $promotionStr';
+    return '$playerStr $column $row ${pieceType.describe} $pieceRelationTypeStr $moveTypeStr $promotionStr';
   }
 }

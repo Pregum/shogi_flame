@@ -90,7 +90,7 @@ class KifuEditContainer extends FlameGame with HasTappables {
           }
           for (var i = 0; i < board.pieceTypesOnTiles.length; i++) {
             final oneLine = board.pieceTypesOnTiles[i];
-            print('$i: ${oneLine.map((pt) => pt.describe()).join(' | ')}');
+            print('$i: ${oneLine.map((pt) => pt.describe).join(' | ')}');
           }
         },
       )..topLeftPosition = Vector2(700, 80),

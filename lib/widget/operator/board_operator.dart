@@ -241,7 +241,7 @@ class BoardOperator {
             tile, _board.scale * _board.srcTileSize);
         _board.setPiece(piece!);
       }
-      final str = row.map((tile) => tile.describe()).join(' | ');
+      final str = row.map((tile) => tile.describe).join(' | ');
       print('$i: $str');
     }
   }
