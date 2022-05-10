@@ -130,7 +130,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint {
   }
 
   /// 成り込み可能なタイルを返します。
-  List<List<bool>> promotionTileMatrix(PlayerType playerType) {
+  List<List<bool>> getPromotionTileMatrix(PlayerType playerType) {
     if (playerType == PlayerType.Black) {
       // 先手の場合は上3段(1~3段目)のエリアを成り込み可能エリアとする。
       final tiles = List<List<bool>>.generate(
