@@ -269,8 +269,21 @@ class BoardOperator {
     _logger.info('[BoardOperator#_movePiece]: pieceを移動します。');
 
     final movingPiece = startTile.stackedPiece;
-    _board.changeSelectedTile(endPos);
-    // TODO: ここで成り、不成の分岐を実装する。
+    final moveSuccess = _board.changeSelectedTile(endPos);
+    if (!moveSuccess) {
+      return;
+    }
+    // 成り、不成の判定を行う。
+    final promotionMatrix =
+        _board.getPromotionTileMatrix(movingPiece.playerType);
+
+    final canPromote = promotionMatrix[endPos.rowIndex!][endPos.columnIndex!];
+    if (canPromote) {
+      // TODO: 成り・不成を決めるダイアログを表示する。
+      // 成り・不成用のSpriteComponentを配置してたっぷされたら反映するようにする。
+      // ただここでダイアログを出すと下の処理を待つ処理を入れる必要がありよくなさそう？
+      // → タップ時のコールバックに処理をセットするなどして対応する
+    }
     _board.setPiece(movingPiece);
 
     final blanckPiece = PieceFactory.createBlankPiece();

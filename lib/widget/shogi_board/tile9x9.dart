@@ -11,6 +11,7 @@ import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
+import 'package:shogi_game/widget/piece/model/player_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/selector.dart';
 
@@ -119,13 +120,36 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint {
   /// Tile情報を取得します。
   /// [ destinationPosition ] が盤上の範囲外の場合[ null ]を返します。
   OneTile? getTile(PiecePosition destinationPosition) {
-    final row = destinationPosition.row;
-    final column = destinationPosition.column;
+    final row = destinationPosition.rowIndex;
+    final column = destinationPosition.columnIndex;
     _logger.info('[tile9x9#getTile]: タイルを取得します. row: $row, column: $row');
     if (row == null || column == null) {
       return null;
     }
     return _getTile(row, column);
+  }
+
+  /// 成り込み可能なタイルを返します。
+  List<List<bool>> promotionTileMatrix(PlayerType playerType) {
+    if (playerType == PlayerType.Black) {
+      // 先手の場合は上3段(1~3段目)のエリアを成り込み可能エリアとする。
+      final tiles = List<List<bool>>.generate(
+        defaultRowCount,
+        (rowIndex) {
+          return List<bool>.generate(defaultColumnCount, (_) => rowIndex < 3);
+        },
+      );
+      return tiles;
+    } else {
+      // 後手の場合は下3段(7~9段目)のエリアを成り込み可能エリアとする。
+      final tiles = List<List<bool>>.generate(
+        defaultRowCount,
+        (rowIndex) {
+          return List<bool>.generate(defaultColumnCount, (_) => rowIndex >= 6);
+        },
+      );
+      return tiles;
+    }
   }
 
   /// [IPiece] を選択中のマスに設定します。
@@ -155,10 +179,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint {
     return true;
   }
 
-  /// 選択中のマスの [row] と [column] を変更します。
+  /// 選択中のマスの [rowIndex] と [columnIndex] を変更します。
   bool changeSelectedTile(PiecePosition destination) {
-    final row = destination.row;
-    final column = destination.column;
+    final row = destination.rowIndex;
+    final column = destination.columnIndex;
     _logger.info(
         '[tile9x9#changeSelectedTile]: row: $row, column: $column が選択されました。');
     if (row == null || column == null) {
