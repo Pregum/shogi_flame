@@ -22,7 +22,8 @@ class SpriteBishop extends SpriteComponent implements IPiece {
   PieceType pieceType = PieceType.GoldGeneral;
 
   @override
-  PieceRoute get movableRoutes => _movableRoutes;
+  PieceRoute get movableRoutes =>
+      _movableRoutes.consideredPieceRoute(playerType);
   PieceRoute _movableRoutes = PieceRoute(
     <List<MoveStateType>>[
       <MoveStateType>[

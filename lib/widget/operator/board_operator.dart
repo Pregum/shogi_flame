@@ -309,9 +309,10 @@ class BoardOperator {
       _addHistory(movement);
     };
 
+    // FIXME: 相手の陣地から外へ出る手の成り判定ができていないので修正する
     final canPromote = promotionMatrix[endPos.rowIndex!][endPos.columnIndex!];
     if (canPromote) {
-      // TODO: 成り・不成を決めるダイアログを表示する。
+      // 成り・不成を決めるダイアログを表示する。
       // 成り・不成用のSpriteComponentを配置してたっぷされたら反映するようにする。
       // ただここでダイアログを出すと下の処理を待つ処理を入れる必要がありよくなさそう？
       // → タップ時のコールバックに処理をセットするなどして対応する

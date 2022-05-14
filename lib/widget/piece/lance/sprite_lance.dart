@@ -18,8 +18,8 @@ class SpriteLance extends SpriteComponent implements IPiece {
   PieceType pieceType = PieceType.Lance;
 
   @override
-  PieceRoute get movableRoutes => _movableRoutes;
-  // TODO: playerTypeに応じて行列の反転処理を入れる必要がある
+  PieceRoute get movableRoutes =>
+      _movableRoutes.consideredPieceRoute(playerType);
   PieceRoute _movableRoutes = PieceRoute(
     <List<MoveStateType>>[
       <MoveStateType>[
