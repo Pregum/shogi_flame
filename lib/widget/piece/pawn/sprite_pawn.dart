@@ -10,6 +10,9 @@ import '../model/move_state_type.dart';
 class SpritePawn extends SpriteComponent implements IPiece {
   SpritePawn(Sprite sprite, {PlayerType? playerType}) : super(sprite: sprite) {
     _playerType = playerType ?? PlayerType.None;
+    if (!_playerType.isBlack) {
+      flipVerticallyAroundCenter();
+    }
   }
 
   @override
@@ -46,5 +49,9 @@ class SpritePawn extends SpriteComponent implements IPiece {
   @override
   set playerType(PlayerType playerType) {
     _playerType = playerType;
+    if (_playerType != playerType) {
+      // ここで先手・後手の向きを更新する。
+      flipVerticallyAroundCenter();
+    }
   }
 }

@@ -12,6 +12,9 @@ import '../model/move_state_type.dart';
 class SpriteLance extends SpriteComponent implements IPiece {
   SpriteLance(Sprite sprite, {PlayerType? playerType}) : super(sprite: sprite) {
     _playerType = playerType ?? PlayerType.Black;
+    if (!_playerType.isBlack) {
+      flipVerticallyAroundCenter();
+    }
   }
 
   @override

@@ -10,6 +10,9 @@ import '../model/move_state_type.dart';
 class SpriteKing extends SpriteComponent implements IPiece {
   SpriteKing(Sprite sprite, {PlayerType? playerType}) : super(sprite: sprite) {
     _playerType = playerType ?? PlayerType.Black;
+    if (!_playerType.isBlack) {
+      flipVerticallyAroundCenter();
+    }
   }
 
   @override
@@ -45,6 +48,10 @@ class SpriteKing extends SpriteComponent implements IPiece {
 
   @override
   set playerType(PlayerType playerType) {
+    if (_playerType != playerType) {
+      // ここで先手・後手の向きを更新する。
+      flipVerticallyAroundCenter();
+    }
     _playerType = playerType;
   }
 }

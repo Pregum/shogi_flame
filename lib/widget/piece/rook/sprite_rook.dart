@@ -9,6 +9,9 @@ import '../model/move_state_type.dart';
 class SpriteRook extends SpriteComponent implements IPiece {
   SpriteRook(Sprite sprite, {PlayerType? playerType}) : super(sprite: sprite) {
     _playerType = playerType ?? PlayerType.None;
+    if (!_playerType.isBlack) {
+      flipVerticallyAroundCenter();
+    }
   }
   @override
   PieceType pieceType = PieceType.Rook;
@@ -43,6 +46,10 @@ class SpriteRook extends SpriteComponent implements IPiece {
 
   @override
   set playerType(PlayerType playerType) {
+    if (_playerType != playerType) {
+      // ここで先手・後手の向きを更新する。
+      flipVerticallyAroundCenter();
+    }
     _playerType = playerType;
   }
 }

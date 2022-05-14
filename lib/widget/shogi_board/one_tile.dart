@@ -50,9 +50,9 @@ class OneTile extends SpriteComponent with Tappable {
     final oldPiece = _stackedPiece;
     _stackedPiece = piece;
     oldPiece.removeFromParent();
-    if (piece.playerType == PlayerType.White) {
-      piece.flipVerticallyAroundCenter();
-    }
+    // if (piece.playerType == PlayerType.White) {
+    //   piece.flipVerticallyAroundCenter();
+    // }
     add(_stackedPiece);
   }
 
