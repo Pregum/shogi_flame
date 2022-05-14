@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flame/effects.dart';
+import 'package:flame/input.dart';
 import 'package:flame/layers.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
@@ -21,7 +22,7 @@ import 'one_tile.dart';
 typedef OnTapTileEventHandler = void Function(OneTile tile);
 
 /// 9x9の将棋盤を描画するcomponent
-class Tile9x9 extends FlameGame with HasTappables, HasPaint {
+class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
   /// 選択マスを表示するselector
   late Selector _selector;
 
@@ -381,7 +382,8 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint {
 
   /// 9x9の初期設定を行います。
   Future<void> _prepare9x9Tile() async {
-    final OnTileTapDowned onTapDowned = (info, rowIndex, columnIndex) {
+    final OnTileTapDowned onTapDowned =
+        (info, rowIndex, columnIndex, isDoubleTap) {
       print('ontapp!!! row: $rowIndex, column: $columnIndex');
       _selector.position = info;
       _selectedRowIndex = rowIndex;

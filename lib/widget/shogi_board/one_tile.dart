@@ -12,7 +12,13 @@ import '../piece/model/player_type.dart';
 /// タップしたマスの左上のxy座標が [Vector2] から与えられる.
 /// タップ箇所のマスのindexを **rowIndex** と **columnIndex** から与えられる.
 typedef OnTileTapDowned = void Function(
-    Vector2 xy, int? rowIndex, int? columnIndex);
+    Vector2 xy, int? rowIndex, int? columnIndex, bool isDoubleTap);
+
+class TapStatus {
+  final bool isTap;
+  double? dt;
+  TapStatus(this.isTap, this.dt);
+}
 
 /// 将棋盤の1マスを描画するcomponent
 class OneTile extends SpriteComponent with Tappable {
@@ -27,6 +33,13 @@ class OneTile extends SpriteComponent with Tappable {
 
   /// 列のindex
   int? columnIndex;
+
+  /// 前の更新時にタップされていたかどうかの判定フラグ
+  bool hadTap = false;
+
+  bool? currentTap;
+
+  var countDown = Timer(200);
 
   // 表示する駒のバッキングフィールドです。
   late IPiece _stackedPiece;
@@ -68,8 +81,21 @@ class OneTile extends SpriteComponent with Tappable {
 
   @override
   bool onTapDown(TapDownInfo info) {
-    callback?.call(this.topLeft, rowIndex, columnIndex);
     isSelected = !isSelected;
+
+    var isDoubleTap = false;
+    if (hadTap) {
+      print('double tap!!!');
+      isDoubleTap = true;
+
+      // TODO: 後で消す
+      stackedPiece.flipVerticallyAroundCenter();
+    }
+
+    countDown = Timer(0.5);
+    currentTap = isSelected;
+
+    callback?.call(this.topLeft, rowIndex, columnIndex, isDoubleTap);
 
     // 子供に伝播させるフラグを返す
     // true: 伝播させる, false: 伝播させない
@@ -94,6 +120,25 @@ class OneTile extends SpriteComponent with Tappable {
         ),
       );
     add(_movableTile);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    // print('update: $dt');
+
+    // まず前のstatusがない場合は関係なし
+    // 前のstatusのtapedがfalseになっている場合もむし
+    // 前のstatusのtapedがtrueでdtが200以上小さければむし
+    // それ以外は通す
+    var ct = currentTap;
+    if (ct != null) {
+      hadTap = ct;
+    }
+    countDown.update(dt);
+    if (countDown.finished) {
+      hadTap = false;
+    }
   }
 
   @override
