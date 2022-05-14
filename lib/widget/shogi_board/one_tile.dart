@@ -39,7 +39,7 @@ class OneTile extends SpriteComponent with Tappable {
   bool? currentTap;
 
   /// ダブルタップの1回目と2回目の間隔を計るタイマー
-  var countDown = Timer(200);
+  var countDown = Timer(0.3);
 
   // 表示する駒のバッキングフィールドです。
   late IPiece _stackedPiece;
@@ -88,7 +88,7 @@ class OneTile extends SpriteComponent with Tappable {
       isDoubleTap = true;
     }
 
-    countDown = Timer(0.5);
+    countDown = Timer(0.3);
     currentTap = isSelected;
 
     callback?.call(this.topLeft, rowIndex, columnIndex, isDoubleTap);
