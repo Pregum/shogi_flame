@@ -99,9 +99,4 @@ class KifuEditContainer extends FlameGame with HasTappables {
     add(moveInfodsComponent = TextComponent(text: 'ここに指した手が表示されます。')
       ..topLeftPosition = Vector2(700, 140));
   }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-  }
 }

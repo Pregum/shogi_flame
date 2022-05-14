@@ -8,3 +8,9 @@ enum PlayerType {
   /// 後手
   White
 }
+
+extension PlayerTypeEx on PlayerType {
+  bool get isBlack {
+    return this == PlayerType.Black;
+  }
+}

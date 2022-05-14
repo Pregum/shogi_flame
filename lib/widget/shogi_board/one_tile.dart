@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
@@ -11,13 +9,19 @@ import '../piece/model/player_type.dart';
 
 /// タップしたマスの左上のxy座標が [Vector2] から与えられる.
 /// タップ箇所のマスのindexを **rowIndex** と **columnIndex** から与えられる.
-typedef OnTileTapDowned = void Function(
-    Vector2 xy, int? rowIndex, int? columnIndex);
+typedef OnTileTapDown = void Function(
+    Vector2 xy, int? rowIndex, int? columnIndex, bool isDoubleTap);
+
+class TapStatus {
+  final bool isTap;
+  double? dt;
+  TapStatus(this.isTap, this.dt);
+}
 
 /// 将棋盤の1マスを描画するcomponent
 class OneTile extends SpriteComponent with Tappable {
   /// tapdown時のcallback
-  OnTileTapDowned? callback;
+  OnTileTapDown? callback;
 
   /// 左上の座標(xy)
   Vector2 topLeft;
@@ -28,6 +32,15 @@ class OneTile extends SpriteComponent with Tappable {
   /// 列のindex
   int? columnIndex;
 
+  /// 前の更新時にタップされていたかどうかの判定フラグ
+  bool hadTap = false;
+
+  /// ダブルタップで使用される一時保存用フィールド
+  bool? currentTap;
+
+  /// ダブルタップの1回目と2回目の間隔を計るタイマー
+  var countDown = Timer(200);
+
   // 表示する駒のバッキングフィールドです。
   late IPiece _stackedPiece;
   // 表示する駒へアクセスするプロパティです。
@@ -37,9 +50,9 @@ class OneTile extends SpriteComponent with Tappable {
     final oldPiece = _stackedPiece;
     _stackedPiece = piece;
     oldPiece.removeFromParent();
-    if (piece.playerType == PlayerType.White) {
-      piece.flipVerticallyAroundCenter();
-    }
+    // if (piece.playerType == PlayerType.White) {
+    //   piece.flipVerticallyAroundCenter();
+    // }
     add(_stackedPiece);
   }
 
@@ -68,8 +81,17 @@ class OneTile extends SpriteComponent with Tappable {
 
   @override
   bool onTapDown(TapDownInfo info) {
-    callback?.call(this.topLeft, rowIndex, columnIndex);
     isSelected = !isSelected;
+
+    var isDoubleTap = false;
+    if (hadTap) {
+      isDoubleTap = true;
+    }
+
+    countDown = Timer(0.5);
+    currentTap = isSelected;
+
+    callback?.call(this.topLeft, rowIndex, columnIndex, isDoubleTap);
 
     // 子供に伝播させるフラグを返す
     // true: 伝播させる, false: 伝播させない
@@ -97,12 +119,31 @@ class OneTile extends SpriteComponent with Tappable {
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+
+    _updateDoubleTapStatus(dt);
+  }
+
+  @override
   void render(Canvas canvas) {
     super.render(canvas);
 
     if (_isMovableTile) {
       final opacityPaint = Paint()..color = Colors.blue.withOpacity(0.6);
       canvas.drawRect(_movableTile.toRect(), opacityPaint);
+    }
+  }
+
+  void _updateDoubleTapStatus(double dt) {
+    var ct = currentTap;
+    if (ct != null) {
+      hadTap = ct;
+      currentTap = null;
+    }
+    countDown.update(dt);
+    if (countDown.finished) {
+      hadTap = false;
     }
   }
 }

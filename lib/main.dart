@@ -7,8 +7,8 @@ Future<void> main() async {
   runApp(
     MaterialApp(
       home: Scaffold(
-        // body: SandboxView(),
-        body: KifuEditView(),
+        body: SandboxView(),
+        // body: KifuEditView(),
       ),
     ),
   );

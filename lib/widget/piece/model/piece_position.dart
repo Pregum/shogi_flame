@@ -5,15 +5,15 @@ import 'position_type.dart';
 
 /// 駒の位置を表すオブジェクト
 class PiecePosition {
-  /// [row] は0始まりの行数
+  /// [rowIndex] は0始まりの行数
   ///
   /// 駒台などマスに配置されていない場合はnull
-  int? row;
+  int? rowIndex;
 
-  /// [column] は0始まりの列数
+  /// [columnIndex] は0始まりの列数
   ///
   /// 駒台などマスに配置されていない場合はnull
-  int? column;
+  int? columnIndex;
 
   /// 配置された場所のタイプ
   PositionFieldType positionFieldType;
@@ -22,11 +22,12 @@ class PiecePosition {
   PieceType pieceType;
 
   /// ctor
-  PiecePosition(this.row, this.column, this.positionFieldType, this.pieceType);
+  PiecePosition(
+      this.rowIndex, this.columnIndex, this.positionFieldType, this.pieceType);
 
   @override
   String toString() {
-    return 'row: $row, column: $column, pieceType: $pieceType';
+    return 'row: $rowIndex, column: $columnIndex, pieceType: $pieceType';
   }
 
   /// [OneTile] から [PiecePosition] を生成します。

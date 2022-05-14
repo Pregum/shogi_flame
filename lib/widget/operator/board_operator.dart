@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:flame/components.dart';
+import 'package:flame/input.dart';
+import 'package:flutter/material.dart';
 import 'package:shogi_game/model/normal_logger.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/model/piece_movement.dart';
@@ -63,6 +66,13 @@ class BoardOperator {
   /// ロガー
   final NormalLogger _logger = NormalLogger.singleton();
 
+  /// ダイアログを出すためのグルーピング用component
+  final PositionComponent _promotionDalogComponent =
+      PositionComponent(priority: 10)
+        ..size = Vector2.all(5000)
+        ..position = Vector2.all(0)
+        ..debugColor = Colors.red;
+
   /// ctor
   BoardOperator(this._board) {
     final firstSnapshot = List<List<PieceType>>.filled(_board.defaultRowCount,
@@ -73,6 +83,9 @@ class BoardOperator {
         null,
         snapshot: firstSnapshot);
     _addHistory(movement);
+
+    // ダイアログはTile9x9のメンバに持たせる方が機能的に良さそう?
+    _board.add(_promotionDalogComponent);
   }
 
   /// クラス破棄時に呼び出すメソッドです。
@@ -256,7 +269,8 @@ class BoardOperator {
     await syncPiecesOnBoard(snapshot);
   }
 
-  void _movePiece({required OneTile startTile, required OneTile endTile}) {
+  Future<void> _movePiece(
+      {required OneTile startTile, required OneTile endTile}) async {
     operatorStatus = OperatorPhaseType.StartTileSelect;
     // 移動可能タイルでない場合は移動処理を行わない。
     if (!endTile.isMovableTile) {
@@ -269,23 +283,82 @@ class BoardOperator {
     _logger.info('[BoardOperator#_movePiece]: pieceを移動します。');
 
     final movingPiece = startTile.stackedPiece;
-    _board.changeSelectedTile(endPos);
-    // TODO: ここで成り、不成の分岐を実装する。
-    _board.setPiece(movingPiece);
-
-    final blanckPiece = PieceFactory.createBlankPiece();
-    startTile.stackedPiece = blanckPiece;
-
-    final movement = PieceMovement(startPos, endPos, endTile.stackedPiece,
-        snapshot: _board.pieceTypesOnTiles);
-
-    final killedPiece = movement.killedPiece;
-    if (killedPiece != null) {
-      // TODO: 駒台クラスへ駒を渡す処理を実装する
+    final moveSuccess = _board.changeSelectedTile(endPos);
+    if (!moveSuccess) {
+      return;
     }
+    // 成り、不成の判定を行う。
+    final promotionMatrix =
+        _board.getPromotionTileMatrix(movingPiece.playerType);
 
-    // 履歴の更新
-    _addHistory(movement);
+    final handleOnTapDialog = () {
+      _board.setPiece(movingPiece);
+
+      final blanckPiece = PieceFactory.createBlankPiece();
+      startTile.stackedPiece = blanckPiece;
+
+      final movement = PieceMovement(startPos, endPos, endTile.stackedPiece,
+          snapshot: _board.pieceTypesOnTiles);
+
+      final killedPiece = movement.killedPiece;
+      if (killedPiece != null) {
+        // TODO: 駒台クラスへ駒を渡す処理を実装する
+      }
+
+      // 履歴の更新
+      _addHistory(movement);
+    };
+
+    // FIXME: 相手の陣地から外へ出る手の成り判定ができていないので修正する
+    final canPromote = promotionMatrix[endPos.rowIndex!][endPos.columnIndex!];
+    if (canPromote) {
+      // 成り・不成を決めるダイアログを表示する。
+      // 成り・不成用のSpriteComponentを配置してたっぷされたら反映するようにする。
+      // ただここでダイアログを出すと下の処理を待つ処理を入れる必要がありよくなさそう？
+      // → タップ時のコールバックに処理をセットするなどして対応する
+      final okSprite = await Sprite.load('gold_general.png');
+      final okComponent = SpriteComponent(
+          sprite: okSprite,
+          size: Vector2.all(_board.srcTileSize),
+          scale: Vector2.all(_board.scale),
+          anchor: Anchor.center);
+      final okButtonComp = ButtonComponent(
+          button: okComponent,
+          position: Vector2(
+            endTile.x + _board.srcTileSize / 2,
+            endTile.y + _board.srcTileSize / 2,
+          ),
+          onPressed: () {
+            // 成りのPieceTypeに変更する.
+            _promotionDalogComponent.children.clear();
+            handleOnTapDialog();
+            print('成りました。');
+          })
+        ..debugMode = true;
+      final noSprite = await Sprite.load('pawn.png');
+      final noComponent = SpriteComponent(
+        sprite: noSprite,
+        size: Vector2.all(_board.srcTileSize),
+        scale: Vector2.all(_board.scale),
+        anchor: Anchor.center,
+      );
+      final noButtonComp = ButtonComponent(
+          button: noComponent,
+          position: Vector2(
+            okButtonComp.x + _board.destTileSize * 1.5,
+            okButtonComp.y,
+          ),
+          onPressed: () {
+            _promotionDalogComponent.children.clear();
+            handleOnTapDialog();
+            print('不成です。');
+          });
+
+      await _promotionDalogComponent.add(okButtonComp);
+      await _promotionDalogComponent.add(noButtonComp);
+    } else {
+      handleOnTapDialog();
+    }
   }
 
   /// [movement] を新しい履歴に追加します。

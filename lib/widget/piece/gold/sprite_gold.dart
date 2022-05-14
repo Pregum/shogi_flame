@@ -1,13 +1,17 @@
 import 'package:flame/components.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
-import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/model/player_type.dart';
 
+import '../model/move_state_type.dart';
+
 class SpriteGold extends SpriteComponent implements IPiece {
   SpriteGold(Sprite sprite, {PlayerType? playerType}) : super(sprite: sprite) {
     _playerType = playerType ?? PlayerType.Black;
+    if (!_playerType.isBlack) {
+      flipVerticallyAroundCenter();
+    }
   }
 
   static Future<SpriteGold> initialize() async {
@@ -19,12 +23,25 @@ class SpriteGold extends SpriteComponent implements IPiece {
   PieceType pieceType = PieceType.GoldGeneral;
 
   @override
-  PieceRoute get movableRoutes => _movableRoutes;
+  PieceRoute get movableRoutes =>
+      _movableRoutes.consideredPieceRoute(playerType);
   PieceRoute _movableRoutes = PieceRoute(
-    <List<MoveType>>[
-      <MoveType>[MoveType.Movable, MoveType.Movable, MoveType.Movable],
-      <MoveType>[MoveType.Movable, MoveType.UnMovable, MoveType.Movable],
-      <MoveType>[MoveType.UnMovable, MoveType.Movable, MoveType.UnMovable],
+    <List<MoveStateType>>[
+      <MoveStateType>[
+        MoveStateType.Movable,
+        MoveStateType.Movable,
+        MoveStateType.Movable
+      ],
+      <MoveStateType>[
+        MoveStateType.Movable,
+        MoveStateType.UnMovable,
+        MoveStateType.Movable
+      ],
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.Movable,
+        MoveStateType.UnMovable
+      ],
     ],
     3,
   );
@@ -32,4 +49,13 @@ class SpriteGold extends SpriteComponent implements IPiece {
   @override
   PlayerType get playerType => _playerType;
   late PlayerType _playerType;
+
+  @override
+  set playerType(PlayerType playerType) {
+    if (_playerType != playerType) {
+      // ここで先手・後手の向きを更新する。
+      flipVerticallyAroundCenter();
+    }
+    _playerType = playerType;
+  }
 }
