@@ -4,6 +4,8 @@ import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/model/player_type.dart';
 
+import '../model/move_state_type.dart';
+
 /// 桂馬のsprite
 class SpriteKnight extends SpriteComponent implements IPiece {
   SpriteKnight(Sprite sprite, {PlayerType? playerType})
@@ -17,41 +19,41 @@ class SpriteKnight extends SpriteComponent implements IPiece {
   @override
   PieceRoute get movableRoutes => _movableRoutes;
   PieceRoute _movableRoutes = PieceRoute(
-    <List<MoveType>>[
-      <MoveType>[
-        MoveType.UnMovable,
-        MoveType.Movable,
-        MoveType.UnMovable,
-        MoveType.Movable,
-        MoveType.UnMovable
+    <List<MoveStateType>>[
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.Movable,
+        MoveStateType.UnMovable,
+        MoveStateType.Movable,
+        MoveStateType.UnMovable
       ],
-      <MoveType>[
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable
       ],
-      <MoveType>[
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable
       ],
-      <MoveType>[
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable
       ],
-      <MoveType>[
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable,
-        MoveType.UnMovable
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable
       ],
     ],
     5,

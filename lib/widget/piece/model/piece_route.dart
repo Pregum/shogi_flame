@@ -1,3 +1,5 @@
+import 'move_state_type.dart';
+
 /// 駒の移動ルートを表すクラス
 ///
 class PieceRoute {
@@ -5,7 +7,7 @@ class PieceRoute {
   ///
   /// 0要素目から順番に入っています。
   ///
-  final List<List<MoveType>> routeMatrix;
+  final List<List<MoveStateType>> routeMatrix;
 
   /// １辺の長さです。
   ///
@@ -17,19 +19,4 @@ class PieceRoute {
 
   /// ctor
   PieceRoute(this.routeMatrix, this.widthTileLnegth);
-}
-
-/// 移動の種類
-enum MoveType {
-  /// 不明(default値)
-  Unknown,
-
-  /// 移動不可
-  UnMovable,
-
-  /// 移動可能
-  Movable,
-
-  /// 無限超
-  Infinite,
 }

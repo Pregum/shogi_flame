@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
 import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/model/player_type.dart';
+
+import '../model/move_state_type.dart';
 
 /// 香車のsprite
 class SpriteLance extends SpriteComponent implements IPiece {
@@ -15,11 +19,24 @@ class SpriteLance extends SpriteComponent implements IPiece {
 
   @override
   PieceRoute get movableRoutes => _movableRoutes;
+  // TODO: playerTypeに応じて行列の反転処理を入れる必要がある
   PieceRoute _movableRoutes = PieceRoute(
-    <List<MoveType>>[
-      <MoveType>[MoveType.UnMovable, MoveType.Infinite, MoveType.UnMovable],
-      <MoveType>[MoveType.UnMovable, MoveType.UnMovable, MoveType.UnMovable],
-      <MoveType>[MoveType.UnMovable, MoveType.UnMovable, MoveType.UnMovable],
+    <List<MoveStateType>>[
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.Infinite,
+        MoveStateType.UnMovable
+      ],
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable
+      ],
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable
+      ],
     ],
     3,
   );
@@ -30,6 +47,10 @@ class SpriteLance extends SpriteComponent implements IPiece {
 
   @override
   set playerType(PlayerType playerType) {
+    if (_playerType != playerType) {
+      // ここで先手・後手の向きを更新する。
+      flipVerticallyAroundCenter();
+    }
     _playerType = playerType;
   }
 }

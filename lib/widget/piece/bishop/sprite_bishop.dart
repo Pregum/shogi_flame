@@ -4,6 +4,8 @@ import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/model/player_type.dart';
 
+import '../model/move_state_type.dart';
+
 /// 角行のsprite
 class SpriteBishop extends SpriteComponent implements IPiece {
   SpriteBishop(Sprite sprite, {PlayerType? playerType})
@@ -22,10 +24,22 @@ class SpriteBishop extends SpriteComponent implements IPiece {
   @override
   PieceRoute get movableRoutes => _movableRoutes;
   PieceRoute _movableRoutes = PieceRoute(
-    <List<MoveType>>[
-      <MoveType>[MoveType.Infinite, MoveType.UnMovable, MoveType.Infinite],
-      <MoveType>[MoveType.UnMovable, MoveType.UnMovable, MoveType.UnMovable],
-      <MoveType>[MoveType.Infinite, MoveType.UnMovable, MoveType.Infinite],
+    <List<MoveStateType>>[
+      <MoveStateType>[
+        MoveStateType.Infinite,
+        MoveStateType.UnMovable,
+        MoveStateType.Infinite
+      ],
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable,
+        MoveStateType.UnMovable
+      ],
+      <MoveStateType>[
+        MoveStateType.Infinite,
+        MoveStateType.UnMovable,
+        MoveStateType.Infinite
+      ],
     ],
     3,
   );

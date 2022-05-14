@@ -1,9 +1,10 @@
 import 'package:flame/components.dart';
 import 'package:shogi_game/widget/piece/interface/i_piece.dart';
-import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/model/player_type.dart';
+
+import '../model/move_state_type.dart';
 
 class SpriteGold extends SpriteComponent implements IPiece {
   SpriteGold(Sprite sprite, {PlayerType? playerType}) : super(sprite: sprite) {
@@ -21,10 +22,22 @@ class SpriteGold extends SpriteComponent implements IPiece {
   @override
   PieceRoute get movableRoutes => _movableRoutes;
   PieceRoute _movableRoutes = PieceRoute(
-    <List<MoveType>>[
-      <MoveType>[MoveType.Movable, MoveType.Movable, MoveType.Movable],
-      <MoveType>[MoveType.Movable, MoveType.UnMovable, MoveType.Movable],
-      <MoveType>[MoveType.UnMovable, MoveType.Movable, MoveType.UnMovable],
+    <List<MoveStateType>>[
+      <MoveStateType>[
+        MoveStateType.Movable,
+        MoveStateType.Movable,
+        MoveStateType.Movable
+      ],
+      <MoveStateType>[
+        MoveStateType.Movable,
+        MoveStateType.UnMovable,
+        MoveStateType.Movable
+      ],
+      <MoveStateType>[
+        MoveStateType.UnMovable,
+        MoveStateType.Movable,
+        MoveStateType.UnMovable
+      ],
     ],
     3,
   );

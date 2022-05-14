@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
-import 'package:flame/layers.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
@@ -16,6 +15,7 @@ import 'package:shogi_game/widget/piece/model/player_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/selector.dart';
 
+import '../piece/model/move_state_type.dart';
 import 'board_state.dart';
 import 'one_tile.dart';
 
@@ -332,12 +332,12 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
   }
 
   /// [currMovableType] に応じて、[currTile] の移動可能フラグの更新を行います。
-  void _updateMovableState(MoveType currMovableType, OneTile currTile,
+  void _updateMovableState(MoveStateType currMovableType, OneTile currTile,
       int currRowIndex, int centerRow, int currColumnIndex, int centerColumn) {
-    if (currMovableType == MoveType.Movable &&
+    if (currMovableType == MoveStateType.Movable &&
         currTile.stackedPiece.pieceType == PieceType.Blank) {
       currTile.isMovableTile = true;
-    } else if (currMovableType == MoveType.Infinite) {
+    } else if (currMovableType == MoveStateType.Infinite) {
       // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
       _setMovableTypeToInifiteTiles(
           currRowIndex, centerRow, currColumnIndex, centerColumn);
@@ -387,7 +387,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
     } else {
       tile.stackedPiece.playerType = PlayerType.Black;
     }
-    tile.stackedPiece.flipVerticallyAroundCenter();
+    // tile.stackedPiece.flipVerticallyAroundCenter();
   }
 
   /// 9x9の初期設定を行います。

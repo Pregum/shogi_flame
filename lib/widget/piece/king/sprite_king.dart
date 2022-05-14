@@ -4,6 +4,8 @@ import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/model/player_type.dart';
 
+import '../model/move_state_type.dart';
+
 /// 王将を表すクラス
 class SpriteKing extends SpriteComponent implements IPiece {
   SpriteKing(Sprite sprite, {PlayerType? playerType}) : super(sprite: sprite) {
@@ -16,10 +18,22 @@ class SpriteKing extends SpriteComponent implements IPiece {
   @override
   PieceRoute get movableRoutes => _movableRoutes;
   PieceRoute _movableRoutes = PieceRoute(
-    <List<MoveType>>[
-      <MoveType>[MoveType.Movable, MoveType.Movable, MoveType.Movable],
-      <MoveType>[MoveType.Movable, MoveType.Movable, MoveType.Movable],
-      <MoveType>[MoveType.Movable, MoveType.Movable, MoveType.Movable],
+    <List<MoveStateType>>[
+      <MoveStateType>[
+        MoveStateType.Movable,
+        MoveStateType.Movable,
+        MoveStateType.Movable
+      ],
+      <MoveStateType>[
+        MoveStateType.Movable,
+        MoveStateType.Movable,
+        MoveStateType.Movable
+      ],
+      <MoveStateType>[
+        MoveStateType.Movable,
+        MoveStateType.Movable,
+        MoveStateType.Movable
+      ],
     ],
     3,
   );
