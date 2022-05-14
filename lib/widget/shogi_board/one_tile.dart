@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
@@ -11,7 +9,7 @@ import '../piece/model/player_type.dart';
 
 /// タップしたマスの左上のxy座標が [Vector2] から与えられる.
 /// タップ箇所のマスのindexを **rowIndex** と **columnIndex** から与えられる.
-typedef OnTileTapDowned = void Function(
+typedef OnTileTapDown = void Function(
     Vector2 xy, int? rowIndex, int? columnIndex, bool isDoubleTap);
 
 class TapStatus {
@@ -23,7 +21,7 @@ class TapStatus {
 /// 将棋盤の1マスを描画するcomponent
 class OneTile extends SpriteComponent with Tappable {
   /// tapdown時のcallback
-  OnTileTapDowned? callback;
+  OnTileTapDown? callback;
 
   /// 左上の座標(xy)
   Vector2 topLeft;
@@ -37,8 +35,10 @@ class OneTile extends SpriteComponent with Tappable {
   /// 前の更新時にタップされていたかどうかの判定フラグ
   bool hadTap = false;
 
+  /// ダブルタップで使用される一時保存用フィールド
   bool? currentTap;
 
+  /// ダブルタップの1回目と2回目の間隔を計るタイマー
   var countDown = Timer(200);
 
   // 表示する駒のバッキングフィールドです。
@@ -85,11 +85,7 @@ class OneTile extends SpriteComponent with Tappable {
 
     var isDoubleTap = false;
     if (hadTap) {
-      print('double tap!!!');
       isDoubleTap = true;
-
-      // TODO: 後で消す
-      stackedPiece.flipVerticallyAroundCenter();
     }
 
     countDown = Timer(0.5);
@@ -125,20 +121,8 @@ class OneTile extends SpriteComponent with Tappable {
   @override
   void update(double dt) {
     super.update(dt);
-    // print('update: $dt');
 
-    // まず前のstatusがない場合は関係なし
-    // 前のstatusのtapedがfalseになっている場合もむし
-    // 前のstatusのtapedがtrueでdtが200以上小さければむし
-    // それ以外は通す
-    var ct = currentTap;
-    if (ct != null) {
-      hadTap = ct;
-    }
-    countDown.update(dt);
-    if (countDown.finished) {
-      hadTap = false;
-    }
+    _updateDoubleTapStatus(dt);
   }
 
   @override
@@ -148,6 +132,18 @@ class OneTile extends SpriteComponent with Tappable {
     if (_isMovableTile) {
       final opacityPaint = Paint()..color = Colors.blue.withOpacity(0.6);
       canvas.drawRect(_movableTile.toRect(), opacityPaint);
+    }
+  }
+
+  void _updateDoubleTapStatus(double dt) {
+    var ct = currentTap;
+    if (ct != null) {
+      hadTap = ct;
+      currentTap = null;
+    }
+    countDown.update(dt);
+    if (countDown.finished) {
+      hadTap = false;
     }
   }
 }

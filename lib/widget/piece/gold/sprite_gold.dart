@@ -32,4 +32,9 @@ class SpriteGold extends SpriteComponent implements IPiece {
   @override
   PlayerType get playerType => _playerType;
   late PlayerType _playerType;
+
+  @override
+  set playerType(PlayerType playerType) {
+    _playerType = playerType;
+  }
 }

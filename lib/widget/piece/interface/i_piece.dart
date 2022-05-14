@@ -13,9 +13,10 @@ abstract class IPiece extends PositionComponent {
   /// 駒の種類
   PieceType get pieceType;
 
-  /// プレイヤーの種類
-  PlayerType get playerType;
-
   /// 駒の種類の設定
   set pieceType(PieceType type);
+
+  /// プレイヤーの種類
+  PlayerType get playerType;
+  set playerType(PlayerType playerType);
 }

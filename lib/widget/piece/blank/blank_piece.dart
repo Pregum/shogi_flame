@@ -15,4 +15,7 @@ class BlankPiece extends PositionComponent implements IPiece {
 
   @override
   PlayerType get playerType => PlayerType.None;
+
+  @override
+  set playerType(PlayerType playerType) {}
 }

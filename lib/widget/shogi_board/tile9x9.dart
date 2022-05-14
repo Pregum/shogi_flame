@@ -27,13 +27,13 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
   late Selector _selector;
 
   /// マス単位のインスタンスを保持するフィールド
-  late List<List<OneTile>> _matrixTiles;
+  late List<List<OneTile>> _tileMatrix;
 
   late Component _effectControllerObject = Component();
 
   /// タイル上のpieceTypeを取得するgetter
   List<List<PieceType>> get pieceTypesOnTiles {
-    final ret = _matrixTiles.map((row) {
+    final ret = _tileMatrix.map((row) {
       return row.map((tile) {
         final pt = tile.stackedPiece.pieceType;
         return pt;
@@ -164,8 +164,8 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
       return false;
     }
 
-    if (_matrixTiles.length <= rowIndex ||
-        _matrixTiles[rowIndex].length <= columnIndex) {
+    if (_tileMatrix.length <= rowIndex ||
+        _tileMatrix[rowIndex].length <= columnIndex) {
       // matrix内に収まっていない場合もfalseを返す.
       _logger.info(
           '[tile9x9#setPiece]: マス目の範囲内ではないです。 row: $rowIndex, column: $columnIndex');
@@ -173,7 +173,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
       return false;
     }
 
-    var targetOneTile = _matrixTiles[rowIndex][columnIndex];
+    var targetOneTile = _tileMatrix[rowIndex][columnIndex];
     targetOneTile.stackedPiece = piece;
     _logger.info(
         '[tile9x9#setPiece]: row: $rowIndex, column: $columnIndex にタイルを設定しました, piece: ${targetOneTile.stackedPiece.pieceType}');
@@ -206,7 +206,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
   /// 9x9タイルの状態をリセットします。
   void resetBoard() {
     _logger.info('[tile9x9#resetBoard]: ボードをリセットします。');
-    for (var row in _matrixTiles) {
+    for (var row in _tileMatrix) {
       for (var aTile in row) {
         aTile.stackedPiece = PieceFactory.createBlankPiece();
       }
@@ -230,14 +230,14 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
     for (var i = 0; i < movableRoutes.widthTileLnegth; i++) {
       final currRowIndex = topIndex + i;
       // 上下が盤面外の場合はcontinue
-      if (currRowIndex < 0 || currRowIndex >= _matrixTiles.length) {
+      if (currRowIndex < 0 || currRowIndex >= _tileMatrix.length) {
         continue;
       }
 
       for (var j = 0; j < movableRoutes.widthTileLnegth; j++) {
         final currColumnIndex = leftIndex + j;
         // 左右が盤面外の場合はcontinue
-        if (currColumnIndex < 0 || currColumnIndex >= _matrixTiles[i].length) {
+        if (currColumnIndex < 0 || currColumnIndex >= _tileMatrix[i].length) {
           continue;
         }
 
@@ -246,7 +246,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
           continue;
         }
 
-        final currTile = _matrixTiles[currRowIndex][currColumnIndex];
+        final currTile = _tileMatrix[currRowIndex][currColumnIndex];
         final currMovableType = movableRoutes.routeMatrix[i][j];
         _updateMovableState(currMovableType, currTile, currRowIndex, centerRow,
             currColumnIndex, centerColumn);
@@ -256,9 +256,9 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
 
   /// 移動可能な場所を忘れます。
   void forgetMovablePiece() {
-    for (var i = 0; i < _matrixTiles.length; i++) {
-      for (var j = 0; j < _matrixTiles[i].length; j++) {
-        final tile = _matrixTiles[i][j];
+    for (var i = 0; i < _tileMatrix.length; i++) {
+      for (var j = 0; j < _tileMatrix[i].length; j++) {
+        final tile = _tileMatrix[i][j];
         tile.isMovableTile = false;
       }
     }
@@ -328,7 +328,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
       return null;
     }
 
-    return _matrixTiles[rowIndex][columnIndex];
+    return _tileMatrix[rowIndex][columnIndex];
   }
 
   /// [currMovableType] に応じて、[currTile] の移動可能フラグの更新を行います。
@@ -356,10 +356,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
     var row = currRowIndex;
     var column = currColumnIndex;
     while (row >= 0 &&
-        row < _matrixTiles.length &&
+        row < _tileMatrix.length &&
         column >= 0 &&
-        column < _matrixTiles[row].length) {
-      final tile = _matrixTiles[row][column];
+        column < _tileMatrix[row].length) {
+      final tile = _tileMatrix[row][column];
 
       // 空でなければ止める
       if (tile.stackedPiece.pieceType != PieceType.Blank) {
@@ -380,25 +380,40 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
     add(_selector = Selector(destTileSize, selectorImage));
   }
 
+  /// 駒の持ち主を先手・後手を入れ替えます。
+  void _swapPlayerType(OneTile tile) {
+    if (tile.stackedPiece.playerType == PlayerType.Black) {
+      tile.stackedPiece.playerType = PlayerType.White;
+    } else {
+      tile.stackedPiece.playerType = PlayerType.Black;
+    }
+    tile.stackedPiece.flipVerticallyAroundCenter();
+  }
+
   /// 9x9の初期設定を行います。
   Future<void> _prepare9x9Tile() async {
-    final OnTileTapDowned onTapDowned =
+    final OnTileTapDown handleOnTileTapDown =
         (info, rowIndex, columnIndex, isDoubleTap) {
-      print('ontapp!!! row: $rowIndex, column: $columnIndex');
+      print(
+          'ontapp!!! row: $rowIndex, column: $columnIndex, doubleTap: $isDoubleTap');
       _selector.position = info;
       _selectedRowIndex = rowIndex;
       _selectedColumnIndex = columnIndex;
 
       if (rowIndex == null ||
           columnIndex == null ||
-          _matrixTiles.length <= rowIndex ||
-          _matrixTiles[0].length <= columnIndex) {
+          _tileMatrix.length <= rowIndex ||
+          _tileMatrix[0].length <= columnIndex) {
         return;
+      }
+
+      if (isDoubleTap) {
+        _swapPlayerType(_tileMatrix[rowIndex][columnIndex]);
       }
 
       // 将棋盤の操作オブジェクトへ伝播する。
       for (var listener in _eventListeners) {
-        listener.call(_matrixTiles[rowIndex][columnIndex]);
+        listener.call(_tileMatrix[rowIndex][columnIndex]);
       }
     };
 
@@ -406,7 +421,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
     final blankPiece = PieceFactory.createBlankPiece();
 
     /// 内部操作用フィールドの初期化処理
-    _matrixTiles = <List<OneTile>>[];
+    _tileMatrix = <List<OneTile>>[];
 
     // 9x9マスのComponentを作成し、内部操作用フィールドへ1行毎に追加していく
     for (int i = 0; i < defaultRowCount; i++) {
@@ -417,7 +432,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
           'tile.png',
         );
         final oneTile = OneTile(
-          onTapDowned,
+          handleOnTileTapDown,
           Vector2(j * destTileSize, i * destTileSize),
           destTileSize,
           tileImage,
@@ -432,11 +447,11 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
       }
 
       // ここで1行分のList<OneTile>を追加
-      _matrixTiles.add(rowTiles);
+      _tileMatrix.add(rowTiles);
     }
 
     // check
-    assert(_matrixTiles.length == defaultRowCount);
-    assert(_matrixTiles[0].length == defaultColumnCount);
+    assert(_tileMatrix.length == defaultRowCount);
+    assert(_tileMatrix[0].length == defaultColumnCount);
   }
 }
