@@ -1,17 +1,13 @@
+import 'package:dashbook/dashbook.dart';
 import 'package:flutter/material.dart';
-import 'package:shogi_game/example/quiz_view.dart';
-
-import 'example/kifu_edit_view.dart';
-import 'example/sandbox_view.dart';
+import 'package:shogi_game/stories/utils.dart';
 
 Future<void> main() async {
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        // body: SandboxView(),
-        // body: KifuEditView(),
-        body: QuizView(),
-      ),
-    ),
+  final dashbook = Dashbook(
+    theme: ThemeData.dark(),
+    title: 'shogi flame example',
   );
+  addStrories(dashbook);
+
+  runApp(dashbook);
 }
