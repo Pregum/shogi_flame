@@ -47,15 +47,17 @@ class KifuGenerator {
     final prt = Random().nextBool() ? PieceRelationTypeEx.random() : null;
 
     final moveInfo = MoveInfo(
-      pieceType: pt,
-      column: col,
-      row: row,
-      isBlack: isBlack,
-      isPromotion: isPromotion,
-      moveType: mt,
-      pieceRelationType: prt,
-      // TODO: previousRow, previousColumnはconfigでON/OFFを切り替えられるようにする。
-    );
+        pieceType: pt,
+        column: col,
+        row: row,
+        isBlack: isBlack,
+        isPromotion: isPromotion,
+        moveType: mt,
+        pieceRelationType: prt,
+        columnLength: _columnNum,
+        rowLength: _rowNum
+        // TODO: previousRow, previousColumnはconfigでON/OFFを切り替えられるようにする。
+        );
     return moveInfo;
   }
 }

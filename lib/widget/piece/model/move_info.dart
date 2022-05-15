@@ -13,10 +13,16 @@ class MoveInfo {
   /// 到達地点の段
   final int row;
   int get rowIndex => max(row - 1, 0);
+  int get reversedRow => rowLength - rowIndex;
+
+  final int rowLength;
 
   // 到達地点の筋
   final int column;
   int get columnIndex => max(column - 1, 0);
+  int get reversedColumn => columnLength - columnIndex;
+
+  final int columnLength;
 
   /// 前の地点の段
   final int? previousRow;
@@ -43,6 +49,8 @@ class MoveInfo {
     required this.pieceType,
     required this.row,
     required this.column,
+    required this.columnLength,
+    required this.rowLength,
     this.previousRow,
     this.previousColumn,
     this.isPromotion = false,
