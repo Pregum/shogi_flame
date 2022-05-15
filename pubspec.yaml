@@ -30,6 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flame: 1.0.0
   dashbook: ^0.1.7
+  firebase_core: ^1.17.0
 
 dev_dependencies:
   canvas_test: ^0.2.0

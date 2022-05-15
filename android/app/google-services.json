@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "941047431151",
+    "project_id": "shogi-flame",
+    "storage_bucket": "shogi-flame.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:941047431151:android:e477217d2ebe3d4d47001a",
+        "android_client_info": {
+          "package_name": "com.example.shogi_game"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "941047431151-7mta1couubs6tq6q848kh8m845ngjas7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOFpF4kWlHZ2M_B389StMFgdBMPGsZduw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "941047431151-7mta1couubs6tq6q848kh8m845ngjas7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
