@@ -1,5 +1,7 @@
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
@@ -18,11 +20,31 @@ class QuizContainer extends FlameGame with HasTappables {
       TextComponent(text: 'correct!', textRenderer: TextPaint())
         ..topLeftPosition = Vector2(660, 50);
   final Component failureComponent =
-      TextComponent(text: 'incrrect...', textRenderer: TextPaint())
+      TextComponent(text: 'incorrect...', textRenderer: TextPaint())
         ..topLeftPosition = Vector2(660, 50);
+  late ButtonComponent retryComponent = ButtonComponent(
+      button: TextComponent(text: 'reset'),
+      onPressed: () {
+        needFadeIn = true;
+      })
+    ..topLeftPosition = Vector2(660, 80);
   var timer = Timer(0.5);
   var canTap = false;
   var haveShown = false;
+  bool needFadeIn = false;
+  bool movingAnimation = false;
+  late PositionComponent fadeInComponent;
+
+  @override
+  void onGameResize(Vector2 canvasSize) {
+    super.onGameResize(canvasSize);
+    fadeInComponent =
+        // PositionComponent(size: Vector2(canvasSize.x, canvasSize.y))
+        PositionComponent(size: Vector2(canvasSize.x * 1.5, canvasSize.y))
+          ..debugMode = true
+          ..topLeftPosition = Vector2(canvasSize.x, 0);
+  }
+
   @override
   Future<void>? onLoad() async {
     super.onLoad();
@@ -58,6 +80,7 @@ class QuizContainer extends FlameGame with HasTappables {
 
       canTap = false;
     });
+    add(retryComponent);
   }
 
   @override
@@ -68,6 +91,18 @@ class QuizContainer extends FlameGame with HasTappables {
       // ここに問題表示処理を実装
       _showQuestion();
       haveShown = true;
+    }
+
+    if (needFadeIn) {
+      add(fadeInComponent);
+      needFadeIn = false;
+      movingAnimation = true;
+    } else if (movingAnimation) {
+      fadeInComponent.x -= 50;
+      if (fadeInComponent.x < -fadeInComponent.size.x) {
+        movingAnimation = false;
+        fadeInComponent.position = Vector2(canvasSize.x, 0);
+      }
     }
   }
 
@@ -84,5 +119,12 @@ class QuizContainer extends FlameGame with HasTappables {
       // textRenderer: tr,
     )..topLeftPosition = Vector2(660, 20));
     canTap = true;
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    canvas.drawRect(
+        fadeInComponent.toRect(), Paint()..color = Colors.greenAccent);
   }
 }
