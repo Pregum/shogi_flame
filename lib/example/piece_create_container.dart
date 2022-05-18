@@ -21,7 +21,7 @@ class PieceCreateContainer extends FlameGame with HasTappables {
 
   @override
   Future<void> onLoad() async {
-    super.onLoad();
+    await super.onLoad();
 
     // ひとまず金銀あたりの駒生成ボタンを表示する
     final scale = 2.0;

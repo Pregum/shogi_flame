@@ -3,6 +3,7 @@ import 'package:flame/game.dart';
 import 'package:shogi_game/example/kifu_edit_view.dart';
 import 'package:shogi_game/example/piece_create_container.dart';
 import 'package:shogi_game/example/quiz_view.dart';
+import 'package:shogi_game/example/score_attack_view.dart';
 
 import '../example/sandbox_view.dart';
 
@@ -13,5 +14,6 @@ void addStrories(Dashbook dashbook) {
       (_) => SandboxView(),
     )
     ..add('Kifu generator', (_) => KifuEditView())
-    ..add('Quiz view', (_) => QuizView());
+    ..add('Quiz view', (_) => QuizView())
+    ..add('score attack', (_) => ScoreAttackView());
 }
