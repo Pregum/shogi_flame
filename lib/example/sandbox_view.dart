@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
@@ -25,7 +24,6 @@ class _SandboxViewState extends State<SandboxView> {
 
     this.stream = NormalLogger.singleton().sc.stream;
     this.stream.listen((event) {
-      // print('on call log stream... length: ${event.length}');
       if (_scontroller.hasClients) {
         _scontroller.animateTo(_scontroller.position.maxScrollExtent,
             duration: Duration(milliseconds: 300), curve: Curves.easeIn);
