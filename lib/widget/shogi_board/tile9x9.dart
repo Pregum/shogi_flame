@@ -214,6 +214,108 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
     _effectControllerObject.children.clear();
   }
 
+  /// デフォルトの駒の配置処理を行います。
+  Future<void> relocationDefaultPiecePosition() async {
+    for (var i = 0; i < defaultRowCount; i++) {
+      for (var j = 0; j < defaultColumnCount; j++) {
+        if (i == 2) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Pawn, destTileSize,
+                  playerType: PlayerType.White))!;
+        } else if (i == defaultRowCount - 3) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Pawn, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 1 && j == 1)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Rook, destTileSize,
+                  playerType: PlayerType.White))!;
+        } else if ((i == defaultRowCount - 2 && j == 1)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Rook, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 1 && j == defaultColumnCount - 2)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Bishop, destTileSize,
+                  playerType: PlayerType.White))!;
+        } else if ((i == defaultRowCount - 2 && j == defaultColumnCount - 2)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Bishop, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 0 && j == 0) ||
+            (i == 0 && j == defaultColumnCount - 1)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Lance, destTileSize,
+                  playerType: PlayerType.White))!;
+        } else if ((i == defaultRowCount - 1 && j == 0) ||
+            (i == defaultRowCount - 1 && j == defaultColumnCount - 1)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Lance, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 0 && j == 1) ||
+            (i == 0 && j == defaultColumnCount - 2)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Knight, destTileSize,
+                  playerType: PlayerType.White))!;
+        } else if ((i == defaultRowCount - 1 && j == 1) ||
+            (i == defaultRowCount - 1 && j == defaultColumnCount - 2)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Knight, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 0 && j == 2) ||
+            (i == 0 && j == defaultColumnCount - 3)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.SilverGeneral, destTileSize,
+                  playerType: PlayerType.White))!;
+        } else if ((i == defaultRowCount - 1 && j == 2) ||
+            (i == defaultRowCount - 1 && j == defaultColumnCount - 3)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.SilverGeneral, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 0 && j == 3) ||
+            (i == 0 && j == defaultColumnCount - 4)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.GoldGeneral, destTileSize,
+                  playerType: PlayerType.White))!;
+        } else if ((i == defaultRowCount - 1 && j == 3) ||
+            (i == defaultRowCount - 1 && j == defaultColumnCount - 4)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.GoldGeneral, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 0 && j == 4)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.King, destTileSize,
+                  playerType: PlayerType.White))!;
+        } else if ((i == defaultRowCount - 1 && j == 4)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.King, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Blank, destTileSize,
+                  playerType: PlayerType.Black))!;
+        }
+      }
+    }
+  }
+
   /// 移動可能な位置を更新します。
   /// [centerTile] を中心に左右と上下に半分の辺の長さ分更新処理をかけます。
   void configureMovablePiece(OneTile centerTile, PieceRoute movableRoutes) {

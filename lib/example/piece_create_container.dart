@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shogi_game/widget/operator/action_mode.dart';
 import 'package:shogi_game/widget/operator/board_operator.dart';
 import 'package:shogi_game/widget/operator/operator_history_table.dart';
@@ -11,7 +12,7 @@ import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/tile9x9.dart';
 
-class PieceCreateContainer extends FlameGame with HasTappables {
+class PieceCreateContainer extends FlameGame with HasTappables, KeyboardEvents {
   late Tile9x9 board;
   late BoardOperator operator;
 
@@ -165,6 +166,18 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       })
         ..topLeftPosition = Vector2(64 * 10 + 120, 700),
     );
+  }
+
+  @override
+  KeyEventResult onKeyEvent(
+    RawKeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
+    if (event.logicalKey == LogicalKeyboardKey.keyQ) {
+      print('tap q');
+      board.relocationDefaultPiecePosition();
+    }
+    return super.onKeyEvent(event, keysPressed);
   }
 }
 
