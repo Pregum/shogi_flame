@@ -9,7 +9,7 @@ import '../model/move_state_type.dart';
 /// 歩兵のsprite
 class SpritePawn extends SpriteComponent implements IPiece {
   SpritePawn(Sprite sprite, {PlayerType? playerType}) : super(sprite: sprite) {
-    _playerType = playerType ?? PlayerType.None;
+    _playerType = playerType ?? PlayerType.Black;
     if (!_playerType.isBlack) {
       flipVerticallyAroundCenter();
     }

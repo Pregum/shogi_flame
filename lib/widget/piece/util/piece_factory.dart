@@ -57,11 +57,29 @@ class PieceFactory {
         return SpritePawn(sprite, playerType: playerType)
           ..size = Vector2.all(size);
       case PieceType.PromotedRook:
+        final sprite = await Sprite.load('promoted_rook.png');
+        return SpritePawn(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedBishop:
+        final sprite = await Sprite.load('promoted_bishop.png');
+        return SpritePawn(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedSilver:
+        final sprite = await Sprite.load('promoted_gold_general.png');
+        return SpritePawn(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedKnight:
+        final sprite = await Sprite.load('promoted_gold_general.png');
+        return SpritePawn(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedLance:
+        final sprite = await Sprite.load('promoted_gold_general.png');
+        return SpritePawn(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedPawn:
+        final sprite = await Sprite.load('promoted_pawn.png');
+        return SpritePawn(sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.Blank:
         return BlankPiece();
     }
