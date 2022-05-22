@@ -287,9 +287,6 @@ class BoardOperator {
     if (!moveSuccess) {
       return;
     }
-    // 成り、不成の判定を行う。
-    final promotionMatrix =
-        _board.getPromotionTileMatrix(movingPiece.playerType);
 
     final handleOnTapDialog = ({IPiece? nPiece}) {
       final nextPiece = nPiece != null ? nPiece : movingPiece;
@@ -310,9 +307,15 @@ class BoardOperator {
       _addHistory(movement);
     };
 
-    // FIXME: 相手の陣地から外へ出る手の成り判定ができていないので修正する
-    final canPromote = promotionMatrix[endPos.rowIndex!][endPos.columnIndex!];
-    if (canPromote) {
+    // 成り、不成の判定を行う。
+    final promotionMatrix =
+        _board.getPromotionTileMatrix(movingPiece.playerType);
+    final isPromotableOfEndTile =
+        promotionMatrix[endPos.rowIndex!][endPos.columnIndex!];
+    final isPromotableOfStartTile =
+        promotionMatrix[startPos.rowIndex!][startPos.columnIndex!];
+    if ((isPromotableOfEndTile || isPromotableOfStartTile) &&
+        movingPiece.pieceType.canPromote) {
       // 成り・不成を決めるダイアログを表示する。
       // 成り・不成用のSpriteComponentを配置してたっぷされたら反映するようにする。
       // ただここでダイアログを出すと下の処理を待つ処理を入れる必要がありよくなさそう？

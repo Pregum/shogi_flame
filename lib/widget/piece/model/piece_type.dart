@@ -115,6 +115,16 @@ extension PieceTypeEx on PieceType {
         this == PieceType.PromotedPawn;
   }
 
+  /// 成りが可能であるか
+  bool get canPromote {
+    return this == PieceType.Rook ||
+        this == PieceType.Bishop ||
+        this == PieceType.Pawn ||
+        this == PieceType.SilverGeneral ||
+        this == PieceType.Lance ||
+        this == PieceType.Knight;
+  }
+
   static List<PieceType> get unPromotedPieceTypes => <PieceType>[
         PieceType.King,
         PieceType.Rook,
