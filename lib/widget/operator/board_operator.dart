@@ -314,7 +314,14 @@ class BoardOperator {
         promotionMatrix[endPos.rowIndex!][endPos.columnIndex!];
     final isPromotableOfStartTile =
         promotionMatrix[startPos.rowIndex!][startPos.columnIndex!];
-    if ((isPromotableOfEndTile || isPromotableOfStartTile) &&
+    // 桂馬などの後ろに下がれない駒の成らせないといけない駒の判定を行う。
+    final canMoveNext = _board.verifyCanMoveNext(endTile, movingPiece);
+    if (!canMoveNext) {
+      final promotedPieceType = movingPiece.pieceType.promotedPieceType;
+      final promotedPiece = await PieceFactory.createSpritePiece(
+          promotedPieceType, _board.destTileSize);
+      handleOnTapDialog(nPiece: promotedPiece);
+    } else if ((isPromotableOfEndTile || isPromotableOfStartTile) &&
         movingPiece.pieceType.canPromote) {
       // 成り・不成を決めるダイアログを表示する。
       // 成り・不成用のSpriteComponentを配置してたっぷされたら反映するようにする。

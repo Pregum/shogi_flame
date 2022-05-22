@@ -115,6 +115,15 @@ extension PieceTypeEx on PieceType {
         this == PieceType.PromotedPawn;
   }
 
+  bool get canBack {
+    return this == PieceType.King ||
+        this == PieceType.Rook ||
+        this == PieceType.Bishop ||
+        this == PieceType.SilverGeneral ||
+        this == PieceType.GoldGeneral ||
+        isPromotion;
+  }
+
   /// 成りが可能であるか
   bool get canPromote {
     return this == PieceType.Rook ||

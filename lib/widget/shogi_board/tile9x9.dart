@@ -214,6 +214,54 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
     _effectControllerObject.children.clear();
   }
 
+  bool verifyCanMoveNext(OneTile endTile, IPiece movingPiece) {
+    if (movingPiece.pieceType == PieceType.Blank) {
+      return false;
+    }
+
+    if (movingPiece.pieceType.canBack) {
+      return true;
+    }
+
+    final movableRoutes = movingPiece.movableRoutes;
+
+    final centerCol = endTile.columnIndex ?? 0;
+    final centerRow = endTile.rowIndex ?? 0;
+
+    final halfWidth = movableRoutes.widthTileLnegth ~/ 2;
+
+    final leftIndex = centerCol - halfWidth;
+    final topIndex = centerRow - halfWidth;
+
+    for (var i = 0; i < movableRoutes.widthTileLnegth; i++) {
+      final currRowIndex = topIndex + i;
+
+      if (currRowIndex < 0 || currRowIndex >= _tileMatrix.length) {
+        continue;
+      }
+
+      for (var j = 0; j < movableRoutes.widthTileLnegth; j++) {
+        final currColumnIndex = leftIndex + j;
+        if (currColumnIndex < 0 || currColumnIndex >= _tileMatrix[i].length) {
+          continue;
+        }
+
+        if (currColumnIndex == centerRow && currColumnIndex == centerCol) {
+          continue;
+        }
+
+        final currMovaleType = movableRoutes.routeMatrix[i][j];
+        // １つでも移動可能なタイルが存在していればtrueを返す。
+        if (currMovaleType == MoveStateType.Movable ||
+            currMovaleType == MoveStateType.Infinite) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   /// デフォルトの駒の配置処理を行います。
   Future<void> relocationDefaultPiecePosition() async {
     for (var i = 0; i < defaultRowCount; i++) {
