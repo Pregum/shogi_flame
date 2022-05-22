@@ -408,7 +408,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         final currTile = _tileMatrix[currRowIndex][currColumnIndex];
         final currMovableType = movableRoutes.routeMatrix[i][j];
         _updateMovableState(currMovableType, currTile, currRowIndex, centerRow,
-            currColumnIndex, centerColumn);
+            currColumnIndex, centerColumn, centerTile.stackedPiece.playerType);
       }
     }
   }
@@ -491,15 +491,22 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
   }
 
   /// [currMovableType] に応じて、[currTile] の移動可能フラグの更新を行います。
-  void _updateMovableState(MoveStateType currMovableType, OneTile currTile,
-      int currRowIndex, int centerRow, int currColumnIndex, int centerColumn) {
+  void _updateMovableState(
+      MoveStateType currMovableType,
+      OneTile currTile,
+      int currRowIndex,
+      int centerRow,
+      int currColumnIndex,
+      int centerColumn,
+      PlayerType playerType) {
     if (currMovableType == MoveStateType.Movable &&
-        currTile.stackedPiece.pieceType == PieceType.Blank) {
+            currTile.stackedPiece.pieceType == PieceType.Blank ||
+        playerType != currTile.stackedPiece.playerType) {
       currTile.isMovableTile = true;
     } else if (currMovableType == MoveStateType.Infinite) {
       // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
       _setMovableTypeToInifiteTiles(
-          currRowIndex, centerRow, currColumnIndex, centerColumn);
+          currRowIndex, centerRow, currColumnIndex, centerColumn, playerType);
     } else {
       currTile.isMovableTile = false;
     }
@@ -507,8 +514,8 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
 
   /// 無限超の移動可能タイルのフラグ更新を行います。
   /// [centerRow], [centerColumn]から[currRowIndex], [currColumnIndex] の差分を端までループしてフラグを立てていきます。
-  void _setMovableTypeToInifiteTiles(
-      int currRowIndex, int centerRow, int currColumnIndex, int centerColumn) {
+  void _setMovableTypeToInifiteTiles(int currRowIndex, int centerRow,
+      int currColumnIndex, int centerColumn, PlayerType playerType) {
     // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
     final deltaRow = currRowIndex - centerRow;
     final deltaColumn = currColumnIndex - centerColumn;
@@ -520,8 +527,11 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         column < _tileMatrix[row].length) {
       final tile = _tileMatrix[row][column];
 
-      // 空でなければ止める
-      if (tile.stackedPiece.pieceType != PieceType.Blank) {
+      // 敵の駒もしくは空でなければ止める
+      if (tile.stackedPiece.playerType != playerType) {
+        tile.isMovableTile = true;
+        break;
+      } else if (tile.stackedPiece.pieceType != PieceType.Blank) {
         break;
       }
 
