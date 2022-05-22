@@ -15,6 +15,7 @@ import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/one_tile.dart';
 import 'package:shogi_game/widget/shogi_board/tile9x9.dart';
 
+import '../shogi_board/piece_stand.dart';
 import 'action_mode.dart';
 import 'operator_phase_type.dart';
 
@@ -64,6 +65,12 @@ class BoardOperator {
   /// 操作対象のboard
   final Tile9x9 _board;
 
+  /// 先手の駒台
+  PieceStand? _blackPieceStand;
+
+  /// 後手の駒台
+  PieceStand? _whitePieceStand;
+
   /// ロガー
   final NormalLogger _logger = NormalLogger.singleton();
 
@@ -75,7 +82,10 @@ class BoardOperator {
         ..debugColor = Colors.red;
 
   /// ctor
-  BoardOperator(this._board) {
+  BoardOperator(this._board,
+      {PieceStand? blackPieceStand, PieceStand? whitePieceStand}) {
+    _blackPieceStand = blackPieceStand;
+    _whitePieceStand = whitePieceStand;
     final firstSnapshot = List<List<PieceType>>.filled(_board.defaultRowCount,
         List<PieceType>.filled(_board.defaultColumnCount, PieceType.Blank));
     final movement = PieceMovement(
@@ -291,17 +301,21 @@ class BoardOperator {
 
     final handleOnTapDialog = ({IPiece? nPiece}) {
       final nextPiece = nPiece != null ? nPiece : movingPiece;
+      final killedPiece = endTile.stackedPiece;
       _board.setPiece(nextPiece);
 
       final blankPiece = PieceFactory.createBlankPiece();
       startTile.stackedPiece = blankPiece;
 
-      final movement = PieceMovement(startPos, endPos, endTile.stackedPiece,
+      final movement = PieceMovement(startPos, endPos, killedPiece,
           snapshot: _board.pieceTypesOnTiles);
 
-      final killedPiece = movement.killedPiece;
-      if (killedPiece != null) {
-        // TODO: 駒台クラスへ駒を渡す処理を実装する
+      if (killedPiece.pieceType != PieceType.Blank) {
+        if (movingPiece.playerType == PlayerType.Black) {
+          _blackPieceStand?.add(killedPiece);
+        } else {
+          _whitePieceStand?.add(killedPiece);
+        }
       }
 
       // 履歴の更新

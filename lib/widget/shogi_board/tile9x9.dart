@@ -68,6 +68,9 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
   double srcTileSize;
   double get destTileSize => scale * srcTileSize;
 
+  double marginTop;
+  double marginLeft;
+
   static double defaultScale = 2.0;
   static double defaultSrcTileSize = 32.0;
 
@@ -87,6 +90,8 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
   Tile9x9({
     this.scale = 4.0,
     this.srcTileSize = 32.0,
+    this.marginTop = 0.0,
+    this.marginLeft = 0.0,
   });
 
   final defaultRowCount = 9;
@@ -603,7 +608,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         );
         final oneTile = OneTile(
           handleOnTileTapDown,
-          Vector2(j * destTileSize, i * destTileSize),
+          Vector2(marginLeft + j * destTileSize, marginTop + i * destTileSize),
           destTileSize,
           tileImage,
           stackedPiece: blankPiece,
