@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 
 import '../piece/interface/i_piece.dart';
 import '../piece/model/piece_type.dart';
@@ -16,11 +17,18 @@ class PieceStand extends PositionComponent {
   Map<PieceType, List<IPiece>> _pieceHolder = Map<PieceType, List<IPiece>>();
 
   late ShapeComponent _standComponent;
+  PositionComponent _holderComponent = PositionComponent();
+
+  final TextPaint textConfig = TextPaint(
+    style: const TextStyle(color: Colors.white, fontSize: 20),
+  );
 
   static final double defaultPieceSize = 64.0;
 
   /// ctor
-  PieceStand({required this.playerType, super.size});
+  PieceStand({required this.playerType, super.size}) {
+    debugMode = true;
+  }
 
   @override
   Future<void>? onLoad() async {
@@ -66,6 +74,7 @@ class PieceStand extends PositionComponent {
 
   Future<void> _updatePieceStandLayout() async {
     // ここでレイアウトの更新を行います。
+    children.clear();
     int index = 0;
     for (var entry in _pieceHolder.entries) {
       if (entry.value.isEmpty) {
@@ -74,21 +83,22 @@ class PieceStand extends PositionComponent {
 
       final piece = await PieceFactory.createSpritePiece(
           entry.value.first.pieceType, defaultPieceSize,
-          playerType: playerType)
+          playerType: PlayerType.Black)
         ?..topLeftPosition = Vector2(index * defaultPieceSize, 0);
 
       if (piece == null) {
         continue;
       }
-      piece.add(
-        TextComponent(
-          text: entry.value.length.toString(),
-          position: Vector2(56.0, 8.0),
-        ),
-      );
 
+      await piece.add(TextComponent(text: entry.value.length.toString())
+        ..topLeftPosition = Vector2(48.0, 10));
       await add(piece);
       index++;
     }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
   }
 }

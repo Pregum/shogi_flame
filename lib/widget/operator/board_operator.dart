@@ -313,9 +313,9 @@ class BoardOperator {
       if (killedPiece.pieceType != PieceType.Blank) {
         killedPiece.playerType = PlayerType.Black;
         if (movingPiece.playerType == PlayerType.Black) {
-          _blackPieceStand?.add(killedPiece);
+          _blackPieceStand?.pushPiece(killedPiece);
         } else {
-          _whitePieceStand?.add(killedPiece);
+          _whitePieceStand?.pushPiece(killedPiece);
         }
       }
 
