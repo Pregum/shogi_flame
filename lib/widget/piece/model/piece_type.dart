@@ -125,4 +125,38 @@ extension PieceTypeEx on PieceType {
         PieceType.Lance,
         PieceType.Pawn,
       ];
+
+  PieceType get promotedPieceType {
+    switch (this) {
+      case PieceType.Blank:
+      case PieceType.King:
+        return PieceType.Blank;
+      case PieceType.Rook:
+        return PieceType.PromotedRook;
+      case PieceType.Bishop:
+        return PieceType.PromotedBishop;
+      case PieceType.GoldGeneral:
+        return PieceType.GoldGeneral;
+      case PieceType.SilverGeneral:
+        return PieceType.PromotedSilver;
+      case PieceType.Knight:
+        return PieceType.PromotedKnight;
+      case PieceType.Lance:
+        return PieceType.PromotedLance;
+      case PieceType.Pawn:
+        return PieceType.PromotedPawn;
+      case PieceType.PromotedRook:
+        return PieceType.PromotedRook;
+      case PieceType.PromotedBishop:
+        return PieceType.PromotedBishop;
+      case PieceType.PromotedSilver:
+        return PieceType.PromotedSilver;
+      case PieceType.PromotedKnight:
+        return PieceType.PromotedKnight;
+      case PieceType.PromotedLance:
+        return PieceType.PromotedLance;
+      case PieceType.PromotedPawn:
+        return PieceType.PromotedPawn;
+    }
+  }
 }

@@ -316,9 +316,12 @@ class BoardOperator {
       // 成り・不成用のSpriteComponentを配置してたっぷされたら反映するようにする。
       // ただここでダイアログを出すと下の処理を待つ処理を入れる必要がありよくなさそう？
       // → タップ時のコールバックに処理をセットするなどして対応する
-      final okSprite = await Sprite.load('gold_general.png');
+      final promotedPieceType = movingPiece.pieceType.promotedPieceType;
+      final okSprite = await PieceFactory.createSpritePiece(
+          promotedPieceType, _board.destTileSize);
+      final sprite = (okSprite as SpriteComponent).sprite;
       final okComponent = SpriteComponent(
-          sprite: okSprite,
+          sprite: sprite,
           size: Vector2.all(_board.srcTileSize),
           scale: Vector2.all(_board.scale),
           anchor: Anchor.center);
@@ -335,7 +338,7 @@ class BoardOperator {
             print('成りました。');
           })
         ..debugMode = true;
-      final noSprite = await Sprite.load('pawn.png');
+      final noSprite = (movingPiece as SpriteComponent).sprite;
       final noComponent = SpriteComponent(
         sprite: noSprite,
         size: Vector2.all(_board.srcTileSize),
