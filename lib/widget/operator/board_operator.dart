@@ -291,11 +291,12 @@ class BoardOperator {
     final promotionMatrix =
         _board.getPromotionTileMatrix(movingPiece.playerType);
 
-    final handleOnTapDialog = () {
-      _board.setPiece(movingPiece);
+    final handleOnTapDialog = ({IPiece? nPiece}) {
+      final nextPiece = nPiece != null ? nPiece : movingPiece;
+      _board.setPiece(nextPiece);
 
-      final blanckPiece = PieceFactory.createBlankPiece();
-      startTile.stackedPiece = blanckPiece;
+      final blankPiece = PieceFactory.createBlankPiece();
+      startTile.stackedPiece = blankPiece;
 
       final movement = PieceMovement(startPos, endPos, endTile.stackedPiece,
           snapshot: _board.pieceTypesOnTiles);
@@ -334,7 +335,7 @@ class BoardOperator {
           onPressed: () {
             // 成りのPieceTypeに変更する.
             _promotionDalogComponent.children.clear();
-            handleOnTapDialog();
+            handleOnTapDialog(nPiece: okSprite);
             print('成りました。');
           })
         ..debugMode = true;

@@ -22,7 +22,7 @@ class SpriteBishop extends SpriteComponent implements IPiece {
   }
 
   @override
-  PieceType pieceType = PieceType.GoldGeneral;
+  PieceType pieceType = PieceType.Bishop;
 
   @override
   PieceRoute get movableRoutes =>
