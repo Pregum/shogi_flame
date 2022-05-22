@@ -38,7 +38,7 @@ class PieceCreateContainer extends FlameGame with HasTappables, KeyboardEvents {
     add(board =
         Tile9x9(scale: scale, srcTileSize: srcTileSize, marginTop: marginTop));
     add(_blackPieceStand = PieceStand(playerType: PlayerType.White)
-      ..topLeftPosition = Vector2(0, board.size.y));
+      ..topLeftPosition = Vector2(0, 64 * 10));
     operator = BoardOperator(board,
         blackPieceStand: _blackPieceStand, whitePieceStand: _whitePieceStand);
     add(OperatorHistoryTable(stream: operator.historyStream)

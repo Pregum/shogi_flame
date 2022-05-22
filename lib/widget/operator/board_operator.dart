@@ -311,6 +311,7 @@ class BoardOperator {
           snapshot: _board.pieceTypesOnTiles);
 
       if (killedPiece.pieceType != PieceType.Blank) {
+        killedPiece.playerType = PlayerType.Black;
         if (movingPiece.playerType == PlayerType.Black) {
           _blackPieceStand?.add(killedPiece);
         } else {

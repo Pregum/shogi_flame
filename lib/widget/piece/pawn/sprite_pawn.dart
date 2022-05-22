@@ -48,10 +48,10 @@ class SpritePawn extends SpriteComponent implements IPiece {
 
   @override
   set playerType(PlayerType playerType) {
-    _playerType = playerType;
     if (_playerType != playerType) {
       // ここで先手・後手の向きを更新する。
       flipVerticallyAroundCenter();
     }
+    _playerType = playerType;
   }
 }
