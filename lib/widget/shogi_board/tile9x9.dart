@@ -528,7 +528,8 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
       final tile = _tileMatrix[row][column];
 
       // 敵の駒もしくは空でなければ止める
-      if (tile.stackedPiece.playerType != playerType) {
+      if (tile.stackedPiece.playerType != PlayerType.None &&
+          tile.stackedPiece.playerType != playerType) {
         tile.isMovableTile = true;
         break;
       } else if (tile.stackedPiece.pieceType != PieceType.Blank) {

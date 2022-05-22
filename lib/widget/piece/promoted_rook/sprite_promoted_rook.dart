@@ -45,7 +45,7 @@ class SpritePromotedRook extends SpriteComponent implements IPiece {
   @override
   set playerType(PlayerType playerType) {
     if (_playerType != playerType) {
-      flipHorizontallyAroundCenter();
+      flipVerticallyAroundCenter();
     }
     _playerType = playerType;
   }
