@@ -500,8 +500,8 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
       int centerColumn,
       PlayerType playerType) {
     if (currMovableType == MoveStateType.Movable &&
-            currTile.stackedPiece.pieceType == PieceType.Blank ||
-        playerType != currTile.stackedPiece.playerType) {
+        (currTile.stackedPiece.pieceType == PieceType.Blank ||
+            playerType != currTile.stackedPiece.playerType)) {
       currTile.isMovableTile = true;
     } else if (currMovableType == MoveStateType.Infinite) {
       // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける

@@ -9,6 +9,7 @@ import 'package:shogi_game/widget/piece/model/piece_movement.dart';
 import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
+import 'package:shogi_game/widget/piece/model/player_type.dart';
 import 'package:shogi_game/widget/piece/model/position_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/one_tile.dart';
@@ -407,8 +408,10 @@ class BoardOperator {
     required OneTile? startTile,
   }) {
     return _operatorStatus == OperatorPhaseType.EndTileSelect &&
-        startTile != null &&
-        targetTile.stackedPiece.pieceType == PieceType.Blank;
+            startTile != null &&
+            targetTile.stackedPiece.pieceType == PieceType.Blank ||
+        (startTile?.stackedPiece.playerType ?? PlayerType.None) !=
+            targetTile.stackedPiece.playerType;
   }
 
   /// 移動条件を満たしているか判定します。
@@ -417,9 +420,10 @@ class BoardOperator {
     required OneTile? endTile,
   }) {
     return startTile != null &&
-        startTile.stackedPiece.pieceType != PieceType.Blank &&
-        endTile != null &&
-        endTile.stackedPiece.pieceType == PieceType.Blank;
+            startTile.stackedPiece.pieceType != PieceType.Blank &&
+            endTile != null &&
+            endTile.stackedPiece.pieceType == PieceType.Blank ||
+        startTile?.stackedPiece.playerType != endTile?.stackedPiece.playerType;
   }
 
   /// [targetTile] を終了地点のタイルに設定します。
