@@ -17,7 +17,6 @@ class PieceStand extends PositionComponent {
   Map<PieceType, List<IPiece>> _pieceHolder = Map<PieceType, List<IPiece>>();
 
   late ShapeComponent _standComponent;
-  PositionComponent _holderComponent = PositionComponent();
 
   final TextPaint textConfig = TextPaint(
     style: const TextStyle(color: Colors.white, fontSize: 20),

@@ -251,7 +251,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
           continue;
         }
 
-        if (currColumnIndex == centerRow && currColumnIndex == centerCol) {
+        if (currRowIndex == centerRow && currColumnIndex == centerCol) {
           continue;
         }
 
