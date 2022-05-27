@@ -178,4 +178,28 @@ extension PieceTypeEx on PieceType {
         return PieceType.PromotedPawn;
     }
   }
+
+  /// 裏面のpiece_typeを返します。
+  /// 裏面がない場合は現在の[PieceType]を返します。
+  PieceType get reversePieceType {
+    if (!this.isPromotion) {
+      return this;
+    }
+    switch (this) {
+      case PieceType.PromotedRook:
+        return PieceType.Rook;
+      case PieceType.PromotedBishop:
+        return PieceType.Bishop;
+      case PieceType.PromotedSilver:
+        return PieceType.SilverGeneral;
+      case PieceType.PromotedKnight:
+        return PieceType.Knight;
+      case PieceType.PromotedLance:
+        return PieceType.Lance;
+      case PieceType.PromotedPawn:
+        return PieceType.Pawn;
+      default:
+        return PieceType.Blank;
+    }
+  }
 }

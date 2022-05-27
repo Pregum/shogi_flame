@@ -299,7 +299,7 @@ class BoardOperator {
       return;
     }
 
-    final handleOnTapDialog = ({IPiece? nPiece}) {
+    final handleOnTapDialog = ({IPiece? nPiece}) async {
       final nextPiece = nPiece != null ? nPiece : movingPiece;
       final killedPiece = endTile.stackedPiece;
       _board.setPiece(nextPiece);
@@ -310,13 +310,12 @@ class BoardOperator {
       final movement = PieceMovement(startPos, endPos, killedPiece,
           snapshot: _board.pieceTypesOnTiles);
 
-      if (killedPiece.pieceType != PieceType.Blank) {
-        killedPiece.playerType = PlayerType.Black;
-        if (movingPiece.playerType == PlayerType.Black) {
-          _blackPieceStand?.pushPiece(killedPiece);
-        } else {
-          _whitePieceStand?.pushPiece(killedPiece);
-        }
+      final newPice = await killedPiece.cleanState();
+
+      if (movingPiece.playerType == PlayerType.Black) {
+        _blackPieceStand?.pushPiece(newPice);
+      } else {
+        _whitePieceStand?.pushPiece(newPice);
       }
 
       // 履歴の更新
@@ -368,10 +367,10 @@ class BoardOperator {
             endTile.x + _board.srcTileSize / 2,
             endTile.y + _board.srcTileSize / 2,
           ),
-          onPressed: () {
+          onPressed: () async {
             // 成りのPieceTypeに変更する.
             _promotionDalogComponent.children.clear();
-            handleOnTapDialog(nPiece: okSprite);
+            await handleOnTapDialog(nPiece: okSprite);
             print('成りました。');
           })
         ..debugMode = true;
@@ -388,16 +387,16 @@ class BoardOperator {
             okButtonComp.x + _board.destTileSize * 1.5,
             okButtonComp.y,
           ),
-          onPressed: () {
+          onPressed: () async {
             _promotionDalogComponent.children.clear();
-            handleOnTapDialog();
+            await handleOnTapDialog();
             print('不成です。');
           });
 
       await _promotionDalogComponent.add(okButtonComp);
       await _promotionDalogComponent.add(noButtonComp);
     } else {
-      handleOnTapDialog();
+      await handleOnTapDialog();
     }
   }
 
