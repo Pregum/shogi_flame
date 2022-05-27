@@ -310,12 +310,13 @@ class BoardOperator {
       final movement = PieceMovement(startPos, endPos, killedPiece,
           snapshot: _board.pieceTypesOnTiles);
 
-      final newPice = await killedPiece.cleanState();
-
-      if (movingPiece.playerType == PlayerType.Black) {
-        _blackPieceStand?.pushPiece(newPice);
-      } else {
-        _whitePieceStand?.pushPiece(newPice);
+      final newPiece = await killedPiece.cleanState();
+      if (newPiece.pieceType != PieceType.Blank) {
+        if (movingPiece.playerType == PlayerType.Black) {
+          _blackPieceStand?.pushPiece(newPiece);
+        } else {
+          _whitePieceStand?.pushPiece(newPiece);
+        }
       }
 
       // 履歴の更新
