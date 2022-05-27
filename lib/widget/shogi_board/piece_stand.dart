@@ -58,6 +58,11 @@ class PieceStand extends PositionComponent {
     _updatePieceStandLayout();
   }
 
+  void clear() {
+    _pieceHolder.clear();
+    children.clear();
+  }
+
   /// 駒を排出する。
   /// 排出したコマはリストから削除されます。
   IPiece? popPiece(PieceType gavenPieceType) {

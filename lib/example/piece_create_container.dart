@@ -188,6 +188,8 @@ class PieceCreateContainer extends FlameGame with HasTappables, KeyboardEvents {
     if (event.logicalKey == LogicalKeyboardKey.keyQ) {
       print('tap q');
       board.relocationDefaultPiecePosition();
+      _whitePieceStand.clear();
+      _blackPieceStand.clear();
     }
     return super.onKeyEvent(event, keysPressed);
   }
