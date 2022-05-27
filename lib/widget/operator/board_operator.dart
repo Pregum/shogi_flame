@@ -335,7 +335,12 @@ class BoardOperator {
     if (!canMoveNext) {
       final promotedPieceType = movingPiece.pieceType.promotedPieceType;
       final promotedPiece = await PieceFactory.createSpritePiece(
-          promotedPieceType, _board.destTileSize);
+          promotedPieceType, _board.destTileSize,
+          playerType: movingPiece.playerType);
+      if (!movingPiece.playerType.isBlack) {
+        promotedPiece?.y -= _board.destTileSize;
+        promotedPiece?.flipHorizontallyAroundCenter();
+      }
       handleOnTapDialog(nPiece: promotedPiece);
     } else if ((isPromotableOfEndTile || isPromotableOfStartTile) &&
         movingPiece.pieceType.canPromote) {
@@ -345,7 +350,12 @@ class BoardOperator {
       // → タップ時のコールバックに処理をセットするなどして対応する
       final promotedPieceType = movingPiece.pieceType.promotedPieceType;
       final okSprite = await PieceFactory.createSpritePiece(
-          promotedPieceType, _board.destTileSize);
+          promotedPieceType, _board.destTileSize,
+          playerType: movingPiece.playerType);
+      if (!movingPiece.playerType.isBlack) {
+        okSprite?.y -= _board.destTileSize;
+        okSprite?.flipHorizontallyAroundCenter();
+      }
       final sprite = (okSprite as SpriteComponent).sprite;
       final okComponent = SpriteComponent(
           sprite: sprite,
