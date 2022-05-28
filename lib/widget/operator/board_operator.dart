@@ -126,11 +126,16 @@ class BoardOperator {
       return;
     }
 
-    // 選択されていれば移動処理を行う。
-    if (_verifySatisfiedMoveCondition(
+    if (_movingStartTile?.rowIndex == null ||
+        _movingStartTile?.columnIndex == null) {
+      // 駒台から打つputPieceメソッドを叩く
+      putPiece(_movingStartTile!.stackedPiece);
+      _forgetMovingPiece();
+    } else if (_verifySatisfiedMoveCondition(
       startTile: _movingStartTile,
       endTile: _movingEndTile,
     )) {
+      // 選択されていれば移動処理を行う。
       _movePiece(startTile: _movingStartTile!, endTile: _movingEndTile!);
       _forgetMovingPiece();
     }
@@ -143,7 +148,9 @@ class BoardOperator {
     if (piece.pieceType.isBlank) {
       return;
     }
-    // TODO: start Tileにセットする処理を実装する
+    final tile = OneTile.fromPiece(
+        (xy, rowIndex, columnIndex, isDoubleTap) {}, Vector2.zero(), piece);
+    _setMovingStartTile(tile);
 
     _board.updateMovableTilesThatCanPut(piece, ownerPlayerType);
   }
@@ -158,10 +165,17 @@ class BoardOperator {
   /// [piece] を配置します。
   /// 併せて履歴にも追加します。
   void putPiece(IPiece piece) {
+    operatorStatus = OperatorPhaseType.StartTileSelect;
     final tile = _board.selectedTile;
     if (tile == null) {
       _logger.debug('[BoardOperator#putPiece]: 設置タイルがnullです。');
       return;
+    }
+
+    if (piece.playerType.isBlack) {
+      _blackPieceStand?.popPiece(piece.pieceType);
+    } else {
+      _whitePieceStand?.popPiece(piece.pieceType);
     }
 
     final alreadyPiece = tile.stackedPiece;

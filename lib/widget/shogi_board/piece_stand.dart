@@ -109,6 +109,10 @@ class PieceStand extends PositionComponent {
           size: piece.size,
           onPressed: () {
             callback?.call(piece);
+            final labelComponent = piece.children.firstWhere(
+              (value) => value is TextComponent,
+            );
+            labelComponent.removeFromParent();
             print('tap piece: ${piece.pieceType}');
           },
         )..topLeftPosition = Vector2(index * defaultPieceSize, 0),
