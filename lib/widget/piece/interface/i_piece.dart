@@ -30,4 +30,10 @@ extension IPieceEx on IPiece {
         playerType: PlayerType.Black);
     return newPiece!;
   }
+
+  Future<IPiece?> clone() async {
+    final replicaPiece = await PieceFactory.createSpritePiece(pieceType, size.x,
+        playerType: playerType);
+    return replicaPiece;
+  }
 }

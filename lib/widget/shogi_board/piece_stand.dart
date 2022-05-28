@@ -81,6 +81,7 @@ class PieceStand extends PositionComponent {
 
     // 存在する場合は、１つ目のpieceを渡す
     final last = _pieceHolder[gavenPieceType]?.removeLast();
+    _updatePieceStandLayout();
     return last;
   }
 
@@ -107,13 +108,15 @@ class PieceStand extends PositionComponent {
         ButtonComponent(
           button: piece,
           size: piece.size,
-          onPressed: () {
-            callback?.call(piece);
-            final labelComponent = piece.children.firstWhere(
-              (value) => value is TextComponent,
-            );
-            labelComponent.removeFromParent();
-            print('tap piece: ${piece.pieceType}');
+          onPressed: () async {
+            final replica = await piece.clone();
+            replica?.children
+                .where((value) => value is TextComponent)
+                .forEach((labelComp) {
+              labelComp.removeFromParent();
+            });
+            print('tap piece: ${replica?.pieceType}');
+            callback?.call(replica!);
           },
         )..topLeftPosition = Vector2(index * defaultPieceSize, 0),
       );
