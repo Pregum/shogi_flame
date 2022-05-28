@@ -119,6 +119,10 @@ class BoardOperator {
     } else if (_verifySatisfiedEndTile(
         targetTile: targetTile, startTile: _movingStartTile)) {
       _setMovingEndTile(targetTile);
+    } else {
+      // 終点条件もクリアできなかった場合は、開始地点選択状態へ遷移する。
+      operatorStatus = OperatorPhaseType.StartTileSelect;
+      _forgetMovingPiece();
     }
 
     if (_movingStartTile == null || _movingEndTile == null) {
@@ -146,6 +150,10 @@ class BoardOperator {
   void onClickStand(IPiece piece, PlayerType ownerPlayerType) {
     // 事前条件の確認
     if (piece.pieceType.isBlank) {
+      return;
+    } else if (_operatorStatus != OperatorPhaseType.StartTileSelect) {
+      operatorStatus = OperatorPhaseType.StartTileSelect;
+      _forgetMovingPiece();
       return;
     }
     final tile = OneTile.fromPiece(
