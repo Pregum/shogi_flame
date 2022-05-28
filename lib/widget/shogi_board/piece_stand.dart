@@ -55,6 +55,7 @@ class PieceStand extends PositionComponent {
     );
   }
 
+  /// [piece]を駒台に追加します。
   void pushPiece(IPiece piece) {
     if (_pieceHolder.containsKey(piece.pieceType)) {
       _pieceHolder[piece.pieceType]?.add(piece);
@@ -64,6 +65,7 @@ class PieceStand extends PositionComponent {
     _updatePieceStandLayout();
   }
 
+  /// 駒台の駒をクリアします。
   void clear() {
     _pieceHolder.clear();
     children.clear();
@@ -93,8 +95,7 @@ class PieceStand extends PositionComponent {
 
       final piece = await PieceFactory.createSpritePiece(
           entry.value.first.pieceType, defaultPieceSize,
-          playerType: PlayerType.Black)
-        ?..topLeftPosition = Vector2(index * defaultPieceSize, 0);
+          playerType: PlayerType.Black);
 
       if (piece == null) {
         continue;
@@ -105,11 +106,12 @@ class PieceStand extends PositionComponent {
       await add(
         ButtonComponent(
           button: piece,
+          size: piece.size,
           onPressed: () {
             callback?.call(piece);
             print('tap piece: ${piece.pieceType}');
           },
-        ),
+        )..topLeftPosition = Vector2(index * defaultPieceSize, 0),
       );
       index++;
     }
