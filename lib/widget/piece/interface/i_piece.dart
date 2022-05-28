@@ -36,4 +36,9 @@ extension IPieceEx on IPiece {
         playerType: playerType);
     return replicaPiece;
   }
+
+  void reversePieceDirection() {
+    // this.y -= size.y;
+    this.flipHorizontallyAroundCenter();
+  }
 }

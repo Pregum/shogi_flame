@@ -115,6 +115,7 @@ class PieceStand extends PositionComponent {
                 .forEach((labelComp) {
               labelComp.removeFromParent();
             });
+            replica?.playerType = playerType;
             print('tap piece: ${replica?.pieceType}');
             callback?.call(replica!);
           },

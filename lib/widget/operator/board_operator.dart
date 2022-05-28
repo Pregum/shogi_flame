@@ -189,6 +189,7 @@ class BoardOperator {
       _blackPieceStand?.popPiece(piece.pieceType);
     } else {
       _whitePieceStand?.popPiece(piece.pieceType);
+      piece.reversePieceDirection();
     }
 
     final alreadyPiece = tile.stackedPiece;

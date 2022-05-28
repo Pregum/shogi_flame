@@ -34,10 +34,10 @@ class PieceCreateContainer extends FlameGame with HasTappables, KeyboardEvents {
     // ひとまず金銀あたりの駒生成ボタンを表示する
     final scale = 2.0;
     final srcTileSize = 32.0;
-    add(_whitePieceStand = PieceStand(playerType: PlayerType.Black));
+    add(_whitePieceStand = PieceStand(playerType: PlayerType.White));
     add(board =
         Tile9x9(scale: scale, srcTileSize: srcTileSize, marginTop: marginTop));
-    add(_blackPieceStand = PieceStand(playerType: PlayerType.White)
+    add(_blackPieceStand = PieceStand(playerType: PlayerType.Black)
       ..topLeftPosition = Vector2(0, 64 * 10));
     operator = BoardOperator(board,
         blackPieceStand: _blackPieceStand, whitePieceStand: _whitePieceStand);
