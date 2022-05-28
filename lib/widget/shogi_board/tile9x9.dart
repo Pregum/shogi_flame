@@ -317,9 +317,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         if (i == 2) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
-                  PieceType.Pawn, destTileSize,
-                  playerType: PlayerType.White)
-                ?..y -= destTileSize)!;
+                      PieceType.Pawn, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
         } else if (i == defaultRowCount - 3) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
@@ -329,9 +330,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         } else if ((i == 1 && j == 1)) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
-                  PieceType.Rook, destTileSize,
-                  playerType: PlayerType.White)
-                ?..y -= destTileSize)!;
+                      PieceType.Rook, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
         } else if ((i == defaultRowCount - 2 && j == defaultColumnCount - 2)) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
@@ -340,9 +342,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         } else if ((i == 1 && j == defaultColumnCount - 2)) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
-                  PieceType.Bishop, destTileSize,
-                  playerType: PlayerType.White)
-                ?..y -= destTileSize)!;
+                      PieceType.Bishop, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
         } else if ((i == defaultRowCount - 2 && j == 1)) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
@@ -352,9 +355,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
             (i == 0 && j == defaultColumnCount - 1)) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
-                  PieceType.Lance, destTileSize,
-                  playerType: PlayerType.White)
-                ?..y -= destTileSize)!;
+                      PieceType.Lance, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
         } else if ((i == defaultRowCount - 1 && j == 0) ||
             (i == defaultRowCount - 1 && j == defaultColumnCount - 1)) {
           _tileMatrix[i][j].stackedPiece =
@@ -365,9 +369,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
             (i == 0 && j == defaultColumnCount - 2)) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
-                  PieceType.Knight, destTileSize,
-                  playerType: PlayerType.White)
-                ?..y -= destTileSize)!;
+                      PieceType.Knight, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
         } else if ((i == defaultRowCount - 1 && j == 1) ||
             (i == defaultRowCount - 1 && j == defaultColumnCount - 2)) {
           _tileMatrix[i][j].stackedPiece =
@@ -378,9 +383,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
             (i == 0 && j == defaultColumnCount - 3)) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
-                  PieceType.SilverGeneral, destTileSize,
-                  playerType: PlayerType.White)
-                ?..y -= destTileSize)!;
+                      PieceType.SilverGeneral, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
         } else if ((i == defaultRowCount - 1 && j == 2) ||
             (i == defaultRowCount - 1 && j == defaultColumnCount - 3)) {
           _tileMatrix[i][j].stackedPiece =
@@ -391,9 +397,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
             (i == 0 && j == defaultColumnCount - 4)) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
-                  PieceType.GoldGeneral, destTileSize,
-                  playerType: PlayerType.White)
-                ?..y -= destTileSize)!;
+                      PieceType.GoldGeneral, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
         } else if ((i == defaultRowCount - 1 && j == 3) ||
             (i == defaultRowCount - 1 && j == defaultColumnCount - 4)) {
           _tileMatrix[i][j].stackedPiece =
@@ -403,9 +410,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         } else if ((i == 0 && j == 4)) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(
-                  PieceType.King, destTileSize,
-                  playerType: PlayerType.White)
-                ?..y -= destTileSize)!;
+                      PieceType.King, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
         } else if ((i == defaultRowCount - 1 && j == 4)) {
           _tileMatrix[i][j].stackedPiece =
               (await PieceFactory.createSpritePiece(

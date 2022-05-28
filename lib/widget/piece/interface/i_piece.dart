@@ -37,8 +37,8 @@ extension IPieceEx on IPiece {
     return replicaPiece;
   }
 
-  void reversePieceDirection() {
-    // this.y -= size.y;
+  IPiece reversePieceDirection() {
     this.flipHorizontallyAroundCenter();
+    return this;
   }
 }
