@@ -1,12 +1,14 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
+import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 
 import '../piece/interface/i_piece.dart';
 import '../piece/model/piece_type.dart';
 import '../piece/model/player_type.dart';
 import '../piece/util/piece_factory.dart';
+
+/// タップされた[piece] を引数で渡されたcallbackに渡します。
+typedef OnTapPiece = void Function(IPiece piece);
 
 /// 駒台
 class PieceStand extends PositionComponent {
@@ -18,14 +20,18 @@ class PieceStand extends PositionComponent {
 
   late ShapeComponent _standComponent;
 
+  /// タップされた時のコールバック
+  OnTapPiece? callback;
+
   final TextPaint textConfig = TextPaint(
     style: const TextStyle(color: Colors.white, fontSize: 20),
   );
 
+  /// デフォルトの駒のサイズ
   static final double defaultPieceSize = 64.0;
 
   /// ctor
-  PieceStand({required this.playerType, super.size}) {
+  PieceStand({required this.playerType, super.size, this.callback}) {
     debugMode = true;
   }
 
@@ -96,7 +102,15 @@ class PieceStand extends PositionComponent {
 
       await piece.add(TextComponent(text: entry.value.length.toString())
         ..topLeftPosition = Vector2(48.0, 10));
-      await add(piece);
+      await add(
+        ButtonComponent(
+          button: piece,
+          onPressed: () {
+            callback?.call(piece);
+            print('tap piece: ${piece.pieceType}');
+          },
+        ),
+      );
       index++;
     }
   }

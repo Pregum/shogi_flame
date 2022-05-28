@@ -208,6 +208,49 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
     return true;
   }
 
+  /// 配置可能なタイルを更新します。
+  void updateMovableTilesThatCanPut(IPiece piece, PlayerType actionPlayerType) {
+    var movableTileMatrix = <List<bool>>[];
+
+    if (_tileMatrix.isEmpty) {
+      return;
+    }
+    var pawnExistColumns =
+        List<bool>.generate(_tileMatrix[0].length, (_) => false);
+
+    // ラスタ走査で、フラグをたてていく
+    for (var i = 0; i < _tileMatrix.length; i++) {
+      final oneLineTiles = <bool>[];
+      for (var j = 0; j < _tileMatrix[i].length; j++) {
+        final tile = _tileMatrix[i][j];
+        final targetPiece = tile.stackedPiece;
+        final isBlank = targetPiece.pieceType.isBlank;
+        oneLineTiles.add(isBlank);
+
+        // TODO: 配置後、進めない位置の処理も実装する
+
+        // 歩の場合、同列にすでに配置されていればフラグを立てる
+        if (targetPiece.pieceType == PieceType.Pawn &&
+            targetPiece.playerType == actionPlayerType) {
+          pawnExistColumns[j] = true;
+        }
+      }
+      movableTileMatrix.add(oneLineTiles);
+    }
+
+    // ２歩を防ぐ為、その列は塗らないようにする。
+    for (var i = 0; i < _tileMatrix.length; i++) {
+      for (var j = 0; j < _tileMatrix[i].length; j++) {
+        final tile = _tileMatrix[i][j];
+        var willMovable = movableTileMatrix[i][j];
+        if (piece.pieceType == PieceType.Pawn) {
+          willMovable = willMovable && !pawnExistColumns[j];
+        }
+        tile.isMovableTile = willMovable;
+      }
+    }
+  }
+
   /// 9x9タイルの状態をリセットします。
   void resetBoard() {
     _logger.info('[tile9x9#resetBoard]: ボードをリセットします。');

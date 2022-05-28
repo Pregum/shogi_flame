@@ -84,8 +84,10 @@ class BoardOperator {
   /// ctor
   BoardOperator(this._board,
       {PieceStand? blackPieceStand, PieceStand? whitePieceStand}) {
-    _blackPieceStand = blackPieceStand;
-    _whitePieceStand = whitePieceStand;
+    _blackPieceStand = blackPieceStand
+      ?..callback = (IPiece piece) => onClickStand(piece, PlayerType.Black);
+    _whitePieceStand = whitePieceStand
+      ?..callback = (IPiece piece) => onClickStand(piece, PlayerType.White);
     final firstSnapshot = List<List<PieceType>>.filled(_board.defaultRowCount,
         List<PieceType>.filled(_board.defaultColumnCount, PieceType.Blank));
     final movement = PieceMovement(
@@ -134,40 +136,16 @@ class BoardOperator {
     }
   }
 
-  /// 駒の移動を行います。
-  /// 戻り値に討ち取った[ IPiece ]を取得します。
-  /// 討ち取った駒がなければ[ null ]を返します。
-  ///
-  /// 移動元or移動先のコマがない、操作する駒がない場合は [Error] が発生します。
-  IPiece? move(PieceMovement movement) {
-    // 移動元のタイルがない場合はnull
-    final startTile = _board.getTile(movement.movingStartPosition);
-    if (startTile == null) {
-      throw new Error();
+  /// 駒台がクリックされた時のハンドリング処理
+  /// クリックされた [piece] に対して配置箇所などの処理を行います。
+  void onClickStand(IPiece piece, PlayerType ownerPlayerType) {
+    // 事前条件の確認
+    if (piece.pieceType.isBlank) {
+      return;
     }
+    // TODO: start Tileにセットする処理を実装する
 
-    // 操作駒がない場合はnull
-    final movingPiece = startTile.stackedPiece;
-    if (movingPiece.pieceType == PieceType.Blank) {
-      // return null;
-      throw new Error();
-    }
-
-    // 移動先のタイルがない場合はnull
-    final destTile = _board.getTile(movement.movingEndPosition);
-    if (destTile == null) {
-      throw new Error();
-    }
-
-    // 空の場合は倒した駒がない為、nullを返す
-    final killedPiece = destTile.stackedPiece;
-    if (killedPiece.pieceType == PieceType.Blank) {
-      return null;
-    }
-
-    destTile.stackedPiece = movingPiece;
-    startTile.stackedPiece = PieceFactory.createBlankPiece();
-    return killedPiece;
+    _board.updateMovableTilesThatCanPut(piece, ownerPlayerType);
   }
 
   /// モードを [ nextMode ] のモードに変更します。

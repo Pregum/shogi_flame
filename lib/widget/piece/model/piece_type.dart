@@ -202,4 +202,8 @@ extension PieceTypeEx on PieceType {
         return PieceType.Blank;
     }
   }
+
+  bool get isBlank {
+    return this == PieceType.Blank;
+  }
 }
