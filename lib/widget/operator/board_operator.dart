@@ -129,7 +129,7 @@ class BoardOperator {
     if (_movingStartTile?.rowIndex == null ||
         _movingStartTile?.columnIndex == null) {
       // 駒台から打つputPieceメソッドを叩く
-      putPiece(_movingStartTile!.stackedPiece);
+      putPiece(_movingStartTile!.stackedPiece, fromPieceStand: true);
       _forgetMovingPiece();
     } else if (_verifySatisfiedMoveCondition(
       startTile: _movingStartTile,
@@ -164,11 +164,16 @@ class BoardOperator {
 
   /// [piece] を配置します。
   /// 併せて履歴にも追加します。
-  void putPiece(IPiece piece) {
+  void putPiece(IPiece piece, {bool fromPieceStand = false}) {
     operatorStatus = OperatorPhaseType.StartTileSelect;
     final tile = _board.selectedTile;
     if (tile == null) {
       _logger.debug('[BoardOperator#putPiece]: 設置タイルがnullです。');
+      return;
+    }
+
+    if (fromPieceStand && !tile.isMovableTile) {
+      // 駒台から配置の場合は、移動不可の場合は早期return
       return;
     }
 
