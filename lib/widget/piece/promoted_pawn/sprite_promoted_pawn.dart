@@ -14,7 +14,7 @@ class SpritePromotedPawn extends SpriteComponent implements IPiece {
     }
   }
   @override
-  PieceType pieceType = PieceType.PromotedKnight;
+  PieceType pieceType = PieceType.PromotedPawn;
 
   @override
   PlayerType get playerType => _playerType;
