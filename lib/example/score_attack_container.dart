@@ -20,7 +20,7 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
   late Tile9x9 board;
   late TimelimitProgressBar timelimitProgressComponent;
   late PositionComponent headerComponent;
-  Component? questionComponent;
+  Component? _questionComponent;
 
   bool _hasShown = false;
   bool _canTap = false;
@@ -45,6 +45,7 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
 
     add(headerComponent = PositionComponent()..size = Vector2(1000, 100));
     headerComponent.add(timelimitProgressComponent = TimelimitProgressBar(
+      remainSeconds: 30.0,
       onTick: (() => print('ストップしました。')),
     )..size = Vector2(1000, 100));
 
@@ -56,13 +57,23 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
 
     add(
       ButtonComponent(
-        button: TextComponent(text: 'スタート!!!'),
+        button: TextComponent(text: 'start!!!'),
         onPressed: () {
-          print('onclick...');
+          print('onclick start...');
           timelimitProgressComponent.resetTimer();
           timelimitProgressComponent.startTimer();
+          _showQuestion();
         },
-      )..topLeftPosition = Vector2(500, 50),
+      )..topLeftPosition = Vector2(600, 50),
+    );
+    add(
+      ButtonComponent(
+        button: TextComponent(text: 'stop!!!'),
+        onPressed: () {
+          print('onclick stop...');
+          timelimitProgressComponent.stopTimer();
+        },
+      )..topLeftPosition = Vector2(600, 80),
     );
 
     _prepareQuestion(board);
@@ -93,10 +104,10 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
     final moveInfos = _kifuGenerator.generateMoveInfos(1,
         pieceTypeCandidates: unpromotedPieceType);
     _targetMoveInfo = moveInfos[0];
-    questionComponent?.removeFromParent();
-    await add(questionComponent = TextComponent(
+    _questionComponent?.removeFromParent();
+    await add(_questionComponent = TextComponent(
       text: 'Tap ${_targetMoveInfo?.reversedColumn} ${_targetMoveInfo?.row} !',
-    )..topLeftPosition = Vector2(660, 20));
+    )..topLeftPosition = Vector2(760, 50));
     _canTap = true;
   }
 
