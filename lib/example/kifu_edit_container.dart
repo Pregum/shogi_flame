@@ -4,6 +4,8 @@ import 'package:flame/input.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
 import 'package:shogi_game/widget/piece/model/position_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
+import 'package:flame_rive/flame_rive.dart';
+import 'package:rive/rive.dart';
 
 import '../widget/piece/model/kifu_generator.dart';
 import '../widget/piece/model/piece_position.dart';
@@ -63,7 +65,6 @@ class KifuEditContainer extends FlameGame with HasTappables {
               pieceTypeCandidates: candidates);
           print(moveInfos.join('\n'));
           moveInfodsComponent.removeFromParent();
-          // await Future.delayed(const Duration(milliseconds: 500));
           board.resetBoard();
 
           add(moveInfodsComponent = TextComponent(text: moveInfos.join('\n'))

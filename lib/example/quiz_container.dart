@@ -1,7 +1,8 @@
 import 'package:flame/components.dart';
-import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame_rive/flame_rive.dart';
+import 'package:rive/rive.dart';
 import 'package:flutter/material.dart';
 import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
@@ -96,6 +97,7 @@ class QuizContainer extends FlameGame with HasTappables {
     });
     add(retryComponent);
     add(_answearComponent);
+    await _initializeSuccessRive();
   }
 
   void _updateResults() {
@@ -153,6 +155,18 @@ class QuizContainer extends FlameGame with HasTappables {
     super.render(canvas);
     canvas.drawRect(
         fadeInComponent.toRect(), Paint()..color = Colors.greenAccent);
+  }
+
+  Future<void> _initializeSuccessRive() async {
+    final correctArtboard =
+        await loadArtboard(RiveFile.asset('assets/rives/correct_circle.riv'));
+    final correctComponent = RiveComponent(artboard: correctArtboard)
+      ..size = Vector2.all(300)
+      ..topLeftPosition = Vector2(800, 50)
+      ..debugMode = true;
+    var controller = OneShotAnimation('first_animation', autoplay: true);
+    correctArtboard.addController(controller);
+    add(correctComponent);
   }
 }
 
