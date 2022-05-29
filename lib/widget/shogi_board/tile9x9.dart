@@ -225,9 +225,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         final tile = _tileMatrix[i][j];
         final targetPiece = tile.stackedPiece;
         final isBlank = targetPiece.pieceType.isBlank;
-        oneLineTiles.add(isBlank);
 
-        // TODO: 配置後、進めない位置の処理も実装する
+        // 配置後、進めない位置の処理も実装する
+        final canMoveNext = verifyCanMoveNext(tile, piece);
+        oneLineTiles.add(isBlank && canMoveNext);
 
         // 歩の場合、同列にすでに配置されていればフラグを立てる
         if (targetPiece.pieceType == PieceType.Pawn &&
