@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -8,6 +7,7 @@ import 'package:flame_rive/flame_rive.dart';
 import 'package:rive/rive.dart';
 import 'package:shogi_game/example/quiz_container.dart';
 import 'package:shogi_game/widget/ui_widget/timelimit_progress_bar.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 import '../widget/piece/model/kifu_generator.dart';
 import '../widget/piece/model/move_info.dart';
@@ -23,7 +23,7 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
   late PositionComponent headerComponent;
   Component? _questionComponent;
 
-  bool get _isPhone => Platform.isAndroid || Platform.isIOS;
+  bool get _isPhone => UniversalPlatform.isAndroid || UniversalPlatform.isIOS;
 
   bool _hasShown = false;
   bool _canTap = false;
