@@ -28,12 +28,13 @@ class QuizContainer extends FlameGame with HasTappables {
       button: TextComponent(text: 'next'),
       onPressed: () {
         // needFadeIn = true;
-        successComponent.removeFromParent();
-        failureComponent.removeFromParent();
         _showQuestion();
       })
     ..topLeftPosition = Vector2(660, 80);
-  var timer = Timer(0.5);
+  List<AnswearResult> _answearHolder = <AnswearResult>[];
+  PositionComponent _answearComponent = PositionComponent()
+    ..topLeftPosition = Vector2(800, 100);
+  var timer = Timer(1);
   var canTap = false;
   var haveShown = false;
   bool needFadeIn = false;
@@ -64,8 +65,9 @@ class QuizContainer extends FlameGame with HasTappables {
       if (rowIndex == null || columnIndex == null) {
         return;
       }
-      if (targetMoveInfo?.rowIndex == rowIndex &&
-          targetMoveInfo?.columnIndex == columnIndex) {
+      final isCorrect = targetMoveInfo?.rowIndex == rowIndex &&
+          targetMoveInfo?.columnIndex == columnIndex;
+      if (isCorrect) {
         add(successComponent =
             TextComponent(text: 'correct!', textRenderer: TextPaint())
               ..topLeftPosition = Vector2(660, 50));
@@ -83,9 +85,29 @@ class QuizContainer extends FlameGame with HasTappables {
         oldTile?.isMovableTile = true;
       }
 
+      final answearResult =
+          AnswearResult(moveInfo: targetMoveInfo!, success: isCorrect);
+      _answearHolder.add(answearResult);
+      _updateResults();
+
       canTap = false;
+      haveShown = false;
+      timer.start();
     });
     add(retryComponent);
+    add(_answearComponent);
+  }
+
+  void _updateResults() {
+    _answearComponent.children.clear();
+    final tr = TextPaint();
+    for (var i = 0; i < _answearHolder.length; i++) {
+      final answear = _answearHolder[i];
+      final comp = TextComponent(text: '$answear', textRenderer: tr)
+        ..topLeftPosition = Vector2(0, i * 30);
+      _answearComponent.add(comp);
+      // add(comp);
+    }
   }
 
   @override
@@ -112,6 +134,8 @@ class QuizContainer extends FlameGame with HasTappables {
   }
 
   Future<void> _showQuestion() async {
+    successComponent.removeFromParent();
+    failureComponent.removeFromParent();
     oldTile?.isMovableTile = false;
     final unpromotedPieceType = PieceTypeEx.unPromotedPieceTypes;
     final moveInfos = kifuGenerator.generateMoveInfos(1,
@@ -129,5 +153,21 @@ class QuizContainer extends FlameGame with HasTappables {
     super.render(canvas);
     canvas.drawRect(
         fadeInComponent.toRect(), Paint()..color = Colors.greenAccent);
+  }
+}
+
+class AnswearResult {
+  final bool success;
+  final MoveInfo moveInfo;
+
+  AnswearResult({
+    required this.success,
+    required this.moveInfo,
+  });
+
+  @override
+  String toString() {
+    final passFailStr = success ? 'o' : 'x';
+    return '$passFailStr ${moveInfo.reversedColumn} ${moveInfo.row}';
   }
 }
