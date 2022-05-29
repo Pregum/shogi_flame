@@ -150,12 +150,12 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
       if (isCorrect) {
         add(successComponent =
             TextComponent(text: 'correct!', textRenderer: TextPaint())
-              ..topLeftPosition = Vector2(660, 50));
+              ..topLeftPosition = Vector2(600, 150));
         await _showSuccessRive();
       } else {
         add(failureComponent =
             TextComponent(text: 'incorrect...', textRenderer: TextPaint())
-              ..topLeftPosition = Vector2(660, 50));
+              ..topLeftPosition = Vector2(600, 150));
         final pp = PiecePosition(
           _targetMoveInfo?.rowIndex,
           _targetMoveInfo?.columnIndex,
