@@ -24,10 +24,11 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
     add(centerComponent = PositionComponent()
       ..topLeftPosition = Vector2(0, headerComponent.y));
 
-    // centerComponent.add(board = Tile9x9(
-    //   scale: Tile9x9.defaultScale,
-    //   srcTileSize: Tile9x9.defaultSrcTileSize,
-    // ));
+    add(board = Tile9x9(
+      scale: Tile9x9.defaultScale,
+      srcTileSize: Tile9x9.defaultSrcTileSize,
+      marginTop: 100,
+    ));
 
     add(
       ButtonComponent(

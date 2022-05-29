@@ -605,6 +605,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
     final selectorImage = await images.load('selector.png');
     // TODO: ios or androidだと表示されないため原因を調べる
     add(_selector = Selector(destTileSize, selectorImage));
+    _selector.visible = false;
   }
 
   /// 駒の持ち主を先手・後手を入れ替えます。
@@ -623,6 +624,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         (info, rowIndex, columnIndex, isDoubleTap) {
       print(
           'ontapp!!! row: $rowIndex, column: $columnIndex, doubleTap: $isDoubleTap');
+      _selector.visible = true;
       _selector.position = info;
       _selectedRowIndex = rowIndex;
       _selectedColumnIndex = columnIndex;
