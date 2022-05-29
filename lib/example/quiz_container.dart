@@ -41,6 +41,7 @@ class QuizContainer extends FlameGame with HasTappables {
   bool needFadeIn = false;
   bool movingAnimation = false;
   late PositionComponent fadeInComponent;
+  Component? _correctRiveComponent;
 
   @override
   void onGameResize(Vector2 canvasSize) {
@@ -56,7 +57,7 @@ class QuizContainer extends FlameGame with HasTappables {
     await super.onLoad();
     add(board = Tile9x9(
         scale: Tile9x9.defaultScale, srcTileSize: Tile9x9.defaultSrcTileSize));
-    board.addListener((tile) {
+    board.addListener((tile) async {
       if (!canTap) {
         return;
       }
@@ -72,6 +73,7 @@ class QuizContainer extends FlameGame with HasTappables {
         add(successComponent =
             TextComponent(text: 'correct!', textRenderer: TextPaint())
               ..topLeftPosition = Vector2(660, 50));
+        await _showSuccessRive();
       } else {
         add(failureComponent =
             TextComponent(text: 'incorrect...', textRenderer: TextPaint())
@@ -97,7 +99,7 @@ class QuizContainer extends FlameGame with HasTappables {
     });
     add(retryComponent);
     add(_answearComponent);
-    await _initializeSuccessRive();
+    // await _showSuccessRive();
   }
 
   void _updateResults() {
@@ -136,6 +138,7 @@ class QuizContainer extends FlameGame with HasTappables {
   }
 
   Future<void> _showQuestion() async {
+    _correctRiveComponent?.removeFromParent();
     successComponent.removeFromParent();
     failureComponent.removeFromParent();
     oldTile?.isMovableTile = false;
@@ -157,16 +160,19 @@ class QuizContainer extends FlameGame with HasTappables {
         fadeInComponent.toRect(), Paint()..color = Colors.greenAccent);
   }
 
-  Future<void> _initializeSuccessRive() async {
+  Future<void> _showSuccessRive() async {
     final correctArtboard =
         await loadArtboard(RiveFile.asset('assets/rives/correct_circle.riv'));
-    final correctComponent = RiveComponent(artboard: correctArtboard)
+    final correctComponent = RiveComponent(
+      artboard: correctArtboard,
+      priority: 1,
+      position: Vector2.all(100),
+    )
       ..size = Vector2.all(300)
-      ..topLeftPosition = Vector2(800, 50)
       ..debugMode = true;
     var controller = OneShotAnimation('first_animation', autoplay: true);
     correctArtboard.addController(controller);
-    add(correctComponent);
+    add(_correctRiveComponent = correctComponent);
   }
 }
 
