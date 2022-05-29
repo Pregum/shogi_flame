@@ -12,6 +12,12 @@ import 'package:shogi_game/widget/piece/rook/sprite_rook.dart';
 import 'package:shogi_game/widget/piece/silver/sprite_silver.dart';
 
 import '../model/player_type.dart';
+import '../promoted_bishop/sprite_promoted_bishop.dart';
+import '../promoted_knight/sprite_promoted_knight.dart';
+import '../promoted_lance/sprite_promoted_lance.dart';
+import '../promoted_pawn/sprite_promoted_pawn.dart';
+import '../promoted_rook/sprite_promoted_rook.dart';
+import '../promoted_silver/sprite_promoted_silver.dart';
 
 /// [IPiece] のインスタンスを生成するutility
 class PieceFactory {
@@ -57,11 +63,29 @@ class PieceFactory {
         return SpritePawn(sprite, playerType: playerType)
           ..size = Vector2.all(size);
       case PieceType.PromotedRook:
+        final sprite = await Sprite.load('promoted_rook.png');
+        return SpritePromotedRook(sprite: sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedBishop:
+        final sprite = await Sprite.load('promoted_bishop.png');
+        return SpritePromotedBishop(sprite: sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedSilver:
+        final sprite = await Sprite.load('promoted_gold_general.png');
+        return SpritePromotedSilver(sprite: sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedKnight:
+        final sprite = await Sprite.load('promoted_gold_general.png');
+        return SpritePromotedKnight(sprite: sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedLance:
+        final sprite = await Sprite.load('promoted_gold_general.png');
+        return SpritePromotedLance(sprite: sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.PromotedPawn:
+        final sprite = await Sprite.load('promoted_pawn.png');
+        return SpritePromotedPawn(sprite: sprite, playerType: playerType)
+          ..size = Vector2.all(size);
       case PieceType.Blank:
         return BlankPiece();
     }

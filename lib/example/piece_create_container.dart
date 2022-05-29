@@ -4,15 +4,21 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shogi_game/widget/operator/action_mode.dart';
 import 'package:shogi_game/widget/operator/board_operator.dart';
 import 'package:shogi_game/widget/operator/operator_history_table.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
+import 'package:shogi_game/widget/piece/model/player_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/tile9x9.dart';
 
-class PieceCreateContainer extends FlameGame with HasTappables {
+import '../widget/shogi_board/piece_stand.dart';
+
+class PieceCreateContainer extends FlameGame with HasTappables, KeyboardEvents {
   late Tile9x9 board;
+  late PieceStand _blackPieceStand;
+  late PieceStand _whitePieceStand;
   late BoardOperator operator;
 
   late _PieceCreateButton changeText;
@@ -21,13 +27,20 @@ class PieceCreateContainer extends FlameGame with HasTappables {
 
   @override
   Future<void> onLoad() async {
-    super.onLoad();
+    await super.onLoad();
+
+    final marginTop = 64.0;
 
     // ひとまず金銀あたりの駒生成ボタンを表示する
     final scale = 2.0;
     final srcTileSize = 32.0;
-    add(board = Tile9x9(scale: scale, srcTileSize: srcTileSize));
-    operator = BoardOperator(board);
+    add(_whitePieceStand = PieceStand(playerType: PlayerType.White));
+    add(board =
+        Tile9x9(scale: scale, srcTileSize: srcTileSize, marginTop: marginTop));
+    add(_blackPieceStand = PieceStand(playerType: PlayerType.Black)
+      ..topLeftPosition = Vector2(0, 64 * 10));
+    operator = BoardOperator(board,
+        blackPieceStand: _blackPieceStand, whitePieceStand: _whitePieceStand);
     add(OperatorHistoryTable(stream: operator.historyStream)
       ..positionType = PositionType.game);
     board.addListener((tile) {
@@ -165,6 +178,20 @@ class PieceCreateContainer extends FlameGame with HasTappables {
       })
         ..topLeftPosition = Vector2(64 * 10 + 120, 700),
     );
+  }
+
+  @override
+  KeyEventResult onKeyEvent(
+    RawKeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
+    if (event.logicalKey == LogicalKeyboardKey.keyQ) {
+      print('tap q');
+      board.relocationDefaultPiecePosition();
+      _whitePieceStand.clear();
+      _blackPieceStand.clear();
+    }
+    return super.onKeyEvent(event, keysPressed);
   }
 }
 

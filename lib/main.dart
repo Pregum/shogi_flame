@@ -1,17 +1,21 @@
+import 'package:dashbook/dashbook.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:shogi_game/example/quiz_view.dart';
+import 'package:shogi_game/stories/utils.dart';
 
-import 'example/kifu_edit_view.dart';
-import 'example/sandbox_view.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        // body: SandboxView(),
-        // body: KifuEditView(),
-        body: QuizView(),
-      ),
-    ),
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  final dashbook = Dashbook(
+    theme: ThemeData.dark(),
+    title: 'shogi flame example',
+  );
+  addStrories(dashbook);
+
+  runApp(dashbook);
 }

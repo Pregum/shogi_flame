@@ -79,6 +79,14 @@ class OneTile extends SpriteComponent with Tappable {
     y = topLeft.y;
   }
 
+  factory OneTile.fromPiece(
+      OnTileTapDown callback, Vector2 topLeft, IPiece piece) {
+    final sprite = (piece as SpriteComponent).sprite;
+    final tile =
+        OneTile(callback, topLeft, piece.size.x, sprite!, stackedPiece: piece);
+    return tile;
+  }
+
   @override
   bool onTapDown(TapDownInfo info) {
     isSelected = !isSelected;

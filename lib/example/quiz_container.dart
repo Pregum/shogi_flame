@@ -47,7 +47,7 @@ class QuizContainer extends FlameGame with HasTappables {
 
   @override
   Future<void>? onLoad() async {
-    super.onLoad();
+    await super.onLoad();
     add(board = Tile9x9(
         scale: Tile9x9.defaultScale, srcTileSize: Tile9x9.defaultSrcTileSize));
     board.addListener((tile) {

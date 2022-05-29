@@ -9,11 +9,13 @@ import 'package:shogi_game/widget/piece/model/piece_movement.dart';
 import 'package:shogi_game/widget/piece/model/piece_position.dart';
 import 'package:shogi_game/widget/piece/model/piece_route.dart';
 import 'package:shogi_game/widget/piece/model/piece_type.dart';
+import 'package:shogi_game/widget/piece/model/player_type.dart';
 import 'package:shogi_game/widget/piece/model/position_type.dart';
 import 'package:shogi_game/widget/piece/util/piece_factory.dart';
 import 'package:shogi_game/widget/shogi_board/one_tile.dart';
 import 'package:shogi_game/widget/shogi_board/tile9x9.dart';
 
+import '../shogi_board/piece_stand.dart';
 import 'action_mode.dart';
 import 'operator_phase_type.dart';
 
@@ -63,6 +65,12 @@ class BoardOperator {
   /// 操作対象のboard
   final Tile9x9 _board;
 
+  /// 先手の駒台
+  PieceStand? _blackPieceStand;
+
+  /// 後手の駒台
+  PieceStand? _whitePieceStand;
+
   /// ロガー
   final NormalLogger _logger = NormalLogger.singleton();
 
@@ -74,7 +82,12 @@ class BoardOperator {
         ..debugColor = Colors.red;
 
   /// ctor
-  BoardOperator(this._board) {
+  BoardOperator(this._board,
+      {PieceStand? blackPieceStand, PieceStand? whitePieceStand}) {
+    _blackPieceStand = blackPieceStand
+      ?..callback = (IPiece piece) => onClickStand(piece, PlayerType.Black);
+    _whitePieceStand = whitePieceStand
+      ?..callback = (IPiece piece) => onClickStand(piece, PlayerType.White);
     final firstSnapshot = List<List<PieceType>>.filled(_board.defaultRowCount,
         List<PieceType>.filled(_board.defaultColumnCount, PieceType.Blank));
     final movement = PieceMovement(
@@ -106,6 +119,10 @@ class BoardOperator {
     } else if (_verifySatisfiedEndTile(
         targetTile: targetTile, startTile: _movingStartTile)) {
       _setMovingEndTile(targetTile);
+    } else {
+      // 終点条件もクリアできなかった場合は、開始地点選択状態へ遷移する。
+      operatorStatus = OperatorPhaseType.StartTileSelect;
+      _forgetMovingPiece();
     }
 
     if (_movingStartTile == null || _movingEndTile == null) {
@@ -113,50 +130,37 @@ class BoardOperator {
       return;
     }
 
-    // 選択されていれば移動処理を行う。
-    if (_verifySatisfiedMoveCondition(
+    if (_movingStartTile?.rowIndex == null ||
+        _movingStartTile?.columnIndex == null) {
+      // 駒台から打つputPieceメソッドを叩く
+      putPiece(_movingStartTile!.stackedPiece, fromPieceStand: true);
+      _forgetMovingPiece();
+    } else if (_verifySatisfiedMoveCondition(
       startTile: _movingStartTile,
       endTile: _movingEndTile,
     )) {
+      // 選択されていれば移動処理を行う。
       _movePiece(startTile: _movingStartTile!, endTile: _movingEndTile!);
       _forgetMovingPiece();
     }
   }
 
-  /// 駒の移動を行います。
-  /// 戻り値に討ち取った[ IPiece ]を取得します。
-  /// 討ち取った駒がなければ[ null ]を返します。
-  ///
-  /// 移動元or移動先のコマがない、操作する駒がない場合は [Error] が発生します。
-  IPiece? move(PieceMovement movement) {
-    // 移動元のタイルがない場合はnull
-    final startTile = _board.getTile(movement.movingStartPosition);
-    if (startTile == null) {
-      throw new Error();
+  /// 駒台がクリックされた時のハンドリング処理
+  /// クリックされた [piece] に対して配置箇所などの処理を行います。
+  void onClickStand(IPiece piece, PlayerType ownerPlayerType) {
+    // 事前条件の確認
+    if (piece.pieceType.isBlank) {
+      return;
+    } else if (_operatorStatus != OperatorPhaseType.StartTileSelect) {
+      operatorStatus = OperatorPhaseType.StartTileSelect;
+      _forgetMovingPiece();
+      return;
     }
+    final tile = OneTile.fromPiece(
+        (xy, rowIndex, columnIndex, isDoubleTap) {}, Vector2.zero(), piece);
+    _setMovingStartTile(tile);
 
-    // 操作駒がない場合はnull
-    final movingPiece = startTile.stackedPiece;
-    if (movingPiece.pieceType == PieceType.Blank) {
-      // return null;
-      throw new Error();
-    }
-
-    // 移動先のタイルがない場合はnull
-    final destTile = _board.getTile(movement.movingEndPosition);
-    if (destTile == null) {
-      throw new Error();
-    }
-
-    // 空の場合は倒した駒がない為、nullを返す
-    final killedPiece = destTile.stackedPiece;
-    if (killedPiece.pieceType == PieceType.Blank) {
-      return null;
-    }
-
-    destTile.stackedPiece = movingPiece;
-    startTile.stackedPiece = PieceFactory.createBlankPiece();
-    return killedPiece;
+    _board.updateMovableTilesThatCanPut(piece, ownerPlayerType);
   }
 
   /// モードを [ nextMode ] のモードに変更します。
@@ -168,11 +172,24 @@ class BoardOperator {
 
   /// [piece] を配置します。
   /// 併せて履歴にも追加します。
-  void putPiece(IPiece piece) {
+  void putPiece(IPiece piece, {bool fromPieceStand = false}) {
+    operatorStatus = OperatorPhaseType.StartTileSelect;
     final tile = _board.selectedTile;
     if (tile == null) {
       _logger.debug('[BoardOperator#putPiece]: 設置タイルがnullです。');
       return;
+    }
+
+    if (fromPieceStand && !tile.isMovableTile) {
+      // 駒台から配置の場合は、移動不可の場合は早期return
+      return;
+    }
+
+    if (piece.playerType.isBlack) {
+      _blackPieceStand?.popPiece(piece.pieceType);
+    } else {
+      _whitePieceStand?.popPiece(piece.pieceType);
+      piece.reversePieceDirection();
     }
 
     final alreadyPiece = tile.stackedPiece;
@@ -287,38 +304,67 @@ class BoardOperator {
     if (!moveSuccess) {
       return;
     }
-    // 成り、不成の判定を行う。
-    final promotionMatrix =
-        _board.getPromotionTileMatrix(movingPiece.playerType);
 
-    final handleOnTapDialog = () {
-      _board.setPiece(movingPiece);
+    final handleOnTapDialog = ({IPiece? nPiece}) async {
+      final nextPiece = nPiece != null ? nPiece : movingPiece;
+      final killedPiece = endTile.stackedPiece;
+      _board.setPiece(nextPiece);
 
-      final blanckPiece = PieceFactory.createBlankPiece();
-      startTile.stackedPiece = blanckPiece;
+      final blankPiece = PieceFactory.createBlankPiece();
+      startTile.stackedPiece = blankPiece;
 
-      final movement = PieceMovement(startPos, endPos, endTile.stackedPiece,
+      final movement = PieceMovement(startPos, endPos, killedPiece,
           snapshot: _board.pieceTypesOnTiles);
 
-      final killedPiece = movement.killedPiece;
-      if (killedPiece != null) {
-        // TODO: 駒台クラスへ駒を渡す処理を実装する
+      final newPiece = await killedPiece.cleanState();
+      if (newPiece.pieceType != PieceType.Blank) {
+        if (movingPiece.playerType == PlayerType.Black) {
+          _blackPieceStand?.pushPiece(newPiece);
+        } else {
+          _whitePieceStand?.pushPiece(newPiece);
+        }
       }
 
       // 履歴の更新
       _addHistory(movement);
     };
 
-    // FIXME: 相手の陣地から外へ出る手の成り判定ができていないので修正する
-    final canPromote = promotionMatrix[endPos.rowIndex!][endPos.columnIndex!];
-    if (canPromote) {
+    // 成り、不成の判定を行う。
+    final promotionMatrix =
+        _board.getPromotionTileMatrix(movingPiece.playerType);
+    final isPromotableOfEndTile =
+        promotionMatrix[endPos.rowIndex!][endPos.columnIndex!];
+    final isPromotableOfStartTile =
+        promotionMatrix[startPos.rowIndex!][startPos.columnIndex!];
+    // 桂馬などの後ろに下がれない駒の成らせないといけない駒の判定を行う。
+    final canMoveNext = _board.verifyCanMoveNext(endTile, movingPiece);
+    if (!canMoveNext) {
+      final promotedPieceType = movingPiece.pieceType.promotedPieceType;
+      final promotedPiece = await PieceFactory.createSpritePiece(
+          promotedPieceType, _board.destTileSize,
+          playerType: movingPiece.playerType);
+      if (!movingPiece.playerType.isBlack) {
+        promotedPiece?.y -= _board.destTileSize;
+        promotedPiece?.flipHorizontallyAroundCenter();
+      }
+      handleOnTapDialog(nPiece: promotedPiece);
+    } else if ((isPromotableOfEndTile || isPromotableOfStartTile) &&
+        movingPiece.pieceType.canPromote) {
       // 成り・不成を決めるダイアログを表示する。
       // 成り・不成用のSpriteComponentを配置してたっぷされたら反映するようにする。
       // ただここでダイアログを出すと下の処理を待つ処理を入れる必要がありよくなさそう？
       // → タップ時のコールバックに処理をセットするなどして対応する
-      final okSprite = await Sprite.load('gold_general.png');
+      final promotedPieceType = movingPiece.pieceType.promotedPieceType;
+      final okSprite = await PieceFactory.createSpritePiece(
+          promotedPieceType, _board.destTileSize,
+          playerType: movingPiece.playerType);
+      if (!movingPiece.playerType.isBlack) {
+        okSprite?.y -= _board.destTileSize;
+        okSprite?.flipHorizontallyAroundCenter();
+      }
+      final sprite = (okSprite as SpriteComponent).sprite;
       final okComponent = SpriteComponent(
-          sprite: okSprite,
+          sprite: sprite,
           size: Vector2.all(_board.srcTileSize),
           scale: Vector2.all(_board.scale),
           anchor: Anchor.center);
@@ -328,14 +374,14 @@ class BoardOperator {
             endTile.x + _board.srcTileSize / 2,
             endTile.y + _board.srcTileSize / 2,
           ),
-          onPressed: () {
+          onPressed: () async {
             // 成りのPieceTypeに変更する.
             _promotionDalogComponent.children.clear();
-            handleOnTapDialog();
+            await handleOnTapDialog(nPiece: okSprite);
             print('成りました。');
           })
         ..debugMode = true;
-      final noSprite = await Sprite.load('pawn.png');
+      final noSprite = (movingPiece as SpriteComponent).sprite;
       final noComponent = SpriteComponent(
         sprite: noSprite,
         size: Vector2.all(_board.srcTileSize),
@@ -348,16 +394,16 @@ class BoardOperator {
             okButtonComp.x + _board.destTileSize * 1.5,
             okButtonComp.y,
           ),
-          onPressed: () {
+          onPressed: () async {
             _promotionDalogComponent.children.clear();
-            handleOnTapDialog();
+            await handleOnTapDialog();
             print('不成です。');
           });
 
       await _promotionDalogComponent.add(okButtonComp);
       await _promotionDalogComponent.add(noButtonComp);
     } else {
-      handleOnTapDialog();
+      await handleOnTapDialog();
     }
   }
 
@@ -393,8 +439,10 @@ class BoardOperator {
     required OneTile? startTile,
   }) {
     return _operatorStatus == OperatorPhaseType.EndTileSelect &&
-        startTile != null &&
-        targetTile.stackedPiece.pieceType == PieceType.Blank;
+            startTile != null &&
+            targetTile.stackedPiece.pieceType == PieceType.Blank ||
+        (startTile?.stackedPiece.playerType ?? PlayerType.None) !=
+            targetTile.stackedPiece.playerType;
   }
 
   /// 移動条件を満たしているか判定します。
@@ -403,9 +451,10 @@ class BoardOperator {
     required OneTile? endTile,
   }) {
     return startTile != null &&
-        startTile.stackedPiece.pieceType != PieceType.Blank &&
-        endTile != null &&
-        endTile.stackedPiece.pieceType == PieceType.Blank;
+            startTile.stackedPiece.pieceType != PieceType.Blank &&
+            endTile != null &&
+            endTile.stackedPiece.pieceType == PieceType.Blank ||
+        startTile?.stackedPiece.playerType != endTile?.stackedPiece.playerType;
   }
 
   /// [targetTile] を終了地点のタイルに設定します。

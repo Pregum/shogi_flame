@@ -10,7 +10,7 @@ import '../model/move_state_type.dart';
 class SpriteKnight extends SpriteComponent implements IPiece {
   SpriteKnight(Sprite sprite, {PlayerType? playerType})
       : super(sprite: sprite) {
-    _playerType = playerType ?? PlayerType.None;
+    _playerType = playerType ?? PlayerType.Black;
     if (!_playerType.isBlack) {
       flipVerticallyAroundCenter();
     }

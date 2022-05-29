@@ -115,6 +115,25 @@ extension PieceTypeEx on PieceType {
         this == PieceType.PromotedPawn;
   }
 
+  bool get canBack {
+    return this == PieceType.King ||
+        this == PieceType.Rook ||
+        this == PieceType.Bishop ||
+        this == PieceType.SilverGeneral ||
+        this == PieceType.GoldGeneral ||
+        isPromotion;
+  }
+
+  /// 成りが可能であるか
+  bool get canPromote {
+    return this == PieceType.Rook ||
+        this == PieceType.Bishop ||
+        this == PieceType.Pawn ||
+        this == PieceType.SilverGeneral ||
+        this == PieceType.Lance ||
+        this == PieceType.Knight;
+  }
+
   static List<PieceType> get unPromotedPieceTypes => <PieceType>[
         PieceType.King,
         PieceType.Rook,
@@ -125,4 +144,66 @@ extension PieceTypeEx on PieceType {
         PieceType.Lance,
         PieceType.Pawn,
       ];
+
+  PieceType get promotedPieceType {
+    switch (this) {
+      case PieceType.Blank:
+      case PieceType.King:
+        return PieceType.Blank;
+      case PieceType.Rook:
+        return PieceType.PromotedRook;
+      case PieceType.Bishop:
+        return PieceType.PromotedBishop;
+      case PieceType.GoldGeneral:
+        return PieceType.GoldGeneral;
+      case PieceType.SilverGeneral:
+        return PieceType.PromotedSilver;
+      case PieceType.Knight:
+        return PieceType.PromotedKnight;
+      case PieceType.Lance:
+        return PieceType.PromotedLance;
+      case PieceType.Pawn:
+        return PieceType.PromotedPawn;
+      case PieceType.PromotedRook:
+        return PieceType.PromotedRook;
+      case PieceType.PromotedBishop:
+        return PieceType.PromotedBishop;
+      case PieceType.PromotedSilver:
+        return PieceType.PromotedSilver;
+      case PieceType.PromotedKnight:
+        return PieceType.PromotedKnight;
+      case PieceType.PromotedLance:
+        return PieceType.PromotedLance;
+      case PieceType.PromotedPawn:
+        return PieceType.PromotedPawn;
+    }
+  }
+
+  /// 裏面のpiece_typeを返します。
+  /// 裏面がない場合は現在の[PieceType]を返します。
+  PieceType get reversePieceType {
+    if (!this.isPromotion) {
+      return this;
+    }
+    switch (this) {
+      case PieceType.PromotedRook:
+        return PieceType.Rook;
+      case PieceType.PromotedBishop:
+        return PieceType.Bishop;
+      case PieceType.PromotedSilver:
+        return PieceType.SilverGeneral;
+      case PieceType.PromotedKnight:
+        return PieceType.Knight;
+      case PieceType.PromotedLance:
+        return PieceType.Lance;
+      case PieceType.PromotedPawn:
+        return PieceType.Pawn;
+      default:
+        return PieceType.Blank;
+    }
+  }
+
+  bool get isBlank {
+    return this == PieceType.Blank;
+  }
 }

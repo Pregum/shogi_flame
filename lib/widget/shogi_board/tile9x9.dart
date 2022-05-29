@@ -68,6 +68,9 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
   double srcTileSize;
   double get destTileSize => scale * srcTileSize;
 
+  double marginTop;
+  double marginLeft;
+
   static double defaultScale = 2.0;
   static double defaultSrcTileSize = 32.0;
 
@@ -85,8 +88,10 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
 
   /// ctor
   Tile9x9({
-    this.scale = 2.0,
+    this.scale = 4.0,
     this.srcTileSize = 32.0,
+    this.marginTop = 0.0,
+    this.marginLeft = 0.0,
   });
 
   final defaultRowCount = 9;
@@ -203,6 +208,50 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
     return true;
   }
 
+  /// 配置可能なタイルを更新します。
+  void updateMovableTilesThatCanPut(IPiece piece, PlayerType actionPlayerType) {
+    var movableTileMatrix = <List<bool>>[];
+
+    if (_tileMatrix.isEmpty) {
+      return;
+    }
+    var pawnExistColumns =
+        List<bool>.generate(_tileMatrix[0].length, (_) => false);
+
+    // ラスタ走査で、フラグをたてていく
+    for (var i = 0; i < _tileMatrix.length; i++) {
+      final oneLineTiles = <bool>[];
+      for (var j = 0; j < _tileMatrix[i].length; j++) {
+        final tile = _tileMatrix[i][j];
+        final targetPiece = tile.stackedPiece;
+        final isBlank = targetPiece.pieceType.isBlank;
+
+        // 配置後、進めない位置の処理も実装する
+        final canMoveNext = verifyCanMoveNext(tile, piece);
+        oneLineTiles.add(isBlank && canMoveNext);
+
+        // 歩の場合、同列にすでに配置されていればフラグを立てる
+        if (targetPiece.pieceType == PieceType.Pawn &&
+            targetPiece.playerType == actionPlayerType) {
+          pawnExistColumns[j] = true;
+        }
+      }
+      movableTileMatrix.add(oneLineTiles);
+    }
+
+    // ２歩を防ぐ為、その列は塗らないようにする。
+    for (var i = 0; i < _tileMatrix.length; i++) {
+      for (var j = 0; j < _tileMatrix[i].length; j++) {
+        final tile = _tileMatrix[i][j];
+        var willMovable = movableTileMatrix[i][j];
+        if (piece.pieceType == PieceType.Pawn) {
+          willMovable = willMovable && !pawnExistColumns[j];
+        }
+        tile.isMovableTile = willMovable;
+      }
+    }
+  }
+
   /// 9x9タイルの状態をリセットします。
   void resetBoard() {
     _logger.info('[tile9x9#resetBoard]: ボードをリセットします。');
@@ -212,6 +261,173 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
       }
     }
     _effectControllerObject.children.clear();
+  }
+
+  bool verifyCanMoveNext(OneTile endTile, IPiece movingPiece) {
+    if (movingPiece.pieceType == PieceType.Blank) {
+      return false;
+    }
+
+    if (movingPiece.pieceType.canBack) {
+      return true;
+    }
+
+    final movableRoutes = movingPiece.movableRoutes;
+
+    final centerCol = endTile.columnIndex ?? 0;
+    final centerRow = endTile.rowIndex ?? 0;
+
+    final halfWidth = movableRoutes.widthTileLnegth ~/ 2;
+
+    final leftIndex = centerCol - halfWidth;
+    final topIndex = centerRow - halfWidth;
+
+    for (var i = 0; i < movableRoutes.widthTileLnegth; i++) {
+      final currRowIndex = topIndex + i;
+
+      if (currRowIndex < 0 || currRowIndex >= _tileMatrix.length) {
+        continue;
+      }
+
+      for (var j = 0; j < movableRoutes.widthTileLnegth; j++) {
+        final currColumnIndex = leftIndex + j;
+        if (currColumnIndex < 0 || currColumnIndex >= _tileMatrix[i].length) {
+          continue;
+        }
+
+        if (currRowIndex == centerRow && currColumnIndex == centerCol) {
+          continue;
+        }
+
+        final currMovaleType = movableRoutes.routeMatrix[i][j];
+        // １つでも移動可能なタイルが存在していればtrueを返す。
+        if (currMovaleType == MoveStateType.Movable ||
+            currMovaleType == MoveStateType.Infinite) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /// デフォルトの駒の配置処理を行います。
+  Future<void> relocationDefaultPiecePosition() async {
+    for (var i = 0; i < defaultRowCount; i++) {
+      for (var j = 0; j < defaultColumnCount; j++) {
+        if (i == 2) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                      PieceType.Pawn, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
+        } else if (i == defaultRowCount - 3) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Pawn, destTileSize,
+                  playerType: PlayerType.Black)
+                ?..debugMode = true)!;
+        } else if ((i == 1 && j == 1)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                      PieceType.Rook, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
+        } else if ((i == defaultRowCount - 2 && j == defaultColumnCount - 2)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Rook, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 1 && j == defaultColumnCount - 2)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                      PieceType.Bishop, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
+        } else if ((i == defaultRowCount - 2 && j == 1)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Bishop, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 0 && j == 0) ||
+            (i == 0 && j == defaultColumnCount - 1)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                      PieceType.Lance, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
+        } else if ((i == defaultRowCount - 1 && j == 0) ||
+            (i == defaultRowCount - 1 && j == defaultColumnCount - 1)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Lance, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 0 && j == 1) ||
+            (i == 0 && j == defaultColumnCount - 2)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                      PieceType.Knight, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
+        } else if ((i == defaultRowCount - 1 && j == 1) ||
+            (i == defaultRowCount - 1 && j == defaultColumnCount - 2)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Knight, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 0 && j == 2) ||
+            (i == 0 && j == defaultColumnCount - 3)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                      PieceType.SilverGeneral, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
+        } else if ((i == defaultRowCount - 1 && j == 2) ||
+            (i == defaultRowCount - 1 && j == defaultColumnCount - 3)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.SilverGeneral, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 0 && j == 3) ||
+            (i == 0 && j == defaultColumnCount - 4)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                      PieceType.GoldGeneral, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
+        } else if ((i == defaultRowCount - 1 && j == 3) ||
+            (i == defaultRowCount - 1 && j == defaultColumnCount - 4)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.GoldGeneral, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else if ((i == 0 && j == 4)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                      PieceType.King, destTileSize,
+                      playerType: PlayerType.White)
+                    ?..y -= destTileSize)!
+                  .reversePieceDirection();
+        } else if ((i == defaultRowCount - 1 && j == 4)) {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.King, destTileSize,
+                  playerType: PlayerType.Black))!;
+        } else {
+          _tileMatrix[i][j].stackedPiece =
+              (await PieceFactory.createSpritePiece(
+                  PieceType.Blank, destTileSize,
+                  playerType: PlayerType.Black))!;
+        }
+      }
+    }
   }
 
   /// 移動可能な位置を更新します。
@@ -249,7 +465,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         final currTile = _tileMatrix[currRowIndex][currColumnIndex];
         final currMovableType = movableRoutes.routeMatrix[i][j];
         _updateMovableState(currMovableType, currTile, currRowIndex, centerRow,
-            currColumnIndex, centerColumn);
+            currColumnIndex, centerColumn, centerTile.stackedPiece.playerType);
       }
     }
   }
@@ -332,15 +548,22 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
   }
 
   /// [currMovableType] に応じて、[currTile] の移動可能フラグの更新を行います。
-  void _updateMovableState(MoveStateType currMovableType, OneTile currTile,
-      int currRowIndex, int centerRow, int currColumnIndex, int centerColumn) {
+  void _updateMovableState(
+      MoveStateType currMovableType,
+      OneTile currTile,
+      int currRowIndex,
+      int centerRow,
+      int currColumnIndex,
+      int centerColumn,
+      PlayerType playerType) {
     if (currMovableType == MoveStateType.Movable &&
-        currTile.stackedPiece.pieceType == PieceType.Blank) {
+        (currTile.stackedPiece.pieceType == PieceType.Blank ||
+            playerType != currTile.stackedPiece.playerType)) {
       currTile.isMovableTile = true;
     } else if (currMovableType == MoveStateType.Infinite) {
       // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
       _setMovableTypeToInifiteTiles(
-          currRowIndex, centerRow, currColumnIndex, centerColumn);
+          currRowIndex, centerRow, currColumnIndex, centerColumn, playerType);
     } else {
       currTile.isMovableTile = false;
     }
@@ -348,8 +571,8 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
 
   /// 無限超の移動可能タイルのフラグ更新を行います。
   /// [centerRow], [centerColumn]から[currRowIndex], [currColumnIndex] の差分を端までループしてフラグを立てていきます。
-  void _setMovableTypeToInifiteTiles(
-      int currRowIndex, int centerRow, int currColumnIndex, int centerColumn) {
+  void _setMovableTypeToInifiteTiles(int currRowIndex, int centerRow,
+      int currColumnIndex, int centerColumn, PlayerType playerType) {
     // 範囲外に出るまで中心から対象座標の相対距離を移動可能距離として塗り続ける
     final deltaRow = currRowIndex - centerRow;
     final deltaColumn = currColumnIndex - centerColumn;
@@ -361,8 +584,12 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         column < _tileMatrix[row].length) {
       final tile = _tileMatrix[row][column];
 
-      // 空でなければ止める
-      if (tile.stackedPiece.pieceType != PieceType.Blank) {
+      // 敵の駒もしくは空でなければ止める
+      if (tile.stackedPiece.playerType != PlayerType.None &&
+          tile.stackedPiece.playerType != playerType) {
+        tile.isMovableTile = true;
+        break;
+      } else if (tile.stackedPiece.pieceType != PieceType.Blank) {
         break;
       }
 
@@ -433,7 +660,7 @@ class Tile9x9 extends FlameGame with HasTappables, HasPaint, DoubleTapDetector {
         );
         final oneTile = OneTile(
           handleOnTileTapDown,
-          Vector2(j * destTileSize, i * destTileSize),
+          Vector2(marginLeft + j * destTileSize, marginTop + i * destTileSize),
           destTileSize,
           tileImage,
           stackedPiece: blankPiece,
