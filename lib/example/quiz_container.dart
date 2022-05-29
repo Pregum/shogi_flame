@@ -9,6 +9,7 @@ import 'package:shogi_game/widget/piece/model/position_type.dart';
 
 import '../widget/piece/model/kifu_generator.dart';
 import '../widget/piece/model/move_info.dart';
+import '../widget/shogi_board/one_tile.dart';
 import '../widget/shogi_board/tile9x9.dart';
 
 class QuizContainer extends FlameGame with HasTappables {
@@ -16,16 +17,20 @@ class QuizContainer extends FlameGame with HasTappables {
   Component? questionComponent;
   final KifuGenerator kifuGenerator = KifuGenerator();
   MoveInfo? targetMoveInfo;
-  final Component successComponent =
+  OneTile? oldTile;
+  Component successComponent =
       TextComponent(text: 'correct!', textRenderer: TextPaint())
         ..topLeftPosition = Vector2(660, 50);
-  final Component failureComponent =
+  Component failureComponent =
       TextComponent(text: 'incorrect...', textRenderer: TextPaint())
         ..topLeftPosition = Vector2(660, 50);
   late ButtonComponent retryComponent = ButtonComponent(
-      button: TextComponent(text: 'reset'),
+      button: TextComponent(text: 'next'),
       onPressed: () {
-        needFadeIn = true;
+        // needFadeIn = true;
+        successComponent.removeFromParent();
+        failureComponent.removeFromParent();
+        _showQuestion();
       })
     ..topLeftPosition = Vector2(660, 80);
   var timer = Timer(0.5);
@@ -39,7 +44,6 @@ class QuizContainer extends FlameGame with HasTappables {
   void onGameResize(Vector2 canvasSize) {
     super.onGameResize(canvasSize);
     fadeInComponent =
-        // PositionComponent(size: Vector2(canvasSize.x, canvasSize.y))
         PositionComponent(size: Vector2(canvasSize.x * 1.5, canvasSize.y))
           ..debugMode = true
           ..topLeftPosition = Vector2(canvasSize.x, 0);
@@ -62,20 +66,21 @@ class QuizContainer extends FlameGame with HasTappables {
       }
       if (targetMoveInfo?.rowIndex == rowIndex &&
           targetMoveInfo?.columnIndex == columnIndex) {
-        add(successComponent);
+        add(successComponent =
+            TextComponent(text: 'correct!', textRenderer: TextPaint())
+              ..topLeftPosition = Vector2(660, 50));
       } else {
-        add(failureComponent);
+        add(failureComponent =
+            TextComponent(text: 'incorrect...', textRenderer: TextPaint())
+              ..topLeftPosition = Vector2(660, 50));
         final pp = PiecePosition(
           targetMoveInfo?.rowIndex,
           targetMoveInfo?.columnIndex,
           PositionFieldType.None,
           PieceType.Blank,
         );
-        final successTile = board.getTile(pp);
-        successTile?.isMovableTile = true;
-        // successTile?.stackedPiece.add(PositionComponent(
-        //   size: Vector2.all(Tile9x9.defaultScale * Tile9x9.defaultSrcTileSize),
-        // ));
+        oldTile = board.getTile(pp);
+        oldTile?.isMovableTile = true;
       }
 
       canTap = false;
@@ -107,16 +112,14 @@ class QuizContainer extends FlameGame with HasTappables {
   }
 
   Future<void> _showQuestion() async {
+    oldTile?.isMovableTile = false;
     final unpromotedPieceType = PieceTypeEx.unPromotedPieceTypes;
     final moveInfos = kifuGenerator.generateMoveInfos(1,
         pieceTypeCandidates: unpromotedPieceType);
     targetMoveInfo = moveInfos[0];
     questionComponent?.removeFromParent();
-    await add(questionComponent =
-        // TextComponent(text: '${targetMoveInfo.toString()}のマスはどこ？')
-        TextComponent(
+    await add(questionComponent = TextComponent(
       text: 'Tap ${targetMoveInfo?.reversedColumn} ${targetMoveInfo?.row} !',
-      // textRenderer: tr,
     )..topLeftPosition = Vector2(660, 20));
     canTap = true;
   }
