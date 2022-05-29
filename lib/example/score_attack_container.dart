@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -17,10 +18,12 @@ import '../widget/shogi_board/one_tile.dart';
 import '../widget/shogi_board/tile9x9.dart';
 
 class ScoreAttackContainer extends FlameGame with HasTappables {
-  late Tile9x9 board;
+  Tile9x9? _board;
   late TimelimitProgressBar timelimitProgressComponent;
   late PositionComponent headerComponent;
   Component? _questionComponent;
+
+  bool get _isPhone => Platform.isAndroid || Platform.isIOS;
 
   bool _hasShown = false;
   bool _canTap = false;
@@ -38,20 +41,34 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
   MoveInfo? _targetMoveInfo;
   OneTile? _oldTile;
   final KifuGenerator _kifuGenerator = KifuGenerator();
+  late final Vector2 _screenSize;
+
+  /// ctor
+  ScoreAttackContainer({required Size size, super.camera}) {
+    _screenSize = Vector2(size.width, size.height);
+  }
+
+  @override
+  void onGameResize(Vector2 canvasSize) {
+    super.onGameResize(canvasSize);
+  }
 
   @override
   Future<void>? onLoad() async {
     await super.onLoad();
 
-    add(headerComponent = PositionComponent()..size = Vector2(1000, 100));
+    add(headerComponent = PositionComponent()
+      ..size = Vector2(_screenSize.x, 100));
     headerComponent.add(timelimitProgressComponent = TimelimitProgressBar(
       remainSeconds: 30.0,
       onTick: (() => print('ストップしました。')),
-    )..size = Vector2(1000, 100));
+    )..size = Vector2(_screenSize.x, 100));
 
-    add(board = Tile9x9(
-      scale: Tile9x9.defaultScale,
-      srcTileSize: Tile9x9.defaultSrcTileSize,
+    add(_board = Tile9x9(
+      scale: _isPhone ? 1.0 : Tile9x9.defaultScale,
+      srcTileSize: _isPhone
+          ? (_screenSize.x / (_board?.defaultColumnCount ?? 10))
+          : Tile9x9.defaultSrcTileSize,
       marginTop: 100,
     ));
 
@@ -64,7 +81,9 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
           timelimitProgressComponent.startTimer();
           _showQuestion();
         },
-      )..topLeftPosition = Vector2(600, 50),
+      )..topLeftPosition = _isPhone
+          ? ((Vector2(2, _board?.destTileSize ?? 0) * 11) + Vector2(0, 50))
+          : Vector2(600, 50),
     );
     add(
       ButtonComponent(
@@ -73,10 +92,12 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
           print('onclick stop...');
           timelimitProgressComponent.stopTimer();
         },
-      )..topLeftPosition = Vector2(600, 80),
+      )..topLeftPosition = _isPhone
+          ? ((Vector2(2, _board?.destTileSize ?? 0) * 12) + Vector2(0, 50))
+          : Vector2(600, 80),
     );
 
-    _prepareQuestion(board);
+    _prepareQuestion(_board!);
   }
 
   @override
@@ -107,7 +128,9 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
     _questionComponent?.removeFromParent();
     await add(_questionComponent = TextComponent(
       text: 'Tap ${_targetMoveInfo?.reversedColumn} ${_targetMoveInfo?.row} !',
-    )..topLeftPosition = Vector2(760, 50));
+    )..topLeftPosition = _isPhone
+        ? ((Vector2(2, _board?.destTileSize ?? 0) * 14) + Vector2(0, 50))
+        : Vector2(760, 50));
     _canTap = true;
   }
 
@@ -152,6 +175,10 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
       _hasShown = false;
       _timer.start();
     });
+    if (_isPhone) {
+      _answearComponent.position =
+          Vector2(_screenSize.x / 2, (_board?.destTileSize ?? 32.0) * 12);
+    }
     add(_answearComponent);
     // await _showSuccessRive();
   }

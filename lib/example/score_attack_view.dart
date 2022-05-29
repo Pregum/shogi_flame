@@ -12,6 +12,7 @@ class ScoreAttackView extends StatefulWidget {
 class _ScoreAttackViewState extends State<ScoreAttackView> {
   @override
   Widget build(BuildContext context) {
-    return GameWidget(game: ScoreAttackContainer());
+    final size = MediaQuery.of(context).size;
+    return GameWidget(game: ScoreAttackContainer(size: size));
   }
 }
