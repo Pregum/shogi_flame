@@ -77,6 +77,8 @@ class ScoreAttackContainer extends FlameGame with HasTappables {
         button: TextComponent(text: 'start!!!'),
         onPressed: () {
           print('onclick start...');
+          _answearHolder.clear();
+          _updateResults();
           timelimitProgressComponent.resetTimer();
           timelimitProgressComponent.startTimer();
           _showQuestion();
