@@ -1,8 +1,9 @@
 import 'package:dashbook/dashbook.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:shogi_game/stories/utils.dart';
+import './misc/non_web_url_strategy.dart'
+    if (dart.library.html) './misc/web_url_strategy.dart';
 
 import 'firebase_options.dart';
 
@@ -17,7 +18,6 @@ Future<void> main() async {
     title: 'shogi flame example',
   );
   addStrories(dashbook);
-
-  setUrlStrategy(PathUrlStrategy());
+  configureUrl();
   runApp(dashbook);
 }
