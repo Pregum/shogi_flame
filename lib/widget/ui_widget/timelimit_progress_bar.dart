@@ -42,7 +42,8 @@ class TimelimitProgressBar extends PositionComponent {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    final tickingWidth = width * (_timer.current / remainSeconds);
+    final tickingWidth =
+        width * ((remainSeconds - _timer.current) / remainSeconds);
     final currentSquare = Vector2(tickingWidth, 50);
     print('curr square: $currentSquare, ');
     canvas.drawRect(
@@ -51,8 +52,8 @@ class TimelimitProgressBar extends PositionComponent {
     if (!_timer.finished) {
       final textConfig =
           TextPaint(style: const TextStyle(color: Colors.white, fontSize: 15));
-      textConfig.render(
-          canvas, _timer.current.toStringAsFixed(2), Vector2(60, 25));
+      textConfig.render(canvas,
+          (remainSeconds - _timer.current).toStringAsFixed(2), Vector2(60, 25));
     }
   }
 
